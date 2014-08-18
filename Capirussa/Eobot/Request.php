@@ -284,12 +284,6 @@ class Request
             throw new \Exception($error);
         }
 
-        echo "\n\n\n\n";
-        echo $requestUrl;
-        echo "\n\n\n\n";
-        echo $result;
-        echo "\n\n\n\n";
-
         // close the CURL request
         curl_close($curl);
 
