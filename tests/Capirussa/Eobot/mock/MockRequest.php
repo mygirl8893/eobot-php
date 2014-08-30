@@ -2,6 +2,7 @@
 require_once(dirname(__FILE__) . '/../../../init.php');
 
 use Capirussa\Eobot;
+use Capirussa\Http;
 
 class MockRequest extends Eobot\Request
 {
@@ -13,11 +14,11 @@ class MockRequest extends Eobot\Request
     protected $baseUrl = 'eobot://mock/';
 
     /**
-     * Overrides the real request method to simulate a predefined response
+     * Overrides the real send method to simulate a predefined response
      *
-     * @return Eobot\Response
+     * @return Http\Response
      */
-    protected function doRequest()
+    public function send()
     {
         // build the request URL
         $requestUrl = $this->buildRequestUrl();
@@ -153,7 +154,7 @@ class MockRequest extends Eobot\Request
             $simulatedResponse = str_replace(array("\r", "\n"), "\r\n", $simulatedResponse);
         }
 
-        $this->response = new Eobot\Response($simulatedResponse);
+        $this->response = new Http\Response($simulatedResponse);
 
         return $this->response;
     }

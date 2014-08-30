@@ -8,6 +8,8 @@ ini_set('display_errors', 'on');
 
 date_default_timezone_set('Europe/Amsterdam');
 
+require_once(dirname(__FILE__) . '/../vendor/autoload.php');
+
 // handle autoloading
 spl_autoload_register(
     function ($className) {

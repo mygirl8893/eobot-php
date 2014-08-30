@@ -189,7 +189,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException InvalidArgumentException
-     * @expectedException no user ID is known
+     * @expectedExceptionMessage no user ID is known
      */
     public function testGetBalanceWithoutParameters()
     {
@@ -347,7 +347,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $response = $client->getLastResponse();
         $this->assertNotNull($response);
-        $this->assertInstanceof('Capirussa\\Eobot\\Response', $response);
+        $this->assertInstanceof('Capirussa\\Http\\Response', $response);
 
         $coinValue2 = floatval(trim($response->getRawBody()));
 

@@ -182,7 +182,7 @@ class Client
     /**
      * Contains the Response object for the last submitted request.
      *
-     * @type Response
+     * @type \Capirussa\Http\Response
      */
     protected $response;
 
@@ -732,7 +732,7 @@ class Client
      * $response = $client->getLastResponse();
      * </code>
      *
-     * @return Response|null
+     * @return \Capirussa\Http\Response|null
      */
     public function getLastResponse()
     {

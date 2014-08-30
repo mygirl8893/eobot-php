@@ -9,6 +9,7 @@ php:
 
 before_script:
   - composer require satooshi/php-coveralls:dev-master
+  - composer update
 
 script:
   - mkdir -p build/logs
