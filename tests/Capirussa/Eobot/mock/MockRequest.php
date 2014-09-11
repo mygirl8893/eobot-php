@@ -49,6 +49,10 @@ class MockRequest extends Eobot\Request
                 $simulatedResponse = $this->loadMockResponse('coin=CNY.txt');
                 break;
 
+            case 'eobot://mock/?coin=BTSX':
+                $simulatedResponse = $this->loadMockResponse('coin=BTSX.txt');
+                break;
+
             case 'eobot://mock/?coin=CURE':
                 $simulatedResponse = $this->loadMockResponse('coin=CURE.txt');
                 break;

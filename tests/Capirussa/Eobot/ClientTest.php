@@ -93,6 +93,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $coins = array(
             Client::COIN_BITCOIN      => 458.36,
+            Client::COIN_BITSHARESX   => 0.04157706,
             Client::COIN_BLACKCOIN    => 0.040105,
             Client::COIN_CURECOIN     => 0.033222,
             Client::COIN_DARKCOIN     => 1.77,
@@ -204,10 +205,11 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balances = $client->getBalance();
 
         $this->assertInternalType('array', $balances);
-        $this->assertCount(14, $balances);
+        $this->assertCount(15, $balances);
 
         $this->assertEquals(0.32751004, $balances['Total']);
         $this->assertEquals(0.00040978, $balances[Client::COIN_BITCOIN]);
+        $this->assertEquals(0.0141392, $balances[Client::COIN_BITSHARESX]);
         $this->assertEquals(0.08188563, $balances[Client::COIN_BLACKCOIN]);
         $this->assertEquals(0.05292104, $balances[Client::COIN_CURECOIN]);
         $this->assertEquals(0.00085430, $balances[Client::COIN_DARKCOIN]);
@@ -272,6 +274,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::COIN_BITCOIN);
         $this->assertEquals(0.00040978, $balance);
+
+        $balance = $client->getBalance(Client::COIN_BITSHARESX);
+        $this->assertEquals(0.0141392, $balance);
 
         $balance = $client->getBalance(Client::COIN_BLACKCOIN);
         $this->assertEquals(0.08188563, $balance);

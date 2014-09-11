@@ -14,6 +14,11 @@ class Client
     const COIN_BITCOIN = 'BTC';
 
     /**
+     * The coin abbreviation for BitSharesX
+     */
+    const COIN_BITSHARESX = 'BTSX';
+
+    /**
      * The coin abbreviation for Litecoin
      */
     const COIN_LITECOIN = 'LTC';
