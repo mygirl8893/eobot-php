@@ -49,11 +49,6 @@ class Client
     const COIN_VERTCOIN = 'VTC';
 
     /**
-     * The coin abbreviation for Feathercoin
-     */
-    const COIN_FEATHERCOIN = 'FTC';
-
-    /**
      * The coin abbreviation for CureCoin
      */
     const COIN_CURECOIN = 'CURE';

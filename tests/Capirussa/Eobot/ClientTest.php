@@ -97,7 +97,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_CURECOIN     => 0.033222,
             Client::COIN_DARKCOIN     => 1.77,
             Client::COIN_DOGECOIN     => 0.000106,
-            Client::COIN_FEATHERCOIN  => 0.018567,
             Client::COIN_LITECOIN     => 3.62,
             Client::COIN_NAMECOIN     => 0.874518,
             Client::COIN_NAUTILUSCOIN => 0.084194,
@@ -205,7 +204,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balances = $client->getBalance();
 
         $this->assertInternalType('array', $balances);
-        $this->assertCount(15, $balances);
+        $this->assertCount(14, $balances);
 
         $this->assertEquals(0.32751004, $balances['Total']);
         $this->assertEquals(0.00040978, $balances[Client::COIN_BITCOIN]);
@@ -213,7 +212,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.05292104, $balances[Client::COIN_CURECOIN]);
         $this->assertEquals(0.00085430, $balances[Client::COIN_DARKCOIN]);
         $this->assertEquals(23.78557417, $balances[Client::COIN_DOGECOIN]);
-        $this->assertEquals(0.13175712, $balances[Client::COIN_FEATHERCOIN]);
         $this->assertEquals(0.03013698, $balances[Client::COIN_LITECOIN]);
         $this->assertEquals(0.00188207, $balances[Client::COIN_NAMECOIN]);
         $this->assertEquals(0.03115914, $balances[Client::COIN_NAUTILUSCOIN]);
@@ -286,9 +284,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::COIN_DOGECOIN);
         $this->assertEquals(23.78557417, $balance);
-
-        $balance = $client->getBalance(Client::COIN_FEATHERCOIN);
-        $this->assertEquals(0.13175712, $balance);
 
         $balance = $client->getBalance(Client::COIN_LITECOIN);
         $this->assertEquals(0.03013698, $balance);

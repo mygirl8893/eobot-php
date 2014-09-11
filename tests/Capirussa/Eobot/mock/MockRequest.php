@@ -23,9 +23,6 @@ class MockRequest extends Eobot\Request
         // build the request URL
         $requestUrl = $this->buildRequestUrl();
 
-        // get the post data
-        $postData = $this->getPostParameters();
-
         // read file contents
         switch ($requestUrl) {
             default:
@@ -70,10 +67,6 @@ class MockRequest extends Eobot\Request
 
             case 'eobot://mock/?coin=EUR':
                 $simulatedResponse = $this->loadMockResponse('coin=EUR.txt');
-                break;
-
-            case 'eobot://mock/?coin=FTC':
-                $simulatedResponse = $this->loadMockResponse('coin=FTC.txt');
                 break;
 
             case 'eobot://mock/?coin=GBP':
