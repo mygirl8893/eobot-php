@@ -51,6 +51,41 @@ class Request extends Http\Request
     const QUERY_MINING = 'mining';
 
     /**
+     * Query parameter used to request a deposit wallet address for a particular cryptocurrency
+     */
+    const QUERY_DEPOSIT = 'deposit';
+
+    /**
+     * Query parameter used to configure the automatic withdrawal wallet address for a particular cryptocurrency
+     */
+    const QUERY_WITHDRAW = 'withdraw';
+
+    /**
+     * Query parameter used to withdraw a specific amount of funds from Eobot
+     */
+    const QUERY_AMOUNT = 'amount';
+
+    /**
+     * Query parameter used to specify a wallet address for withdrawing funds from Eobot
+     */
+    const QUERY_WALLET = 'wallet';
+
+    /**
+     * Query parameter used to manually withdraw funds for a particular cryptocurrency
+     */
+    const QUERY_MANUAL_WITHDRAW = 'manualwithdraw';
+
+    /**
+     * Query parameter used to convert cryptocurrency funds to cloud mining power
+     */
+    const QUERY_CONVERT_FROM = 'convertfrom';
+
+    /**
+     * Query parameter used to convert cryptocurrency funds to cloud mining power
+     */
+    const QUERY_CONVERT_TO = 'convertto';
+
+    /**
      * This property contains the base URL for all requests.
      *
      * @type string

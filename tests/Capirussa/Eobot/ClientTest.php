@@ -131,11 +131,11 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new MockClient();
 
-        $coinValue = $client->getCoinValue(Client::COIN_BITCOIN, Client::CURR_USD);
+        $coinValue = $client->getCoinValue(Client::COIN_BITCOIN, Client::CURRENCY_US_DOLLAR);
 
         $this->assertEquals(458.36, $coinValue);
 
-        $coinValue = $client->getCoinValue(Client::COIN_BITCOIN, Client::CURR_EUR);
+        $coinValue = $client->getCoinValue(Client::COIN_BITCOIN, Client::CURRENCY_EURO);
 
         $this->assertEquals(343.02837352, $coinValue);
     }
@@ -165,19 +165,22 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client = new MockClient();
 
         $currencies = array(
-            Client::CURR_AUD => 1.07221,
-            Client::CURR_CAD => 1.0886,
-            Client::CURR_CNY => 6.14322,
-            Client::CURR_CZK => 20.889,
-            Client::CURR_EUR => 0.748382,
-            Client::CURR_GBP => 0.597745,
-            Client::CURR_IDR => 11689.78,
-            Client::CURR_JPY => 102.563,
-            Client::CURR_MXN => 13.0479,
-            Client::CURR_NOK => 6.15738,
-            Client::CURR_PLN => 3.13386,
-            Client::CURR_RUB => 36.0362,
-            Client::CURR_USD => 1.0,
+            Client::CURRENCY_AUSTRALIAN_DOLLAR     => 1.07221,
+            Client::CURRENCY_BRITISH_POUND         => 0.597745,
+            Client::CURRENCY_CANADIAN_DOLLAR       => 1.0886,
+            Client::CURRENCY_CHINESE_YUAN_RENMINBI => 6.14322,
+            Client::CURRENCY_CZECH_KORUNA          => 20.889,
+            Client::CURRENCY_DANISH_KRONE          => 5.74794,
+            Client::CURRENCY_EURO                  => 0.748382,
+            Client::CURRENCY_INDIAN_RUPEE          => 60.88,
+            Client::CURRENCY_INDONESIAN_RUPIAH     => 11689.78,
+            Client::CURRENCY_JAPANESE_YEN          => 102.563,
+            Client::CURRENCY_MEXICAN_PESO          => 13.0479,
+            Client::CURRENCY_NORWEGIAN_KRONE       => 6.15738,
+            Client::CURRENCY_POLISH_ZLOTY          => 3.13386,
+            Client::CURRENCY_ROMANIAN_NEW_LEU      => 3.41312,
+            Client::CURRENCY_RUSSIAN_RUBLE         => 36.0362,
+            Client::CURRENCY_US_DOLLAR             => 1.0,
         );
 
         foreach ($currencies as $currency => $expectedRate) {
@@ -228,43 +231,52 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new MockClient(1234);
 
-        $balance = $client->getBalance(Client::CURR_AUD);
+        $balance = $client->getBalance(Client::CURRENCY_AUSTRALIAN_DOLLAR);
         $this->assertEquals(0.3511595399884, $balance);
 
-        $balance = $client->getBalance(Client::CURR_CAD);
-        $this->assertEquals(0.356527429544, $balance);
-
-        $balance = $client->getBalance(Client::CURR_CNY);
-        $this->assertEquals(2.0119662279288, $balance);
-
-        $balance = $client->getBalance(Client::CURR_CZK);
-        $this->assertEquals(6.84135722556, $balance);
-
-        $balance = $client->getBalance(Client::CURR_EUR);
-        $this->assertEquals(0.24510261875528, $balance);
-
-        $balance = $client->getBalance(Client::CURR_GBP);
+        $balance = $client->getBalance(Client::CURRENCY_BRITISH_POUND);
         $this->assertEquals(0.1957674888598, $balance);
 
-        $balance = $client->getBalance(Client::CURR_IDR);
+        $balance = $client->getBalance(Client::CURRENCY_CANADIAN_DOLLAR);
+        $this->assertEquals(0.356527429544, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_CHINESE_YUAN_RENMINBI);
+        $this->assertEquals(2.0119662279288, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_CZECH_KORUNA);
+        $this->assertEquals(6.84135722556, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_DANISH_KRONE);
+        $this->assertEquals(1.8825080593176, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_EURO);
+        $this->assertEquals(0.24510261875528, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_INDONESIAN_RUPIAH);
         $this->assertEquals(3828.5203153912, $balance);
 
-        $balance = $client->getBalance(Client::CURR_JPY);
+        $balance = $client->getBalance(Client::CURRENCY_INDIAN_RUPEE);
+        $this->assertEquals(19.9388112352, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_JAPANESE_YEN);
         $this->assertEquals(33.59041223252, $balance);
 
-        $balance = $client->getBalance(Client::CURR_MXN);
+        $balance = $client->getBalance(Client::CURRENCY_MEXICAN_PESO);
         $this->assertEquals(4.273318250916, $balance);
 
-        $balance = $client->getBalance(Client::CURR_NOK);
+        $balance = $client->getBalance(Client::CURRENCY_NORWEGIAN_KRONE);
         $this->assertEquals(2.0166037700952, $balance);
 
-        $balance = $client->getBalance(Client::CURR_PLN);
+        $balance = $client->getBalance(Client::CURRENCY_POLISH_ZLOTY);
         $this->assertEquals(1.0263706139544, $balance);
 
-        $balance = $client->getBalance(Client::CURR_RUB);
+        $balance = $client->getBalance(Client::CURRENCY_ROMANIAN_NEW_LEU);
+        $this->assertEquals(1.1178310677248, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_RUSSIAN_RUBLE);
         $this->assertEquals(11.802217303448, $balance);
 
-        $balance = $client->getBalance(Client::CURR_USD);
+        $balance = $client->getBalance(Client::CURRENCY_US_DOLLAR);
         $this->assertEquals(0.32751004, $balance);
     }
 
@@ -352,5 +364,50 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $coinValue2 = floatval(trim($response->getRawBody()));
 
         $this->assertEquals($coinValue2, $coinValue);
+    }
+
+    public function testGetDepositAddress()
+    {
+        $client = new MockClient(1234);
+
+        $address = $client->getDepositAddress(Client::COIN_BITCOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_BITCOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        // for Bitshares-X you need to contact support, the API will not give an address for it
+        $address = $client->getDepositAddress(Client::COIN_BITSHARESX);
+        $this->assertEmpty($address);
+
+        $address = $client->getDepositAddress(Client::COIN_BLACKCOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_CURECOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_DARKCOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_DOGECOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_LITECOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_NAMECOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_NAUTILUSCOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_NXT);
+        $this->assertEquals('NXT-1234-5678-90AB-CDEF', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_PEERCOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_VERTCOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
     }
 }

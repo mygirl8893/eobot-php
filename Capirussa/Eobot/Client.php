@@ -14,11 +14,6 @@ class Client
     const COIN_BITCOIN = 'BTC';
 
     /**
-     * The coin abbreviation for BitSharesX
-     */
-    const COIN_BITSHARESX = 'BTSX';
-
-    /**
      * The coin abbreviation for Litecoin
      */
     const COIN_LITECOIN = 'LTC';
@@ -54,6 +49,11 @@ class Client
     const COIN_VERTCOIN = 'VTC';
 
     /**
+     * The coin abbreviation for BitSharesX
+     */
+    const COIN_BITSHARESX = 'BTSX';
+
+    /**
      * The coin abbreviation for CureCoin
      */
     const COIN_CURECOIN = 'CURE';
@@ -79,69 +79,94 @@ class Client
     const EO_CLOUD_SCRYPT = 'SCRYPT';
 
     /**
-     * The currency abbreviation for EUR
+     * The currency abbreviation for Euro
      */
-    const CURR_EUR = 'EUR';
+    const CURRENCY_EURO = 'EUR';
 
     /**
-     * The currency abbreviation for USD
+     * The currency abbreviation for US Dollar
      */
-    const CURR_USD = 'USD';
+    const CURRENCY_US_DOLLAR = 'USD';
 
     /**
-     * The currency abbreviation for JPY
+     * The currency abbreviation for Russian Ruble
      */
-    const CURR_JPY = 'JPY';
+    const CURRENCY_RUSSIAN_RUBLE = 'RUB';
 
     /**
-     * The currency abbreviation for GBP
+     * The currency abbreviation for British Pound
      */
-    const CURR_GBP = 'GBP';
+    const CURRENCY_BRITISH_POUND = 'GBP';
 
     /**
-     * The currency abbreviation for RUB
+     * The currency abbreviation for Indonesian Rupiah
      */
-    const CURR_RUB = 'RUB';
+    const CURRENCY_INDONESIAN_RUPIAH = 'IDR';
 
     /**
-     * The currency abbreviation for CNY
+     * The currency abbreviation for Canadian Dollar
      */
-    const CURR_CNY = 'CNY';
+    const CURRENCY_CANADIAN_DOLLAR = 'CAD';
 
     /**
-     * The currency abbreviation for CAD
+     * The currency abbreviation for Australian Dollar
      */
-    const CURR_CAD = 'CAD';
+    const CURRENCY_AUSTRALIAN_DOLLAR = 'AUD';
 
     /**
-     * The currency abbreviation for AUD
+     * The currency abbreviation for Japanese Yen
      */
-    const CURR_AUD = 'AUD';
+    const CURRENCY_JAPANESE_YEN = 'JPY';
 
     /**
-     * The currency abbreviation for MXN
+     * The currency abbreviation for Mexican Peso
      */
-    const CURR_MXN = 'MXN';
+    const CURRENCY_MEXICAN_PESO = 'MXN';
 
     /**
-     * The currency abbreviation for IDR
+     * The currency abbreviation for Chinese Yuan Renminbi
      */
-    const CURR_IDR = 'IDR';
+    const CURRENCY_CHINESE_YUAN_RENMINBI = 'CNY';
 
     /**
-     * The currency abbreviation for NOK
+     * The currency abbreviation for Czech Koruna
      */
-    const CURR_NOK = 'NOK';
+    const CURRENCY_CZECH_KORUNA = 'CZK';
 
     /**
-     * The currency abbreviation for CZK
+     * The currency abbreviation for Norwegian Krone
      */
-    const CURR_CZK = 'CZK';
+    const CURRENCY_NORWEGIAN_KRONE = 'NOK';
 
     /**
-     * The currency abbreviation for PLN
+     * The currency abbreviation for Polish Zloty
      */
-    const CURR_PLN = 'PLN';
+    const CURRENCY_POLISH_ZLOTY = 'PLN';
+
+    /**
+     * The currency abbreviation for Danish Krone
+     */
+    const CURRENCY_DANISH_KRONE = 'DKK';
+
+    /**
+     * The currency abbreviation for Indian Rupee
+     */
+    const CURRENCY_INDIAN_RUPEE = 'INR';
+
+    /**
+     * The currency abbreviation for Romanian New Leu
+     */
+    const CURRENCY_ROMANIAN_NEW_LEU = 'RON';
+
+    /**
+     * The Eobot abbreviation for their 24-hour Cloud SHA-256 miner rental service
+     */
+    const RENTAL_SHA256 = 'GHSTEMP';
+
+    /**
+     * The Eobot abbreviation for their 24-hour Cloud Scrypt miner rental service
+     */
+    const RENTAL_SCRYPT = 'SCRYPTTEMP';
 
     /**
      * The Eobot user identifier
@@ -220,7 +245,7 @@ class Client
      *
      * <code>
      * $client = new Client();
-     * $liteCoinValueInEuros = $client->getCoinValue(Client::COIN_LITECOIN, Client::CURR_EUR);
+     * $liteCoinValueInEuros = $client->getCoinValue(Client::COIN_LITECOIN, Client::CURRENCY_EUROS);
      * </code>
      *
      * @param string $coin     (Optional) Defaults to Bitcoin
@@ -228,7 +253,7 @@ class Client
      * @throws \InvalidArgumentException|\LogicException
      * @return float
      */
-    public function getCoinValue($coin = self::COIN_BITCOIN, $currency = self::CURR_USD)
+    public function getCoinValue($coin = self::COIN_BITCOIN, $currency = self::CURRENCY_US_DOLLAR)
     {
         if (!self::isValidCoin($coin)) {
             throw new \InvalidArgumentException(
@@ -272,7 +297,7 @@ class Client
         $retValue = $this->coinValues[$coin];
 
         // check whether we were asked to retrieve a different currency
-        if ($currency != self::CURR_USD) {
+        if ($currency != self::CURRENCY_US_DOLLAR) {
             $response       = $this->response;
             $exchangeRate   = $this->getExchangeRate($currency);
             $this->response = $response;
@@ -288,18 +313,18 @@ class Client
      *
      * <code>
      * $client = new Client();
-     * $exchangeRate = $client->getExchangeRate(Client::CURR_JPY);
+     * $exchangeRate = $client->getExchangeRate(Client::CURRENCY_JAPANESE_YEN);
      * </code>
      *
      * @param string $currency
      * @throws \InvalidArgumentException|\LogicException
      * @return float
      */
-    public function getExchangeRate($currency = self::CURR_EUR)
+    public function getExchangeRate($currency = self::CURRENCY_EURO)
     {
         $retValue = 1.0;
 
-        if ($currency != self::CURR_USD) {
+        if ($currency != self::CURRENCY_US_DOLLAR) {
             if (!self::isValidCurrency($currency)) {
                 throw new \InvalidArgumentException(
                     sprintf(
@@ -571,13 +596,127 @@ class Client
     }
 
     /**
+     * This method returns a deposit wallet for the given coin type, which can be used to transfer funds to Eobot. It
+     * expects two optional parameters, which are the coin type to request a deposit address for and the Eobot
+     * user identifier. If the user identifier was not passed into the constructor, it is required here. This method
+     * returns a wallet address as a string.
+     *
+     * @param string $coinType (Optional) Defaults to Bitcoin
+     * @param string $userId   (Optional) Defaults to null, only required if not set via the constructor
+     * @throws \InvalidArgumentException|\LogicException
+     * @return string
+     */
+    public function getDepositAddress($coinType = self::COIN_BITCOIN, $userId = null)
+    {
+        // validate the coin type (isValidCoin considers Eobot's internal mining types as valid coins, but for this
+        // method that's not correct)
+        if (!self::isValidCoin($coinType) || $coinType == self::EO_CLOUD_SCRYPT || $coinType == self::EO_CLOUD_SHA256) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid coin type given',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($this->userId === null && $userId === null) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: No user ID given, and no user ID is known from the constructor',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($userId !== null && preg_match('/[^0-9]/', $userId)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid user ID provided, must be numeric',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($userId === null) {
+            $userId = $this->userId;
+        }
+
+        // retrieve the deposit address for this coin type
+        $request = $this->getRequest();
+        $request->addQueryParameter(Request::QUERY_ID, $userId);
+        $request->addQueryParameter(Request::QUERY_DEPOSIT, $coinType);
+        $this->response = $request->send();
+
+        return trim($this->response->getRawBody());
+    }
+
+    /**
+     * This method is used to retrieve the user's Eobot user ID. If an email address and password are given, the user
+     * ID is retrieved via the Eobot API. Otherwise, the user ID set when instantiating the Client is returned. If no
+     * user ID was given to the client, and no email address and password are given, an exception is thrown.
+     *
+     * @param string $email    (Optional) Defaults to null, required if the user ID was not set via the constructor
+     * @param string $password (Optional) Defaults to null, required if the user ID was not set via the constructor, or if $email is set
+     * @throws \LogicException
+     * @return int
+     */
+    public function getUserId($email = null, $password = null)
+    {
+        if ($this->userId === null) {
+            if ($email === null || strlen($email) == 0) {
+                throw new \LogicException(
+                    sprintf(
+                        '%1$s: No email address given, but it is required when no user ID is set',
+                        __METHOD__
+                    )
+                );
+            }
+        }
+
+        if ($this->userId === null || $email !== null) {
+            if ($password === null || strlen($password) == 0) {
+                throw new \LogicException(
+                    sprintf(
+                        '%1$s: No password given, but it is required when a user ID is being fetched from Eobot',
+                        __METHOD__
+                    )
+                );
+            }
+        }
+
+        $retValue = $this->userId;
+
+        if ($email !== null && $password !== null) {
+            // fetch the user ID from Eobot
+            $request = $this->getRequest();
+            $request->addQueryParameter(Request::QUERY_EMAIL, $email);
+            $request->addQueryParameter(Request::QUERY_PASSWORD, $password);
+            $this->response = $request->send();
+
+            $retValue = trim($this->response->getRawBody());
+
+            if (strlen($retValue) == 0) {
+                throw new \LogicException(
+                    sprintf(
+                        '%1$s: Invalid password given for email address "%2$s"',
+                        __METHOD__,
+                        $email
+                    )
+                );
+            }
+        }
+
+        return intval($retValue);
+    }
+
+    /**
      * This method is used to set the mining mode for the given user. Because this is a change in settings, the user's
      * email address and password are required parameters.
      *
      * @param string $type   (Optional) Defaults to Bitcoin
      * @param string $email
      * @param string $password
-     * @param string $userId (Optional) Defaults to null, only required if not set via the contructor
+     * @param string $userId (Optional) Defaults to null, only required if not set via the constructor
      * @throws \InvalidArgumentException
      * @return bool
      */
@@ -628,6 +767,228 @@ class Client
     }
 
     /**
+     * This method is used to configure the automatic withdrawal of funds from Eobot to your own (or someone else's)
+     * wallet. Because this is a change in settings, the user's email address and password are required parameters.
+     *
+     * @param string    $coinType (Optional) Defaults to Bitcoin
+     * @param int|float $amount   (Optional) Defaults to 1.0
+     * @param string    $wallet   Wallet address to send the funds to
+     * @param string    $email
+     * @param string    $password
+     * @param string    $userId   (Optional) Defaults to null, only required if not set via the constructor
+     * @throws \InvalidArgumentException
+     * @return bool
+     */
+    public function setAutomaticWithdraw($coinType = self::COIN_BITCOIN, $amount = 1.0, $wallet, $email, $password, $userId = null)
+    {
+        // isValidCoin accepts Eobot's internal mining types as coins, but for this method that is incorrect
+        if (!self::isValidCoin($coinType) || $coinType == self::EO_CLOUD_SHA256 || $coinType == self::EO_CLOUD_SCRYPT) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid mining type given, it is not a valid coin type',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ((!is_int($amount) && !is_double($amount) && !is_float($amount)) || $amount <= 0) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid amount given, it must be an integer or float greater than zero',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($this->userId === null && $userId === null) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: No user ID given, and no user ID is known from the constructor',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($userId !== null && preg_match('/[^0-9]/', $userId)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid user ID provided, must be numeric',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($userId === null) {
+            $userId = $this->userId;
+        }
+
+        // switch the mining mode
+        $request = $this->getRequest();
+        $request->addQueryParameter(Request::QUERY_ID, $userId);
+        $request->addQueryParameter(Request::QUERY_EMAIL, $email);
+        $request->addQueryParameter(Request::QUERY_PASSWORD, $password);
+        $request->addQueryParameter(Request::QUERY_WITHDRAW, $coinType);
+        $request->addQueryParameter(Request::QUERY_AMOUNT, $amount);
+        $request->addQueryParameter(Request::QUERY_WALLET, $wallet);
+        $this->response = $request->send();
+
+        $result = trim($this->response->getRawBody());
+
+        return ($result == '');
+    }
+
+    /**
+     * This method is used to withdraw funds from Eobot to your own (or someone else's) wallet. Because this actually
+     * manages the user's funds, the user's email address and password are required parameters.
+     *
+     * @param string    $coinType (Optional) Defaults to Bitcoin
+     * @param int|float $amount   (Optional) Defaults to 1.0
+     * @param string    $wallet   Wallet address to send the funds to
+     * @param string    $email
+     * @param string    $password
+     * @param string    $userId   (Optional) Defaults to null, only required if not set via the constructor
+     * @throws \InvalidArgumentException
+     * @return bool
+     */
+    public function withdrawFunds($coinType = self::COIN_BITCOIN, $amount = 1.0, $wallet, $email, $password, $userId = null)
+    {
+        // isValidCoin accepts Eobot's internal mining types as coins, but for this method that is incorrect
+        if (!self::isValidCoin($coinType) || $coinType == self::EO_CLOUD_SHA256 || $coinType == self::EO_CLOUD_SCRYPT) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid mining type given, it is not a valid coin type',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ((!is_int($amount) && !is_double($amount) && !is_float($amount)) || $amount <= 0) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid amount given, it must be an integer or float greater than zero',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($this->userId === null && $userId === null) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: No user ID given, and no user ID is known from the constructor',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($userId !== null && preg_match('/[^0-9]/', $userId)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid user ID provided, must be numeric',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($userId === null) {
+            $userId = $this->userId;
+        }
+
+        // switch the mining mode
+        $request = $this->getRequest();
+        $request->addQueryParameter(Request::QUERY_ID, $userId);
+        $request->addQueryParameter(Request::QUERY_EMAIL, $email);
+        $request->addQueryParameter(Request::QUERY_PASSWORD, $password);
+        $request->addQueryParameter(Request::QUERY_MANUAL_WITHDRAW, $coinType);
+        $request->addQueryParameter(Request::QUERY_AMOUNT, $amount);
+        $request->addQueryParameter(Request::QUERY_WALLET, $wallet);
+        $this->response = $request->send();
+
+        $result = trim($this->response->getRawBody());
+
+        return ($result == '');
+    }
+
+    /**
+     * This method is used to purchase Eobot mining power using mined (or deposited) coins. Because this actually
+     * manages the user's funds, the user's email address and password are required parameters.
+     *
+     * @param string    $coinType  (Optional) Defaults to Bitcoin
+     * @param int|float $amount    (Optional) Defaults to 1.0
+     * @param string    $cloudType (Optional) Defaults to SHA-256
+     * @param string    $email
+     * @param string    $password
+     * @param string    $userId    (Optional) Defaults to null, only required if not set via the constructor
+     * @throws \InvalidArgumentException
+     * @return bool
+     */
+    public function convertCoinToCloud($coinType = self::COIN_BITCOIN, $amount = 1.0, $cloudType = self::EO_CLOUD_SHA256, $email, $password, $userId = null)
+    {
+        // isValidCoin accepts Eobot's internal mining types as coins, but for this method that is incorrect
+        if (!self::isValidCoin($coinType) || $coinType == self::EO_CLOUD_SHA256 || $coinType == self::EO_CLOUD_SCRYPT) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid mining type given, it is not a valid coin type',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ((!is_int($amount) && !is_double($amount) && !is_float($amount)) || $amount <= 0) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid amount given, it must be an integer or float greater than zero',
+                    __METHOD__
+                )
+            );
+        }
+
+        if (!in_array($cloudType, array(self::EO_CLOUD_SHA256, self::EO_CLOUD_SCRYPT, self::RENTAL_SHA256, self::RENTAL_SCRYPT))) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid cloud type given, it is not a valid Eobot mining service',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($this->userId === null && $userId === null) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: No user ID given, and no user ID is known from the constructor',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($userId !== null && preg_match('/[^0-9]/', $userId)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid user ID provided, must be numeric',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($userId === null) {
+            $userId = $this->userId;
+        }
+
+        // purchase mining power
+        $request = $this->getRequest();
+        $request->addQueryParameter(Request::QUERY_ID, $userId);
+        $request->addQueryParameter(Request::QUERY_EMAIL, $email);
+        $request->addQueryParameter(Request::QUERY_PASSWORD, $password);
+        $request->addQueryParameter(Request::QUERY_CONVERT_FROM, $coinType);
+        $request->addQueryParameter(Request::QUERY_AMOUNT, $amount);
+        $request->addQueryParameter(Request::QUERY_CONVERT_TO, $cloudType);
+        $this->response = $request->send();
+
+        $result = trim($this->response->getRawBody());
+
+        return ($result == '');
+    }
+
+    /**
      * This method checks the given value against the defined coin types. It returns a boolean `true` or `false`.
      *
      * <code>
@@ -660,7 +1021,7 @@ class Client
      * This method checks the given value against the defined currency types. It returns a boolean `true` or `false`.
      *
      * <code>
-     * $isValid = Client::isValidCurrency(Client::CURR_EUR);
+     * $isValid = Client::isValidCurrency(Client::CURRENCY_EUROS);
      * </code>
      *
      * @param string $currency
@@ -676,7 +1037,7 @@ class Client
 
         // if it contains the given value as a CURR_* constant, the value is valid
         foreach ($constants as $constantName => $constantValue) {
-            if (substr($constantName, 0, 5) == 'CURR_' && $constantValue == $currency) {
+            if (substr($constantName, 0, 9) == 'CURRENCY_' && $constantValue == $currency) {
                 $retValue = true;
                 break;
             }
