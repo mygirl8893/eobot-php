@@ -76,12 +76,12 @@ class Client
     /**
      * The Eobot abbreviation for their Cloud SHA-256 miners
      */
-    const EO_CLOUD_SHA256 = 'GHS';
+    const EO_CLOUD_SHA256 = 'GHSCONTRACT';
 
     /**
      * The Eobot abbreviation for their Cloud Scrypt miners
      */
-    const EO_CLOUD_SCRYPT = 'SCRYPT';
+    const EO_CLOUD_SCRYPT = 'SCRYPTCONTRACT';
 
     /**
      * The currency abbreviation for Euro
@@ -458,7 +458,7 @@ class Client
             $this->response = $response;
             $retValue       = ($this->balances[$userId]['Total'] * $exchangeRate);
         } else {
-            throw new \InvalidArgumentException(
+            throw new \LogicException(
                 sprintf(
                     '%1$s: Invalid balance type given, it is not in the balance sheet returned by the API',
                     __METHOD__
@@ -519,7 +519,7 @@ class Client
         if (!self::isValidCoin($retValue)) {
             throw new \LogicException(
                 sprintf(
-                    '%1$s: Invalid API result received, given response is not a valid coin type',
+                    '%1$s: Invalid API response received, given response is not a valid coin type',
                     __METHOD__
                 )
             );
