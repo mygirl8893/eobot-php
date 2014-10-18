@@ -76,12 +76,14 @@ class Client
     /**
      * The Eobot abbreviation for their Cloud SHA-256 miners
      */
-    const EO_CLOUD_SHA256 = 'GHSCONTRACT';
+    const EO_CLOUD_SHA256            = 'GHSCONTRACT';
+    const EO_CLOUD_SHA256_DEPRECATED = 'GHS';
 
     /**
      * The Eobot abbreviation for their Cloud Scrypt miners
      */
-    const EO_CLOUD_SCRYPT = 'SCRYPTCONTRACT';
+    const EO_CLOUD_SCRYPT            = 'SCRYPTCONTRACT';
+    const EO_CLOUD_SCRYPT_DEPRECATED = 'SCRYPT';
 
     /**
      * The currency abbreviation for Euro
@@ -443,6 +445,14 @@ class Client
             $balances = explode(';', $balances);
             foreach ($balances as $balance) {
                 $balance = explode(':', trim($balance));
+
+                if (trim($balance[0]) == self::EO_CLOUD_SHA256_DEPRECATED) {
+                    $balance[0] = self::EO_CLOUD_SHA256;
+                }
+
+                if (trim($balance[0]) == self::EO_CLOUD_SCRYPT_DEPRECATED) {
+                    $balance[0] = self::EO_CLOUD_SCRYPT;
+                }
 
                 $this->balances[$userId][trim($balance[0])] = floatval(trim($balance[1]));
             }
