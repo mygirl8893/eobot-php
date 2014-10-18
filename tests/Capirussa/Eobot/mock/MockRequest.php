@@ -43,11 +43,13 @@ class MockRequest extends Eobot\Request
     {
         $path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 
+        // @codeCoverageIgnoreStart
         if (file_exists($path . $filename)) {
             return file_get_contents($path . $filename);
         } else {
             echo 'Mock file not found: ' . $filename . PHP_EOL;
             return file_get_contents($path . 'mock_generic_error.txt');
         }
+        // @codeCoverageIgnoreEnd
     }
 }

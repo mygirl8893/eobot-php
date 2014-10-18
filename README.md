@@ -22,6 +22,6 @@ try {
 }
 ```
 
-If you find any bugs in, please raise an issue on Github.
+If you find any bugs, please raise an issue on Github.
 
 Happy coding!

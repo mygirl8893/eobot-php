@@ -766,9 +766,8 @@ class Client
         $request->addQueryParameter(Request::QUERY_MINING, $type);
         $this->response = $request->send();
 
-        $result = trim($this->response->getRawBody());
-
-        return ($result == '');
+        // the API does not return a result with which we can determine whether the switch was successful or not...
+        return ($this->getMiningMode($userId) == $type);
     }
 
     /**
@@ -790,7 +789,7 @@ class Client
         if (!self::isValidCoin($coinType) || $coinType == self::EO_CLOUD_SHA256 || $coinType == self::EO_CLOUD_SCRYPT) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '%1$s: Invalid mining type given, it is not a valid coin type',
+                    '%1$s: Invalid coin type given, it is not a valid coin type',
                     __METHOD__
                 )
             );
@@ -861,7 +860,7 @@ class Client
         if (!self::isValidCoin($coinType) || $coinType == self::EO_CLOUD_SHA256 || $coinType == self::EO_CLOUD_SCRYPT) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '%1$s: Invalid mining type given, it is not a valid coin type',
+                    '%1$s: Invalid coin type given, it is not a valid coin type',
                     __METHOD__
                 )
             );
@@ -928,11 +927,10 @@ class Client
      */
     public function convertCoinToCloud($coinType = self::COIN_BITCOIN, $amount = 1.0, $cloudType = self::EO_CLOUD_SHA256, $email, $password, $userId = null)
     {
-        // isValidCoin accepts Eobot's internal mining types as coins, but for this method that is incorrect
-        if (!self::isValidCoin($coinType) || $coinType == self::EO_CLOUD_SHA256 || $coinType == self::EO_CLOUD_SCRYPT) {
+        if (!self::isValidCoin($coinType)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '%1$s: Invalid mining type given, it is not a valid coin type',
+                    '%1$s: Invalid coin type given',
                     __METHOD__
                 )
             );
@@ -951,6 +949,15 @@ class Client
             throw new \InvalidArgumentException(
                 sprintf(
                     '%1$s: Invalid cloud type given, it is not a valid Eobot mining service',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($coinType == $cloudType) {
+            throw new \LogicException(
+                sprintf(
+                    '%1$s: Cannot convert a cloud type to itself',
                     __METHOD__
                 )
             );

@@ -13,6 +13,7 @@ require_once(dirname(__FILE__) . '/../vendor/autoload.php');
 // handle autoloading
 spl_autoload_register(
     function ($className) {
+        // @codeCoverageIgnoreStart
         if ($className === 'MockRequest') {
             require_once(dirname(__FILE__) . '/Capirussa/Eobot/mock/MockRequest.php');
         } else if ($className === 'MockClient') {
@@ -23,5 +24,6 @@ spl_autoload_register(
                 require_once(dirname(__FILE__) . '/../' . $filePath);
             }
         }
+        // @codeCoverageIgnoreEnd
     }
 );

@@ -87,6 +87,17 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client->getCoinValue('foo');
     }
 
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage Invalid API response
+     */
+    public function testGetCoinValueWithInvalidApiResponse()
+    {
+        $client = new MockClient();
+
+        $client->getCoinValue(Client::COIN_DARKCOIN);
+    }
+
     public function testGetCoinValueWithValidCoins()
     {
         $client = new MockClient();
@@ -96,7 +107,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_BITSHARESX   => 0.04157706,
             Client::COIN_BLACKCOIN    => 0.040105,
             Client::COIN_CURECOIN     => 0.033222,
-            Client::COIN_DARKCOIN     => 1.77,
             Client::COIN_DOGECOIN     => 0.000106,
             Client::COIN_LITECOIN     => 3.62,
             Client::COIN_NAMECOIN     => 0.874518,
@@ -160,12 +170,22 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client->getExchangeRate('foo');
     }
 
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage Invalid API response
+     */
+    public function testGetExchangeRateWithInvalidApiResponse()
+    {
+        $client = new MockClient();
+
+        $client->getExchangeRate(Client::CURRENCY_AUSTRALIAN_DOLLAR);
+    }
+
     public function testGetExchangeRateWithValidCurrencies()
     {
         $client = new MockClient();
 
         $currencies = array(
-            Client::CURRENCY_AUSTRALIAN_DOLLAR     => 1.07221,
             Client::CURRENCY_BRITISH_POUND         => 0.597745,
             Client::CURRENCY_CANADIAN_DOLLAR       => 1.0886,
             Client::CURRENCY_CHINESE_YUAN_RENMINBI => 6.14322,
@@ -208,14 +228,13 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balances = $client->getBalance();
 
         $this->assertInternalType('array', $balances);
-        $this->assertCount(15, $balances);
+        $this->assertCount(14, $balances);
 
         $this->assertEquals(0.32751004, $balances['Total']);
         $this->assertEquals(0.00040978, $balances[Client::COIN_BITCOIN]);
         $this->assertEquals(0.0141392, $balances[Client::COIN_BITSHARESX]);
         $this->assertEquals(0.08188563, $balances[Client::COIN_BLACKCOIN]);
         $this->assertEquals(0.05292104, $balances[Client::COIN_CURECOIN]);
-        $this->assertEquals(0.00085430, $balances[Client::COIN_DARKCOIN]);
         $this->assertEquals(23.78557417, $balances[Client::COIN_DOGECOIN]);
         $this->assertEquals(0.03013698, $balances[Client::COIN_LITECOIN]);
         $this->assertEquals(0.00188207, $balances[Client::COIN_NAMECOIN]);
@@ -227,12 +246,53 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(20.00019989, $balances[Client::EO_CLOUD_SHA256]);
     }
 
-    public function testGetBalanceTotalInCurrency()
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage not a valid coin type
+     */
+    public function testGetBalanceWithInvalidCoin()
+    {
+        $client = new MockClient();
+
+        $client->getBalance('foo');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage must be numeric
+     */
+    public function testGetBalanceWithInvalidUserId()
+    {
+        $client = new MockClient();
+
+        $client->getBalance(null, 'foo');
+    }
+
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage Invalid API response
+     */
+    public function testGetBalanceWithInvalidApiResponse()
+    {
+        $client = new MockClient();
+
+        $client->getBalance(null, 2345);
+    }
+
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage not in the balance sheet
+     */
+    public function testGetBalanceForMissingCoin()
     {
         $client = new MockClient(1234);
 
-        $balance = $client->getBalance(Client::CURRENCY_AUSTRALIAN_DOLLAR);
-        $this->assertEquals(0.3511595399884, $balance);
+        $client->getBalance(Client::COIN_DARKCOIN);
+    }
+
+    public function testGetBalanceTotalInCurrency()
+    {
+        $client = new MockClient(1234);
 
         $balance = $client->getBalance(Client::CURRENCY_BRITISH_POUND);
         $this->assertEquals(0.1957674888598, $balance);
@@ -296,9 +356,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::COIN_CURECOIN);
         $this->assertEquals(0.05292104, $balance);
 
-        $balance = $client->getBalance(Client::COIN_DARKCOIN);
-        $this->assertEquals(0.00085430, $balance);
-
         $balance = $client->getBalance(Client::COIN_DOGECOIN);
         $this->assertEquals(23.78557417, $balance);
 
@@ -327,12 +384,78 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(20.00019989, $balance);
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage no user ID is known
+     */
+    public function testGetMiningModeWithoutParameters()
+    {
+        $client = new MockClient();
+
+        $client->getMiningMode();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage must be numeric
+     */
+    public function testGetMiningModeWithInvalidUserId()
+    {
+        $client = new MockClient();
+
+        $client->getMiningMode('foo');
+    }
+
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage Invalid API response
+     */
+    public function testGetMiningModeWithInvalidApiResponse()
+    {
+        $client = new MockClient(2345);
+
+        $client->getMiningMode();
+    }
+
     public function testGetMiningMode()
     {
         $client = new MockClient(1234);
 
         $miningMode = $client->getMiningMode();
         $this->assertEquals(Client::COIN_BITCOIN, $miningMode);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage no user ID is known
+     */
+    public function testGetSpeedWithoutParameters()
+    {
+        $client = new MockClient();
+
+        $client->getSpeed();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage must be numeric
+     */
+    public function testGetSpeedWithInvalidUserId()
+    {
+        $client = new MockClient();
+
+        $client->getSpeed('foo');
+    }
+
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage Invalid API response
+     */
+    public function testGetSpeedWithInvalidApiResponse()
+    {
+        $client = new MockClient(2345);
+
+        $client->getSpeed();
     }
 
     public function testGetSpeed()
@@ -364,6 +487,39 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $coinValue2 = floatval(trim($response->getRawBody()));
 
         $this->assertEquals($coinValue2, $coinValue);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage no user ID is known
+     */
+    public function testGetDepositAddressWithoutParameters()
+    {
+        $client = new MockClient();
+
+        $client->getDepositAddress();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid coin type
+     */
+    public function testGetDepositAddressWithInvalidCoinType()
+    {
+        $client = new MockClient();
+
+        $client->getDepositAddress('foo');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage must be numeric
+     */
+    public function testGetDepositAddressWithInvalidUserId()
+    {
+        $client = new MockClient();
+
+        $client->getDepositAddress(Client::COIN_BITCOIN, 'foo');
     }
 
     public function testGetDepositAddress()
@@ -409,5 +565,495 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $address = $client->getDepositAddress(Client::COIN_VERTCOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+    }
+
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage No email address given, but it is required when no user ID is set
+     */
+    public function testGetUserIdWithoutParameters()
+    {
+        $client = new MockClient();
+
+        $client->getUserId();
+    }
+
+    public function testGetUserIdWithoutParametersWithPresetUserId()
+    {
+        $client = new MockClient(1234);
+
+        $userId = $client->getUserId();
+
+        $this->assertEquals(1234, $userId);
+    }
+
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage No password given, but it is required when a user ID is being fetched
+     */
+    public function testGetUserIdWithoutPassword()
+    {
+        $client = new MockClient();
+
+        $client->getUserId('test@example.com');
+    }
+
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage Invalid password given
+     */
+    public function testGetUserIdWithIncorrectPassword()
+    {
+        $client = new MockClient();
+
+        $client->getUserId('test@example.com', 'incorrectPassword');
+    }
+
+    public function testGetUserId()
+    {
+        $client = new MockClient();
+
+        $userId = $client->getUserId('test@example.com', 'correctPassword');
+
+        $this->assertEquals(1234, $userId);
+    }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testSetMiningModeWithoutParameters()
+    {
+        $client = new MockClient();
+
+        /** @noinspection PhpParamsInspection (this is on purpose) */
+        $client->setMiningMode();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid mining type given
+     */
+    public function testSetMiningModeWithInvalidCoinType()
+    {
+        $client = new MockClient();
+
+        $client->setMiningMode('foo', null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage no user ID is known
+     */
+    public function testSetMiningModeWithoutUserId()
+    {
+        $client = new MockClient();
+
+        $client->setMiningMode(Client::COIN_BITCOIN, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage must be numeric
+     */
+    public function testSetMiningModeWithInvalidUserId()
+    {
+        $client = new MockClient();
+
+        $client->setMiningMode(Client::COIN_BITCOIN, null, null, 'foo');
+    }
+
+    public function testSetMiningModeWithInvalidCredentials()
+    {
+        $client = new MockClient(1234);
+
+        $this->assertFalse($client->setMiningMode(Client::COIN_DARKCOIN, 'test@example.com', 'incorrectPassword'));
+    }
+
+    public function testSetMiningMode()
+    {
+        $client = new MockClient(1234);
+
+        $this->assertTrue($client->setMiningMode(Client::COIN_BITCOIN, 'test@example.com', 'correctPassword'));
+    }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testSetAutomaticWithdrawWithoutParameters()
+    {
+        $client = new MockClient();
+
+        /** @noinspection PhpParamsInspection (this is on purpose) */
+        $client->setAutomaticWithdraw();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid coin type given
+     */
+    public function testSetAutomaticWithdrawWithInvalidCoinType()
+    {
+        $client = new MockClient();
+
+        $client->setAutomaticWithdraw('foo', null, null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid amount given
+     */
+    public function testSetAutomaticWithdrawWithInvalidAmount()
+    {
+        $client = new MockClient();
+
+        $client->setAutomaticWithdraw(Client::COIN_BITCOIN, 'foo', null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid amount given
+     */
+    public function testSetAutomaticWithdrawWithNegativeAmount()
+    {
+        $client = new MockClient();
+
+        $client->setAutomaticWithdraw(Client::COIN_BITCOIN, -5, null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid amount given
+     */
+    public function testSetAutomaticWithdrawWithZeroAmount()
+    {
+        $client = new MockClient();
+
+        $client->setAutomaticWithdraw(Client::COIN_BITCOIN, 0, null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage no user ID is known
+     */
+    public function testSetAutomaticWithdrawWithoutUserId()
+    {
+        $client = new MockClient();
+
+        $client->setAutomaticWithdraw(Client::COIN_BITCOIN, 1, null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage must be numeric
+     */
+    public function testSetAutomaticWithdrawWithInvalidUserId()
+    {
+        $client = new MockClient();
+
+        $client->setAutomaticWithdraw(Client::COIN_BITCOIN, 1, null, null, null, 'foo');
+    }
+
+    public function testSetAutomaticWithdrawWithInvalidCredentials()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->setAutomaticWithdraw(Client::COIN_BITCOIN, 1, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'incorrectPassword'));
+    }
+
+    public function testSetAutomaticWithdrawWithInvalidWallet()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->setAutomaticWithdraw(Client::COIN_BITCOIN, 1, 'invalid', 'test@example.com', 'correctPassword'));
+    }
+
+    /**
+     * At the time of writing, the minimum amount for automatic withdrawal of Bitcoins is 0.001 BTC
+     */
+    public function testSetAutomaticWithdrawWithInsufficientAmount()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->setAutomaticWithdraw(Client::COIN_BITCOIN, 0.00001, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'correctPassword'));
+    }
+
+    public function testSetAutomaticWithdraw()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->setAutomaticWithdraw(Client::COIN_BITCOIN, 1, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'correctPassword'));
+    }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testWithdrawFundsWithoutParameters()
+    {
+        $client = new MockClient();
+
+        /** @noinspection PhpParamsInspection (this is on purpose) */
+        $client->withdrawFunds();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid coin type given
+     */
+    public function testWithdrawFundsWithInvalidCoinType()
+    {
+        $client = new MockClient();
+
+        $client->withdrawFunds('foo', null, null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid amount given
+     */
+    public function testWithdrawFundsWithInvalidAmount()
+    {
+        $client = new MockClient();
+
+        $client->withdrawFunds(Client::COIN_BITCOIN, 'foo', null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid amount given
+     */
+    public function testWithdrawFundsWithNegativeAmount()
+    {
+        $client = new MockClient();
+
+        $client->withdrawFunds(Client::COIN_BITCOIN, -5, null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid amount given
+     */
+    public function testWithdrawFundsWithZeroAmount()
+    {
+        $client = new MockClient();
+
+        $client->withdrawFunds(Client::COIN_BITCOIN, 0, null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage no user ID is known
+     */
+    public function testWithdrawFundsWithoutUserId()
+    {
+        $client = new MockClient();
+
+        $client->withdrawFunds(Client::COIN_BITCOIN, 1, null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage must be numeric
+     */
+    public function testWithdrawFundsWithInvalidUserId()
+    {
+        $client = new MockClient();
+
+        $client->withdrawFunds(Client::COIN_BITCOIN, 1, null, null, null, 'foo');
+    }
+
+    public function testWithdrawFundsWithInvalidCredentials()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->withdrawFunds(Client::COIN_BITCOIN, 1, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'incorrectPassword'));
+    }
+
+    public function testWithdrawFundsWithInvalidWallet()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->withdrawFunds(Client::COIN_BITCOIN, 1, 'invalid', 'test@example.com', 'correctPassword'));
+    }
+
+    /**
+     * At the time of writing, the minimum amount for manual withdrawal of Bitcoins is 0.001 BTC
+     */
+    public function testWithdrawFundsWithInsufficientAmount()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->withdrawFunds(Client::COIN_BITCOIN, 0.00001, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'correctPassword'));
+    }
+
+    public function testWithdrawFundsWithInsufficientFunds()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->withdrawFunds(Client::COIN_BITCOIN, 100, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'correctPassword'));
+    }
+
+    public function testWithdrawFunds()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->withdrawFunds(Client::COIN_BITCOIN, 0.002, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'correctPassword'));
+    }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testConvertCoinToCloudWithoutParameters()
+    {
+        $client = new MockClient();
+
+        /** @noinspection PhpParamsInspection (this is on purpose) */
+        $client->convertCoinToCloud();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid coin type given
+     */
+    public function testConvertCoinToCloudWithInvalidCoinType()
+    {
+        $client = new MockClient();
+
+        $client->convertCoinToCloud('foo', null, null, null, null);
+    }
+
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid amount given
+     */
+    public function testConvertCoinToCloudWithInvalidAmount()
+    {
+        $client = new MockClient();
+
+        $client->convertCoinToCloud(Client::COIN_BITCOIN, 'foo', null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid amount given
+     */
+    public function testConvertCoinToCloudWithNegativeAmount()
+    {
+        $client = new MockClient();
+
+        $client->convertCoinToCloud(Client::COIN_BITCOIN, -5, null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid amount given
+     */
+    public function testConvertCoinToCloudWithZeroAmount()
+    {
+        $client = new MockClient();
+
+        $client->convertCoinToCloud(Client::COIN_BITCOIN, 0, null, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid cloud type
+     */
+    public function testConvertCoinToCloudWithInvalidCloudType()
+    {
+        $client = new MockClient();
+
+        $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, 'foo', null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid cloud type
+     */
+    public function testConvertCoinToCloudWithCoinAsCloudType()
+    {
+        $client = new MockClient();
+
+        $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::COIN_DARKCOIN, null, null);
+    }
+
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage Cannot convert a cloud type to itself
+     */
+    public function testConvertCoinToCloudWithConversionToSelf()
+    {
+        $client = new MockClient();
+
+        $client->convertCoinToCloud(Client::EO_CLOUD_SHA256, 1, Client::EO_CLOUD_SHA256, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage no user ID is known
+     */
+    public function testConvertCoinToCloudWithoutUserId()
+    {
+        $client = new MockClient();
+
+        $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::EO_CLOUD_SHA256, null, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage must be numeric
+     */
+    public function testConvertCoinToCloudWithInvalidUserId()
+    {
+        $client = new MockClient();
+
+        $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::EO_CLOUD_SHA256, null, null, 'foo');
+    }
+
+    public function testConvertCoinToCloudWithInvalidCredentials()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->convertCoinToCloud(Client::COIN_BITCOIN, 0.00002, Client::EO_CLOUD_SHA256, 'test@example.com', 'incorrectPassword'));
+    }
+
+    public function testConvertCoinToCloudWithInsufficientFunds()
+    {
+        $client = new MockClient(1234);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->convertCoinToCloud(Client::COIN_BITCOIN, 100, Client::EO_CLOUD_SHA256, 'test@example.com', 'correctPassword'));
+    }
+
+    public function testConvertCoinToCloud()
+    {
+        $client = new MockClient(1234);
+//        $client = new Client(49480);
+
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->convertCoinToCloud(Client::COIN_BITCOIN, 0.00002, Client::EO_CLOUD_SHA256, 'test@example.com', 'correctPassword'));
+//        $this->assertTrue($client->convertCoinToCloud(Client::COIN_BITCOIN, 0.00002, Client::EO_CLOUD_SHA256, 'eobot@rickdenhaan.nl', 'efa93531ad654b'));
     }
 }

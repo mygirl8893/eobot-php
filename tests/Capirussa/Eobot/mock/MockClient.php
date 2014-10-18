@@ -6,26 +6,6 @@ use Capirussa\Eobot;
 class MockClient extends Eobot\Client
 {
     /**
-     * List of modifications to apply to the mock request after creating it
-     *
-     * @var array
-     */
-    protected $requestModifications = array();
-
-    /**
-     * Adds a request modification to perform after creating the request for the given action
-     *
-     * @param string $action
-     * @param string $method
-     * @param array  $arguments (Optional)
-     * @return void
-     */
-    public function prepareRequest($action, $method, $arguments = array())
-    {
-        $this->requestModifications[] = array($action, $method, $arguments);
-    }
-
-    /**
      * Returns a new mock Request object
      *
      * @param string $requestMethod (Optional) Defaults to Request::METHOD_GET
@@ -33,23 +13,6 @@ class MockClient extends Eobot\Client
      */
     protected function getRequest($requestMethod = Eobot\Request::METHOD_GET)
     {
-        $retValue = new MockRequest($requestMethod);
-
-        if (count($this->requestModifications) > 0) {
-            foreach ($this->requestModifications as $modification) {
-                $action    = $modification[0];
-                $method    = $modification[1];
-                $arguments = $modification[2];
-
-                $stackTrace = debug_backtrace();
-                $callee = $stackTrace[1];
-
-                if ($callee['function'] == $action) {
-                    call_user_func_array(array($retValue, $method), $arguments);
-                }
-            }
-        }
-
-        return $retValue;
+        return new MockRequest($requestMethod);
     }
 }
