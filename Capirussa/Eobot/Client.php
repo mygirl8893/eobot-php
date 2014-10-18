@@ -768,6 +768,14 @@ class Client
             $userId = $this->userId;
         }
 
+        if ($type == self::EO_CLOUD_SHA256) {
+            $type = self::EO_CLOUD_SHA256_DEPRECATED;
+        }
+
+        if ($type == self::EO_CLOUD_SCRYPT) {
+            $type = self::EO_CLOUD_SCRYPT_DEPRECATED;
+        }
+
         // switch the mining mode
         $request = $this->getRequest();
         $request->addQueryParameter(Request::QUERY_ID, $userId);
