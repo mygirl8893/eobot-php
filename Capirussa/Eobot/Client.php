@@ -76,14 +76,19 @@ class Client
     /**
      * The Eobot abbreviation for their Cloud SHA-256 miners
      */
-    const EO_CLOUD_SHA256            = 'GHSCONTRACT';
-    const EO_CLOUD_SHA256_DEPRECATED = 'GHS';
+    const EO_CLOUD_SHA256          = 'GHS';
+    const EO_CLOUD_SHA256_CONTRACT = 'GHSCONTRACT';
 
     /**
      * The Eobot abbreviation for their Cloud Scrypt miners
      */
-    const EO_CLOUD_SCRYPT            = 'SCRYPTCONTRACT';
-    const EO_CLOUD_SCRYPT_DEPRECATED = 'SCRYPT';
+    const EO_CLOUD_SCRYPT          = 'SCRYPT';
+    const EO_CLOUD_SCRYPT_CONTRACT = 'SCRYPTCONTRACT';
+
+    /**
+     * The Eobot abbreviation for their Cloud Folding service
+     */
+    const EO_CLOUD_FOLDING = 'PPD';
 
     /**
      * The currency abbreviation for Euro
@@ -262,11 +267,12 @@ class Client
      */
     public function getCoinValue($coin = self::COIN_BITCOIN, $currency = self::CURRENCY_US_DOLLAR)
     {
-        if (!self::isValidCoin($coin)) {
+        if (!self::isValidCoin($coin) && !self::isValidEobotInternalType($coin)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '%1$s: Invalid coin type given',
-                    __METHOD__
+                    '%1$s: Invalid coin type given: %2$s',
+                    __METHOD__,
+                    $coin
                 )
             );
         }
@@ -274,8 +280,9 @@ class Client
         if (!self::isValidCurrency($currency)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '%1$s: Invalid currency type given',
-                    __METHOD__
+                    '%1$s: Invalid currency type given: %2$s',
+                    __METHOD__,
+                    $currency
                 )
             );
         }
@@ -292,8 +299,9 @@ class Client
             if (!preg_match('/^[0-9.]+$/', $coinValueInUsd)) {
                 throw new \LogicException(
                     sprintf(
-                        '%1$s: Invalid API response received, given response is not a valid currency value',
-                        __METHOD__
+                        '%1$s: Invalid API response received, given response is not a valid currency value: %2$s',
+                        __METHOD__,
+                        $coinValueInUsd
                     )
                 );
             }
@@ -353,8 +361,9 @@ class Client
                 if (!preg_match('/^[0-9.]+$/', $exchangeRate)) {
                     throw new \LogicException(
                         sprintf(
-                            '%1$s: Invalid API response received, given response is not a valid exchange rate',
-                            __METHOD__
+                            '%1$s: Invalid API response received, given response is not a valid exchange rate: %2$s',
+                            __METHOD__,
+                            $exchangeRate
                         )
                     );
                 }
@@ -391,7 +400,7 @@ class Client
     public function getBalance($type = null, $userId = null)
     {
         if ($type !== null) {
-            if (!self::isValidCoin($type) && !self::isValidCurrency($type)) {
+            if (!self::isValidCoin($type) && !self::isValidEobotInternalType($type) && !self::isValidCurrency($type)) {
                 throw new \InvalidArgumentException(
                     sprintf(
                         '%1$s: Invalid balance type given, it is not a valid coin type nor a valid currency type',
@@ -436,8 +445,9 @@ class Client
             if (!strstr($balances, ';') || !strstr($balances, ':')) {
                 throw new \LogicException(
                     sprintf(
-                        '%1$s: Invalid API response received, given response does not contain balances',
-                        __METHOD__
+                        '%1$s: Invalid API response received, given response does not contain balances: %2$s',
+                        __METHOD__,
+                        $this->response->getRawBody()
                     )
                 );
             }
@@ -446,11 +456,11 @@ class Client
             foreach ($balances as $balance) {
                 $balance = explode(':', trim($balance));
 
-                if (trim($balance[0]) == self::EO_CLOUD_SHA256_DEPRECATED) {
+                if (trim($balance[0]) == self::EO_CLOUD_SHA256_CONTRACT) {
                     $balance[0] = self::EO_CLOUD_SHA256;
                 }
 
-                if (trim($balance[0]) == self::EO_CLOUD_SCRYPT_DEPRECATED) {
+                if (trim($balance[0]) == self::EO_CLOUD_SCRYPT_CONTRACT) {
                     $balance[0] = self::EO_CLOUD_SCRYPT;
                 }
 
@@ -468,12 +478,25 @@ class Client
             $this->response = $response;
             $retValue       = ($this->balances[$userId]['Total'] * $exchangeRate);
         } else {
-            throw new \LogicException(
-                sprintf(
-                    '%1$s: Invalid balance type given, it is not in the balance sheet returned by the API',
-                    __METHOD__
-                )
-            );
+            if ($type == self::EO_CLOUD_SHA256_CONTRACT) {
+                $type = self::EO_CLOUD_SHA256;
+            }
+
+            if ($type == self::EO_CLOUD_SCRYPT_CONTRACT) {
+                $type = self::EO_CLOUD_SCRYPT;
+            }
+
+            if (self::isValidEobotInternalType($type) && isset($this->balances[$userId][$type])) {
+                $retValue = $this->balances[$userId][$type];
+            } else {
+                throw new \LogicException(
+                    sprintf(
+                        '%1$s: Invalid balance type given, it is not in the balance sheet returned by the API: %2$s',
+                        __METHOD__,
+                        $this->response->getRawBody()
+                    )
+                );
+            }
         }
 
         return $retValue;
@@ -526,11 +549,20 @@ class Client
 
         $retValue = trim($this->response->getRawBody());
 
-        if (!self::isValidCoin($retValue)) {
+        if ($retValue == self::EO_CLOUD_SHA256_CONTRACT) {
+            $retValue = self::EO_CLOUD_SHA256;
+        }
+
+        if ($retValue == self::EO_CLOUD_SCRYPT_CONTRACT) {
+            $retValue = self::EO_CLOUD_SCRYPT;
+        }
+
+        if (!self::isValidCoin($retValue) && !self::isValidEobotInternalType($retValue)) {
             throw new \LogicException(
                 sprintf(
-                    '%1$s: Invalid API response received, given response is not a valid coin type',
-                    __METHOD__
+                    '%1$s: Invalid API response received, given response is not a valid coin type: %2$s',
+                    __METHOD__,
+                    $retValue
                 )
             );
         }
@@ -590,8 +622,9 @@ class Client
         if (!strstr($speeds, ';') || !strstr($speeds, ':')) {
             throw new \LogicException(
                 sprintf(
-                    '%1$s: Invalid API response received, given response does not contain mining speeds',
-                    __METHOD__
+                    '%1$s: Invalid API response received, given response does not contain mining speeds: %2$s',
+                    __METHOD__,
+                    $speeds
                 )
             );
         }
@@ -623,9 +656,7 @@ class Client
      */
     public function getDepositAddress($coinType = self::COIN_BITCOIN, $userId = null)
     {
-        // validate the coin type (isValidCoin considers Eobot's internal mining types as valid coins, but for this
-        // method that's not correct)
-        if (!self::isValidCoin($coinType) || $coinType == self::EO_CLOUD_SCRYPT || $coinType == self::EO_CLOUD_SHA256) {
+        if (!self::isValidCoin($coinType)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     '%1$s: Invalid coin type given',
@@ -737,7 +768,7 @@ class Client
      */
     public function setMiningMode($type = self::COIN_BITCOIN, $email, $password, $userId = null)
     {
-        if (!self::isValidCoin($type)) {
+        if (!self::isValidCoin($type) && !self::isValidEobotInternalType($type)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     '%1$s: Invalid mining type given, it is not a valid coin or Eobot type',
@@ -768,12 +799,12 @@ class Client
             $userId = $this->userId;
         }
 
-        if ($type == self::EO_CLOUD_SHA256) {
-            $type = self::EO_CLOUD_SHA256_DEPRECATED;
+        if ($type == self::EO_CLOUD_SHA256_CONTRACT) {
+            $type = self::EO_CLOUD_SHA256;
         }
 
-        if ($type == self::EO_CLOUD_SCRYPT) {
-            $type = self::EO_CLOUD_SCRYPT_DEPRECATED;
+        if ($type == self::EO_CLOUD_SCRYPT_CONTRACT) {
+            $type = self::EO_CLOUD_SCRYPT;
         }
 
         // switch the mining mode
@@ -803,8 +834,7 @@ class Client
      */
     public function setAutomaticWithdraw($coinType = self::COIN_BITCOIN, $amount = 1.0, $wallet, $email, $password, $userId = null)
     {
-        // isValidCoin accepts Eobot's internal mining types as coins, but for this method that is incorrect
-        if (!self::isValidCoin($coinType) || $coinType == self::EO_CLOUD_SHA256 || $coinType == self::EO_CLOUD_SCRYPT) {
+        if (!self::isValidCoin($coinType)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     '%1$s: Invalid coin type given, it is not a valid coin type',
@@ -874,8 +904,7 @@ class Client
      */
     public function withdrawFunds($coinType = self::COIN_BITCOIN, $amount = 1.0, $wallet, $email, $password, $userId = null)
     {
-        // isValidCoin accepts Eobot's internal mining types as coins, but for this method that is incorrect
-        if (!self::isValidCoin($coinType) || $coinType == self::EO_CLOUD_SHA256 || $coinType == self::EO_CLOUD_SCRYPT) {
+        if (!self::isValidCoin($coinType)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     '%1$s: Invalid coin type given, it is not a valid coin type',
@@ -945,7 +974,7 @@ class Client
      */
     public function convertCoinToCloud($coinType = self::COIN_BITCOIN, $amount = 1.0, $cloudType = self::EO_CLOUD_SHA256, $email, $password, $userId = null)
     {
-        if (!self::isValidCoin($coinType)) {
+        if (!self::isValidCoin($coinType) && !self::isValidEobotInternalType($coinType)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     '%1$s: Invalid coin type given',
@@ -963,7 +992,7 @@ class Client
             );
         }
 
-        if (!in_array($cloudType, array(self::EO_CLOUD_SHA256, self::EO_CLOUD_SCRYPT, self::RENTAL_SHA256, self::RENTAL_SCRYPT))) {
+        if (!self::isValidEobotInternalType($cloudType) && !self::isValidRentalType($cloudType)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     '%1$s: Invalid cloud type given, it is not a valid Eobot mining service',
@@ -1003,6 +1032,22 @@ class Client
             $userId = $this->userId;
         }
 
+        if ($coinType == self::EO_CLOUD_SHA256_CONTRACT) {
+            $coinType = self::EO_CLOUD_SHA256;
+        }
+
+        if ($coinType == self::EO_CLOUD_SCRYPT_CONTRACT) {
+            $coinType = self::EO_CLOUD_SCRYPT;
+        }
+
+        if ($cloudType == self::EO_CLOUD_SHA256_CONTRACT) {
+            $cloudType = self::EO_CLOUD_SHA256;
+        }
+
+        if ($cloudType == self::EO_CLOUD_SCRYPT_CONTRACT) {
+            $cloudType = self::EO_CLOUD_SCRYPT;
+        }
+
         // purchase mining power
         $request = $this->getRequest();
         $request->addQueryParameter(Request::QUERY_ID, $userId);
@@ -1038,7 +1083,7 @@ class Client
 
         // if it contains the given value as a COIN_* or EO_* constant, the value is valid
         foreach ($constants as $constantName => $constantValue) {
-            if ((substr($constantName, 0, 5) == 'COIN_' || substr($constantName, 0, 3) == 'EO_') && $constantValue == $coin) {
+            if (substr($constantName, 0, 5) == 'COIN_' && $constantValue == $coin) {
                 $retValue = true;
                 break;
             }
@@ -1068,6 +1113,66 @@ class Client
         // if it contains the given value as a CURR_* constant, the value is valid
         foreach ($constants as $constantName => $constantValue) {
             if (substr($constantName, 0, 9) == 'CURRENCY_' && $constantValue == $currency) {
+                $retValue = true;
+                break;
+            }
+        }
+
+        return $retValue;
+    }
+
+    /**
+     * This method checks the given value against the defined internal Eobot mining types. It returns a boolean `true`
+     * or `false`.
+     *
+     * <code>
+     * $isValid = Client::isValidEobotInternalType(Client::EO_CLOUD_SHA256);
+     * </code>
+     *
+     * @param string $type
+     * @return bool
+     */
+    public static function isValidEobotInternalType($type)
+    {
+        $retValue = false;
+
+        // get all constants defined in this class
+        $reflectionClass = new \ReflectionClass(get_class());
+        $constants       = $reflectionClass->getConstants();
+
+        // if it contains the given value as a EO_* constant, the value is valid
+        foreach ($constants as $constantName => $constantValue) {
+            if (substr($constantName, 0, 3) == 'EO_' && $constantValue == $type) {
+                $retValue = true;
+                break;
+            }
+        }
+
+        return $retValue;
+    }
+
+    /**
+     * This method checks the given value against the defined Eobot mining rental types. It returns a boolean `true`
+     * or `false`.
+     *
+     * <code>
+     * $isValid = Client::isValidRentalType(Client::RENTAL_SCRYPT);
+     * </code>
+     *
+     * @param string $type
+     * @return bool
+     */
+    public static function isValidRentalType($type)
+    {
+        $retValue = false;
+
+        // get all constants defined in this class
+        $reflectionClass = new \ReflectionClass(get_class());
+        $constants       = $reflectionClass->getConstants();
+
+        // if it contains the given value as a RENTAL_* constant, the value is valid
+        foreach ($constants as $constantName => $constantValue) {
+            if (substr($constantName, 0, 7) == 'RENTAL_' && $constantValue == $type) {
                 $retValue = true;
                 break;
             }

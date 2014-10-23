@@ -3,3 +3,5 @@ composer.lock
 phpunit.phar
 vendor
 demo.php
+real_tests
+coverage
