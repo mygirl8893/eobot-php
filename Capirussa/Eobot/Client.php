@@ -171,6 +171,21 @@ class Client
     const CURRENCY_ROMANIAN_NEW_LEU = 'RON';
 
     /**
+     * The currency abbreviation for Ukrainian Hryvnia
+     */
+    const CURRENCY_UKRAINIAN_HRYVNIA = 'UAH';
+
+    /**
+     * The currency abbreviation for Hong Kong Dollar
+     */
+    const CURRENCY_HONG_KONG_DOLLAR = 'HKD';
+
+    /**
+     * The currency abbreviation for Serbian Dinar
+     */
+    const CURRENCY_SERBIAN_DINAR = 'RSD';
+
+    /**
      * The Eobot abbreviation for their 24-hour Cloud SHA-256 miner rental service
      */
     const RENTAL_SHA256 = 'GHSTEMP';

@@ -193,6 +193,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::CURRENCY_CZECH_KORUNA          => 20.889,
             Client::CURRENCY_DANISH_KRONE          => 5.74794,
             Client::CURRENCY_EURO                  => 0.748382,
+            Client::CURRENCY_HONG_KONG_DOLLAR      => 7.75452,
             Client::CURRENCY_INDIAN_RUPEE          => 60.88,
             Client::CURRENCY_INDONESIAN_RUPIAH     => 11689.78,
             Client::CURRENCY_JAPANESE_YEN          => 102.563,
@@ -201,6 +202,8 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::CURRENCY_POLISH_ZLOTY          => 3.13386,
             Client::CURRENCY_ROMANIAN_NEW_LEU      => 3.41312,
             Client::CURRENCY_RUSSIAN_RUBLE         => 36.0362,
+            Client::CURRENCY_SERBIAN_DINAR         => 85.2002,
+            Client::CURRENCY_UKRAINIAN_HRYVNIA     => 15.515,
             Client::CURRENCY_US_DOLLAR             => 1.0,
         );
 
@@ -314,6 +317,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::CURRENCY_EURO);
         $this->assertEquals(0.24510261875528, $balance);
 
+        $balance = $client->getBalance(Client::CURRENCY_HONG_KONG_DOLLAR);
+        $this->assertEquals(2.5396831553808, $balance);
+
         $balance = $client->getBalance(Client::CURRENCY_INDONESIAN_RUPIAH);
         $this->assertEquals(3828.5203153912, $balance);
 
@@ -337,6 +343,12 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::CURRENCY_RUSSIAN_RUBLE);
         $this->assertEquals(11.802217303448, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_SERBIAN_DINAR);
+        $this->assertEquals(27.90392091, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_UKRAINIAN_HRYVNIA);
+        $this->assertEquals(5.0813182706, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_US_DOLLAR);
         $this->assertEquals(0.32751004, $balance);
