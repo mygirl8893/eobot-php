@@ -1230,7 +1230,10 @@ class Client
      */
     protected function getRequest($requestMethod = Request::METHOD_GET)
     {
-        return new Request($requestMethod, $this->validateSsl);
+        $retValue = new Request($requestMethod, $this->validateSsl);
+        $retValue->setTimeout(30);
+
+        return $retValue;
     }
 
     /**
