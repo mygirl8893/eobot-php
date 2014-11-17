@@ -64,9 +64,9 @@ class Client
     const COIN_PEERCOIN = 'PPC';
 
     /**
-     * The coin abbreviation for CannabisCoin
+     * The coin abbreviation for SysCoin
      */
-    const COIN_CANNABISCOIN = 'CANN';
+    const COIN_SYSCOIN = 'SYS';
 
     /**
      * The coin abbreviation for NXT

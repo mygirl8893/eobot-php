@@ -114,7 +114,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_NXT          => 0.029618,
             Client::COIN_PEERCOIN     => 0.60667,
             Client::COIN_VERTCOIN     => 0.091551,
-            Client::COIN_CANNABISCOIN => 0.00803005,
+            Client::COIN_SYSCOIN      => 0.00803005,
 
             Client::EO_CLOUD_FOLDING  => 0.05,
             Client::EO_CLOUD_SCRYPT   => 0.07,
@@ -247,7 +247,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.10494402, $balances[Client::COIN_NXT]);
         $this->assertEquals(0.00502554, $balances[Client::COIN_PEERCOIN]);
         $this->assertEquals(0.02830923, $balances[Client::COIN_VERTCOIN]);
-        $this->assertEquals(0.02748126, $balances[Client::COIN_CANNABISCOIN]);
+        $this->assertEquals(0.02748126, $balances[Client::COIN_SYSCOIN]);
         $this->assertEquals(2.16726154, $balances[Client::EO_CLOUD_FOLDING]);
         $this->assertEquals(0.01115809, $balances[Client::EO_CLOUD_SCRYPT]);
         $this->assertEquals(20.00019989, $balances[Client::EO_CLOUD_SHA256]);
@@ -393,7 +393,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::COIN_VERTCOIN);
         $this->assertEquals(0.02830923, $balance);
 
-        $balance = $client->getBalance(Client::COIN_CANNABISCOIN);
+        $balance = $client->getBalance(Client::COIN_SYSCOIN);
         $this->assertEquals(0.02748126, $balance);
 
         $balance = $client->getBalance(Client::EO_CLOUD_FOLDING);
@@ -605,7 +605,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $address = $client->getDepositAddress(Client::COIN_VERTCOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
-        $address = $client->getDepositAddress(Client::COIN_CANNABISCOIN);
+        $address = $client->getDepositAddress(Client::COIN_SYSCOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
     }
 
