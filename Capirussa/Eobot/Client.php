@@ -44,9 +44,9 @@ class Client
     const COIN_DARKCOIN = 'DRK';
 
     /**
-     * The coin abbreviation for Vertcoin
+     * The coin abbreviation for Reddcoin
      */
-    const COIN_VERTCOIN = 'VTC';
+    const COIN_REDDCOIN = 'RDD';
 
     /**
      * The coin abbreviation for BitSharesX

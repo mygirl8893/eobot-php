@@ -113,7 +113,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_NAUTILUSCOIN => 0.084194,
             Client::COIN_NXT          => 0.029618,
             Client::COIN_PEERCOIN     => 0.60667,
-            Client::COIN_VERTCOIN     => 0.091551,
+            Client::COIN_REDDCOIN     => 0.091551,
             Client::COIN_SYSCOIN      => 0.00803005,
 
             Client::EO_CLOUD_FOLDING  => 0.05,
@@ -246,7 +246,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.03115914, $balances[Client::COIN_NAUTILUSCOIN]);
         $this->assertEquals(0.10494402, $balances[Client::COIN_NXT]);
         $this->assertEquals(0.00502554, $balances[Client::COIN_PEERCOIN]);
-        $this->assertEquals(0.02830923, $balances[Client::COIN_VERTCOIN]);
+        $this->assertEquals(0.02830923, $balances[Client::COIN_REDDCOIN]);
         $this->assertEquals(0.02748126, $balances[Client::COIN_SYSCOIN]);
         $this->assertEquals(2.16726154, $balances[Client::EO_CLOUD_FOLDING]);
         $this->assertEquals(0.01115809, $balances[Client::EO_CLOUD_SCRYPT]);
@@ -390,7 +390,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::COIN_PEERCOIN);
         $this->assertEquals(0.00502554, $balance);
 
-        $balance = $client->getBalance(Client::COIN_VERTCOIN);
+        $balance = $client->getBalance(Client::COIN_REDDCOIN);
         $this->assertEquals(0.02830923, $balance);
 
         $balance = $client->getBalance(Client::COIN_SYSCOIN);
@@ -602,7 +602,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $address = $client->getDepositAddress(Client::COIN_PEERCOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
-        $address = $client->getDepositAddress(Client::COIN_VERTCOIN);
+        $address = $client->getDepositAddress(Client::COIN_REDDCOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
         $address = $client->getDepositAddress(Client::COIN_SYSCOIN);
