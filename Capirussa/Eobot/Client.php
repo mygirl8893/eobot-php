@@ -51,7 +51,7 @@ class Client
     /**
      * The coin abbreviation for BitSharesX
      */
-    const COIN_BITSHARESX = 'BTSX';
+    const COIN_BITSHARESX = 'BTS';
 
     /**
      * The coin abbreviation for CureCoin
