@@ -39,7 +39,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testGetBaseUrl()
     {
-        $request = new MockRequest();
+        $request = new MockEobotRequest();
 
         // getBaseUrl is a protected method, to test it we need to call it via reflection
         $reflectionRequest = new ReflectionObject($request);
@@ -51,7 +51,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testBuildRequestUrl()
     {
-        $request = new MockRequest();
+        $request = new MockEobotRequest();
 
         // buildRequestUrl is a protected method, to test it we need to call it via reflection
         $reflectionRequest = new ReflectionObject($request);

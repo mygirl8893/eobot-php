@@ -69,7 +69,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testGetCoinValueWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $coinValue = $client->getCoinValue();
 
@@ -82,7 +82,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetCoinValueWithInvalidCoin()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getCoinValue('foo');
     }
@@ -93,32 +93,32 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetCoinValueWithInvalidApiResponse()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getCoinValue(Client::COIN_DARKCOIN);
     }
 
     public function testGetCoinValueWithValidCoins()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $coins = array(
-            Client::COIN_BITCOIN      => 458.36,
-            Client::COIN_BITSHARESX   => 0.04157706,
-            Client::COIN_BLACKCOIN    => 0.040105,
-            Client::COIN_CURECOIN     => 0.033222,
-            Client::COIN_DOGECOIN     => 0.000106,
-            Client::COIN_LITECOIN     => 3.62,
-            Client::COIN_NAMECOIN     => 0.874518,
-            Client::COIN_NAUTILUSCOIN => 0.084194,
-            Client::COIN_NXT          => 0.029618,
-            Client::COIN_PEERCOIN     => 0.60667,
-            Client::COIN_REDDCOIN     => 0.091551,
-            Client::COIN_SYSCOIN      => 0.00803005,
+            Client::COIN_BITCOIN     => 458.36,
+            Client::COIN_BITSHARESX  => 0.04157706,
+            Client::COIN_BLACKCOIN   => 0.040105,
+            Client::COIN_CURECOIN    => 0.033222,
+            Client::COIN_DOGECOIN    => 0.000106,
+            Client::COIN_LITECOIN    => 3.62,
+            Client::COIN_NAMECOIN    => 0.874518,
+            Client::COIN_RIPPLE      => 0.084194,
+            Client::COIN_NXT         => 0.029618,
+            Client::COIN_PEERCOIN    => 0.60667,
+            Client::COIN_REDDCOIN    => 0.091551,
+            Client::COIN_SYSCOIN     => 0.00803005,
 
-            Client::EO_CLOUD_FOLDING  => 0.05,
-            Client::EO_CLOUD_SCRYPT   => 0.07,
-            Client::EO_CLOUD_SHA256   => 1.79,
+            Client::EO_CLOUD_FOLDING => 0.05,
+            Client::EO_CLOUD_SCRYPT  => 0.07,
+            Client::EO_CLOUD_SHA256  => 1.79,
         );
 
         foreach ($coins as $coin => $expectedValue) {
@@ -134,14 +134,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetCoinValueWithInvalidCurrency()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getCoinValue(Client::COIN_BITCOIN, 'foo');
     }
 
     public function testGetCoinValueWithValidCurrency()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $coinValue = $client->getCoinValue(Client::COIN_BITCOIN, Client::CURRENCY_US_DOLLAR);
 
@@ -154,7 +154,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testGetExchangeRateWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $exchangeRate = $client->getExchangeRate();
 
@@ -167,7 +167,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetExchangeRateWithInvalidCurrency()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getExchangeRate('foo');
     }
@@ -178,14 +178,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetExchangeRateWithInvalidApiResponse()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getExchangeRate(Client::CURRENCY_AUSTRALIAN_DOLLAR);
     }
 
     public function testGetExchangeRateWithValidCurrencies()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $currencies = array(
             Client::CURRENCY_BRITISH_POUND         => 0.597745,
@@ -221,14 +221,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetBalanceWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getBalance();
     }
 
     public function testGetBalanceWithoutParametersAndPriorUserId()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         $balances = $client->getBalance();
 
@@ -243,7 +243,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(23.78557417, $balances[Client::COIN_DOGECOIN]);
         $this->assertEquals(0.03013698, $balances[Client::COIN_LITECOIN]);
         $this->assertEquals(0.00188207, $balances[Client::COIN_NAMECOIN]);
-        $this->assertEquals(0.03115914, $balances[Client::COIN_NAUTILUSCOIN]);
+        $this->assertEquals(0.03115914, $balances[Client::COIN_RIPPLE]);
         $this->assertEquals(0.10494402, $balances[Client::COIN_NXT]);
         $this->assertEquals(0.00502554, $balances[Client::COIN_PEERCOIN]);
         $this->assertEquals(0.02830923, $balances[Client::COIN_REDDCOIN]);
@@ -259,7 +259,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetBalanceWithInvalidCoin()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getBalance('foo');
     }
@@ -270,7 +270,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetBalanceWithInvalidUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getBalance(null, 'foo');
     }
@@ -281,7 +281,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetBalanceWithInvalidApiResponse()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getBalance(null, 2345);
     }
@@ -292,14 +292,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetBalanceForMissingCoin()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         $client->getBalance(Client::COIN_DARKCOIN);
     }
 
     public function testGetBalanceTotalInCurrency()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         $balance = $client->getBalance(Client::CURRENCY_BRITISH_POUND);
         $this->assertEquals(0.1957674888598, $balance);
@@ -358,7 +358,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testGetBalanceCoin()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         $balance = $client->getBalance(Client::COIN_BITCOIN);
         $this->assertEquals(0.00040978, $balance);
@@ -381,7 +381,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::COIN_NAMECOIN);
         $this->assertEquals(0.00188207, $balance);
 
-        $balance = $client->getBalance(Client::COIN_NAUTILUSCOIN);
+        $balance = $client->getBalance(Client::COIN_RIPPLE);
         $this->assertEquals(0.03115914, $balance);
 
         $balance = $client->getBalance(Client::COIN_NXT);
@@ -418,7 +418,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetMiningModeWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getMiningMode();
     }
@@ -429,7 +429,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetMiningModeWithInvalidUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getMiningMode('foo');
     }
@@ -440,14 +440,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetMiningModeWithInvalidApiResponse()
     {
-        $client = new MockClient(2345);
+        $client = new MockEobotClient(2345);
 
         $client->getMiningMode();
     }
 
     public function testGetMiningModeContractConversion()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $miningMode = $client->getMiningMode(3456);
         $this->assertEquals(Client::EO_CLOUD_SHA256, $miningMode);
@@ -458,7 +458,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testGetMiningMode()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         $miningMode = $client->getMiningMode();
         $this->assertEquals(Client::COIN_BITCOIN, $miningMode);
@@ -470,7 +470,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetSpeedWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getSpeed();
     }
@@ -481,7 +481,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetSpeedWithInvalidUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getSpeed('foo');
     }
@@ -492,14 +492,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetSpeedWithInvalidApiResponse()
     {
-        $client = new MockClient(2345);
+        $client = new MockEobotClient(2345);
 
         $client->getSpeed();
     }
 
     public function testGetSpeed()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         $speeds = $client->getSpeed();
 
@@ -513,7 +513,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testGetLastResponse()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $this->assertNull($client->getLastResponse());
 
@@ -534,7 +534,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetDepositAddressWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getDepositAddress();
     }
@@ -545,7 +545,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetDepositAddressWithInvalidCoinType()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getDepositAddress('foo');
     }
@@ -556,14 +556,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetDepositAddressWithInvalidUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getDepositAddress(Client::COIN_BITCOIN, 'foo');
     }
 
     public function testGetDepositAddress()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         $address = $client->getDepositAddress(Client::COIN_BITCOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
@@ -593,7 +593,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $address = $client->getDepositAddress(Client::COIN_NAMECOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
-        $address = $client->getDepositAddress(Client::COIN_NAUTILUSCOIN);
+        $address = $client->getDepositAddress(Client::COIN_RIPPLE);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
         $address = $client->getDepositAddress(Client::COIN_NXT);
@@ -615,14 +615,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserIdWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getUserId();
     }
 
     public function testGetUserIdWithoutParametersWithPresetUserId()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         $userId = $client->getUserId();
 
@@ -635,7 +635,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserIdWithoutPassword()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getUserId('test@example.com');
     }
@@ -646,14 +646,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserIdWithIncorrectPassword()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->getUserId('test@example.com', 'incorrectPassword');
     }
 
     public function testGetUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $userId = $client->getUserId('test@example.com', 'correctPassword');
 
@@ -665,7 +665,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetMiningModeWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         /** @noinspection PhpParamsInspection (this is on purpose) */
         $client->setMiningMode();
@@ -677,7 +677,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetMiningModeWithInvalidCoinType()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->setMiningMode('foo', null, null);
     }
@@ -688,7 +688,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetMiningModeWithoutUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->setMiningMode(Client::COIN_BITCOIN, null, null);
     }
@@ -699,21 +699,21 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetMiningModeWithInvalidUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->setMiningMode(Client::COIN_BITCOIN, null, null, 'foo');
     }
 
     public function testSetMiningModeWithInvalidCredentials()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         $this->assertFalse($client->setMiningMode(Client::COIN_DARKCOIN, 'test@example.com', 'incorrectPassword'));
     }
 
     public function testSetMiningModeContract()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $this->assertTrue($client->setMiningMode(Client::EO_CLOUD_SHA256_CONTRACT, 'test@example.com', 'correctPassword', 3456));
         $this->assertTrue($client->setMiningMode(Client::EO_CLOUD_SCRYPT_CONTRACT, 'test@example.com', 'correctPassword', 4567));
@@ -721,7 +721,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testSetMiningMode()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         $this->assertTrue($client->setMiningMode(Client::COIN_BITCOIN, 'test@example.com', 'correctPassword'));
     }
@@ -731,7 +731,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetAutomaticWithdrawWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         /** @noinspection PhpParamsInspection (this is on purpose) */
         $client->setAutomaticWithdraw();
@@ -743,7 +743,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetAutomaticWithdrawWithInvalidCoinType()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->setAutomaticWithdraw('foo', null, null, null, null);
     }
@@ -754,7 +754,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetAutomaticWithdrawWithInvalidAmount()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->setAutomaticWithdraw(Client::COIN_BITCOIN, 'foo', null, null, null);
     }
@@ -765,7 +765,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetAutomaticWithdrawWithNegativeAmount()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->setAutomaticWithdraw(Client::COIN_BITCOIN, -5, null, null, null);
     }
@@ -776,7 +776,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetAutomaticWithdrawWithZeroAmount()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->setAutomaticWithdraw(Client::COIN_BITCOIN, 0, null, null, null);
     }
@@ -787,7 +787,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetAutomaticWithdrawWithoutUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->setAutomaticWithdraw(Client::COIN_BITCOIN, 1, null, null, null);
     }
@@ -798,14 +798,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetAutomaticWithdrawWithInvalidUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->setAutomaticWithdraw(Client::COIN_BITCOIN, 1, null, null, null, 'foo');
     }
 
     public function testSetAutomaticWithdrawWithInvalidCredentials()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -814,7 +814,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testSetAutomaticWithdrawWithInvalidWallet()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -826,7 +826,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSetAutomaticWithdrawWithInsufficientAmount()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -835,7 +835,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testSetAutomaticWithdraw()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -847,7 +847,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testWithdrawFundsWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         /** @noinspection PhpParamsInspection (this is on purpose) */
         $client->withdrawFunds();
@@ -859,7 +859,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testWithdrawFundsWithInvalidCoinType()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->withdrawFunds('foo', null, null, null, null);
     }
@@ -870,7 +870,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testWithdrawFundsWithInvalidAmount()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->withdrawFunds(Client::COIN_BITCOIN, 'foo', null, null, null);
     }
@@ -881,7 +881,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testWithdrawFundsWithNegativeAmount()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->withdrawFunds(Client::COIN_BITCOIN, -5, null, null, null);
     }
@@ -892,7 +892,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testWithdrawFundsWithZeroAmount()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->withdrawFunds(Client::COIN_BITCOIN, 0, null, null, null);
     }
@@ -903,7 +903,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testWithdrawFundsWithoutUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->withdrawFunds(Client::COIN_BITCOIN, 1, null, null, null);
     }
@@ -914,14 +914,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testWithdrawFundsWithInvalidUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->withdrawFunds(Client::COIN_BITCOIN, 1, null, null, null, 'foo');
     }
 
     public function testWithdrawFundsWithInvalidCredentials()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -930,7 +930,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testWithdrawFundsWithInvalidWallet()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -942,7 +942,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testWithdrawFundsWithInsufficientAmount()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -951,7 +951,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testWithdrawFundsWithInsufficientFunds()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -960,7 +960,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testWithdrawFunds()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -972,7 +972,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertCoinToCloudWithoutParameters()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         /** @noinspection PhpParamsInspection (this is on purpose) */
         $client->convertCoinToCloud();
@@ -984,7 +984,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertCoinToCloudWithInvalidCoinType()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->convertCoinToCloud('foo', null, null, null, null);
     }
@@ -995,7 +995,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertCoinToCloudWithInvalidAmount()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->convertCoinToCloud(Client::COIN_BITCOIN, 'foo', null, null, null);
     }
@@ -1006,7 +1006,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertCoinToCloudWithNegativeAmount()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->convertCoinToCloud(Client::COIN_BITCOIN, -5, null, null, null);
     }
@@ -1017,7 +1017,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertCoinToCloudWithZeroAmount()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->convertCoinToCloud(Client::COIN_BITCOIN, 0, null, null, null);
     }
@@ -1028,7 +1028,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertCoinToCloudWithInvalidCloudType()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, 'foo', null, null);
     }
@@ -1039,7 +1039,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertCoinToCloudWithCoinAsCloudType()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::COIN_DARKCOIN, null, null);
     }
@@ -1050,7 +1050,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertCoinToCloudWithConversionToSelf()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->convertCoinToCloud(Client::EO_CLOUD_SHA256, 1, Client::EO_CLOUD_SHA256, null, null);
     }
@@ -1061,7 +1061,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertCoinToCloudWithoutUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::EO_CLOUD_SHA256, null, null);
     }
@@ -1072,14 +1072,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testConvertCoinToCloudWithInvalidUserId()
     {
-        $client = new MockClient();
+        $client = new MockEobotClient();
 
         $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::EO_CLOUD_SHA256, null, null, 'foo');
     }
 
     public function testConvertCoinToCloudWithInvalidCredentials()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -1088,7 +1088,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testConvertCoinToCloudWithInsufficientFunds()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -1097,7 +1097,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testConvertCoinToCloudFromCloud()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
@@ -1107,7 +1107,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testConvertCoinToCloud()
     {
-        $client = new MockClient(1234);
+        $client = new MockEobotClient(1234);
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked

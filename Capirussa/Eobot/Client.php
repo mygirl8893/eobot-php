@@ -34,9 +34,9 @@ class Client
     const COIN_DOGECOIN = 'DOGE';
 
     /**
-     * The coin abbreviation for NautilusCoin
+     * The coin abbreviation for Ripple
      */
-    const COIN_NAUTILUSCOIN = 'NAUT';
+    const COIN_RIPPLE = 'XRP';
 
     /**
      * The coin abbreviation for Darkcoin

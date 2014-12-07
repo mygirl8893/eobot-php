@@ -14,14 +14,14 @@ require_once(dirname(__FILE__) . '/../vendor/autoload.php');
 spl_autoload_register(
     function ($className) {
         // @codeCoverageIgnoreStart
-        if ($className === 'MockRequest') {
-            require_once(dirname(__FILE__) . '/Capirussa/Eobot/mock/MockRequest.php');
-        } else if ($className === 'MockClient') {
-            require_once(dirname(__FILE__) . '/Capirussa/Eobot/mock/MockClient.php');
+        if ($className === 'MockEobotRequest') {
+            require_once(dirname(__FILE__) . '/Capirussa/Eobot/mock/MockEobotRequest.php');
+        } else if ($className === 'MockEobotClient') {
+            require_once(dirname(__FILE__) . '/Capirussa/Eobot/mock/MockEobotClient.php');
         } else if (preg_match('/^Capirussa\\\\Eobot/', $className)) {
-            $filePath = str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
+            $filePath = dirname(__FILE__) . '/../' . str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
             if (file_exists($filePath)) {
-                require_once(dirname(__FILE__) . '/../' . $filePath);
+                require_once($filePath);
             }
         }
         // @codeCoverageIgnoreEnd

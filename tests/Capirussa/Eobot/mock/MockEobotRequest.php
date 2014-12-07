@@ -4,7 +4,7 @@ require_once(dirname(__FILE__) . '/../../../init.php');
 use Capirussa\Eobot;
 use Capirussa\Http;
 
-class MockRequest extends Eobot\Request
+class MockEobotRequest extends Eobot\Request
 {
     /**
      * Base URL for all calls
