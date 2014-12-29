@@ -56,7 +56,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $request = $reflectionMethod->invoke($client);
 
-        $this->assertTrue($this->getObjectAttribute($request, 'validateSsl'));
+        /* @type $request \Buzz\Browser */
+
+        $this->assertTrue($request->getClient()->getVerifyPeer());
 
         $client->disableSslVerification();
 
@@ -64,7 +66,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $request = $reflectionMethod->invoke($client);
 
-        $this->assertFalse($this->getObjectAttribute($request, 'validateSsl'));
+        $this->assertFalse($request->getClient()->getVerifyPeer());
     }
 
     public function testGetCoinValueWithoutParameters()
@@ -521,9 +523,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $response = $client->getLastResponse();
         $this->assertNotNull($response);
-        $this->assertInstanceof('Capirussa\\Http\\Response', $response);
+        $this->assertInstanceof('Buzz\\Message\\Response', $response);
 
-        $coinValue2 = floatval(trim($response->getRawBody()));
+        $coinValue2 = floatval(trim($response->getContent()));
 
         $this->assertEquals($coinValue2, $coinValue);
     }

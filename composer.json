@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "capirussa/http-php": "0.1.*"
+        "kriswallsmith/buzz": "0.*"
     },
     "autoload": {
         "psr-4" : {

@@ -6,13 +6,19 @@ use Capirussa\Eobot;
 class MockEobotClient extends Eobot\Client
 {
     /**
+     * Base URL for all calls
+     *
+     * @type string
+     */
+    protected $baseUrl = 'eobot://mock/';
+
+    /**
      * Returns a new mock Request object
      *
-     * @param string $requestMethod (Optional) Defaults to Request::METHOD_GET
-     * @return MockEobotRequest
+     * @return MockEobotBrowser
      */
-    protected function getRequest($requestMethod = Eobot\Request::METHOD_GET)
+    protected function getRequest()
     {
-        return new MockEobotRequest($requestMethod);
+        return new MockEobotBrowser($this->baseUrl);
     }
 }

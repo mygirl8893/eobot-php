@@ -14,8 +14,8 @@ require_once(dirname(__FILE__) . '/../vendor/autoload.php');
 spl_autoload_register(
     function ($className) {
         // @codeCoverageIgnoreStart
-        if ($className === 'MockEobotRequest') {
-            require_once(dirname(__FILE__) . '/Capirussa/Eobot/mock/MockEobotRequest.php');
+        if ($className === 'MockEobotBrowser') {
+            require_once(dirname(__FILE__) . '/Capirussa/Eobot/mock/MockEobotBrowser.php');
         } else if ($className === 'MockEobotClient') {
             require_once(dirname(__FILE__) . '/Capirussa/Eobot/mock/MockEobotClient.php');
         } else if (preg_match('/^Capirussa\\\\Eobot/', $className)) {

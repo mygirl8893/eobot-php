@@ -1,6 +1,8 @@
 <?php
 namespace Capirussa\Eobot;
 
+use Buzz\Browser;
+
 /**
  * Eobot Client is the class that communicates with the Eobot API
  *
@@ -186,6 +188,81 @@ class Client
     const CURRENCY_SERBIAN_DINAR = 'RSD';
 
     /**
+     * Query parameter used to request a coin value or currency exchange rate
+     */
+    const QUERY_COIN = 'coin';
+
+    /**
+     * Query parameter used to request the user's current mining totals
+     */
+    const QUERY_TOTAL = 'total';
+
+    /**
+     * Query parameter used to check what a user is currently mining
+     */
+    const QUERY_IDMINING = 'idmining';
+
+    /**
+     * Query parameter used to check what the user's current mining speeds are
+     */
+    const QUERY_IDSPEED = 'idspeed';
+
+    /**
+     * Query parameter used to identify a user when changing a setting
+     */
+    const QUERY_ID = 'id';
+
+    /**
+     * Query parameter used as the username when changing a user's setting
+     */
+    const QUERY_EMAIL = 'email';
+
+    /**
+     * Query parameter used as the password when changing a user's setting
+     */
+    const QUERY_PASSWORD = 'password';
+
+    /**
+     * Query parameter used to change what the user is currently mining
+     */
+    const QUERY_MINING = 'mining';
+
+    /**
+     * Query parameter used to request a deposit wallet address for a particular cryptocurrency
+     */
+    const QUERY_DEPOSIT = 'deposit';
+
+    /**
+     * Query parameter used to configure the automatic withdrawal wallet address for a particular cryptocurrency
+     */
+    const QUERY_WITHDRAW = 'withdraw';
+
+    /**
+     * Query parameter used to withdraw a specific amount of funds from Eobot
+     */
+    const QUERY_AMOUNT = 'amount';
+
+    /**
+     * Query parameter used to specify a wallet address for withdrawing funds from Eobot
+     */
+    const QUERY_WALLET = 'wallet';
+
+    /**
+     * Query parameter used to manually withdraw funds for a particular cryptocurrency
+     */
+    const QUERY_MANUAL_WITHDRAW = 'manualwithdraw';
+
+    /**
+     * Query parameter used to convert cryptocurrency funds to cloud mining power
+     */
+    const QUERY_CONVERT_FROM = 'convertfrom';
+
+    /**
+     * Query parameter used to convert cryptocurrency funds to cloud mining power
+     */
+    const QUERY_CONVERT_TO = 'convertto';
+
+    /**
      * The Eobot abbreviation for their 24-hour Cloud SHA-256 miner rental service
      */
     const RENTAL_SHA256 = 'GHSTEMP';
@@ -232,9 +309,16 @@ class Client
     private $validateSsl = true;
 
     /**
+     * This property contains the base URL for all API requests.
+     *
+     * @type string
+     */
+    protected $baseUrl = 'https://www.eobot.com/api.aspx';
+
+    /**
      * Contains the Response object for the last submitted request.
      *
-     * @type \Capirussa\Http\Response
+     * @type \Buzz\Message\Response
      */
     protected $response;
 
@@ -305,11 +389,21 @@ class Client
         // check whether we have the coin value in USD cached
         if (!isset($this->coinValues[$coin])) {
             // retrieve the coin's value in USD
-            $request = $this->getRequest();
-            $request->addQueryParameter(Request::QUERY_COIN, $coin);
-            $this->response = $request->send();
+            $request        = $this->getRequest();
+            $this->response = $request->get(
+                sprintf(
+                    '%1$s?%2$s',
+                    $this->baseUrl,
+                    http_build_query(
+                        array(
+                            self::QUERY_COIN => $coin,
+                        )
+                    )
+                ),
+                $this->getRequestHeaders()
+            );
 
-            $coinValueInUsd = trim($this->response->getRawBody());
+            $coinValueInUsd = trim($this->response->getContent());
 
             if (!preg_match('/^[0-9.]+$/', $coinValueInUsd)) {
                 throw new \LogicException(
@@ -367,11 +461,21 @@ class Client
             // check whether we have the exchange rate cached
             if (!isset($this->exchangeRates[$currency])) {
                 // retrieve the currency's exchange rate
-                $request = $this->getRequest();
-                $request->addQueryParameter(Request::QUERY_COIN, $currency);
-                $this->response = $request->send();
+                $request        = $this->getRequest();
+                $this->response = $request->get(
+                    sprintf(
+                        '%1$s?%2$s',
+                        $this->baseUrl,
+                        http_build_query(
+                            array(
+                                self::QUERY_COIN => $currency,
+                            )
+                        )
+                    ),
+                    $this->getRequestHeaders()
+                );
 
-                $exchangeRate = trim($this->response->getRawBody());
+                $exchangeRate = trim($this->response->getContent());
 
                 if (!preg_match('/^[0-9.]+$/', $exchangeRate)) {
                     throw new \LogicException(
@@ -451,18 +555,28 @@ class Client
             $this->balances[$userId] = array();
 
             // retrieve the balances for the given user
-            $request = $this->getRequest();
-            $request->addQueryParameter(Request::QUERY_TOTAL, $userId);
-            $this->response = $request->send();
+            $request        = $this->getRequest();
+            $this->response = $request->get(
+                sprintf(
+                    '%1$s?%2$s',
+                    $this->baseUrl,
+                    http_build_query(
+                        array(
+                            self::QUERY_TOTAL => $userId,
+                        )
+                    )
+                ),
+                $this->getRequestHeaders()
+            );
 
-            $balances = trim($this->response->getRawBody());
+            $balances = trim($this->response->getContent());
 
             if (!strstr($balances, ';') || !strstr($balances, ':')) {
                 throw new \LogicException(
                     sprintf(
                         '%1$s: Invalid API response received, given response does not contain balances: %2$s',
                         __METHOD__,
-                        $this->response->getRawBody()
+                        $balances
                     )
                 );
             }
@@ -508,7 +622,7 @@ class Client
                     sprintf(
                         '%1$s: Invalid balance type given, it is not in the balance sheet returned by the API: %2$s',
                         __METHOD__,
-                        $this->response->getRawBody()
+                        $this->response->getContent()
                     )
                 );
             }
@@ -558,11 +672,21 @@ class Client
         }
 
         // retrieve the type currently being mined by the given user
-        $request = $this->getRequest();
-        $request->addQueryParameter(Request::QUERY_IDMINING, $userId);
-        $this->response = $request->send();
+        $request        = $this->getRequest();
+        $this->response = $request->get(
+            sprintf(
+                '%1$s?%2$s',
+                $this->baseUrl,
+                http_build_query(
+                    array(
+                        self::QUERY_IDMINING => $userId,
+                    )
+                )
+            ),
+            $this->getRequestHeaders()
+        );
 
-        $retValue = trim($this->response->getRawBody());
+        $retValue = trim($this->response->getContent());
 
         if ($retValue == self::EO_CLOUD_SHA256_CONTRACT) {
             $retValue = self::EO_CLOUD_SHA256;
@@ -628,11 +752,21 @@ class Client
         );
 
         // retrieve the type currently being mined by the given user
-        $request = $this->getRequest();
-        $request->addQueryParameter(Request::QUERY_IDSPEED, $userId);
-        $this->response = $request->send();
+        $request        = $this->getRequest();
+        $this->response = $request->get(
+            sprintf(
+                '%1$s?%2$s',
+                $this->baseUrl,
+                http_build_query(
+                    array(
+                        self::QUERY_IDSPEED => $userId,
+                    )
+                )
+            ),
+            $this->getRequestHeaders()
+        );
 
-        $speeds = trim($this->response->getRawBody());
+        $speeds = trim($this->response->getContent());
 
         if (!strstr($speeds, ';') || !strstr($speeds, ':')) {
             throw new \LogicException(
@@ -703,12 +837,22 @@ class Client
         }
 
         // retrieve the deposit address for this coin type
-        $request = $this->getRequest();
-        $request->addQueryParameter(Request::QUERY_ID, $userId);
-        $request->addQueryParameter(Request::QUERY_DEPOSIT, $coinType);
-        $this->response = $request->send();
+        $request        = $this->getRequest();
+        $this->response = $request->get(
+            sprintf(
+                '%1$s?%2$s',
+                $this->baseUrl,
+                http_build_query(
+                    array(
+                        self::QUERY_ID      => $userId,
+                        self::QUERY_DEPOSIT => $coinType,
+                    )
+                )
+            ),
+            $this->getRequestHeaders()
+        );
 
-        return trim($this->response->getRawBody());
+        return trim($this->response->getContent());
     }
 
     /**
@@ -749,12 +893,19 @@ class Client
 
         if ($email !== null && $password !== null) {
             // fetch the user ID from Eobot
-            $request = $this->getRequest();
-            $request->addQueryParameter(Request::QUERY_EMAIL, $email);
-            $request->addQueryParameter(Request::QUERY_PASSWORD, $password);
-            $this->response = $request->send();
+            $request        = $this->getRequest();
+            $this->response = $request->post(
+                $this->baseUrl,
+                $this->getRequestHeaders(),
+                http_build_query(
+                    array(
+                        self::QUERY_EMAIL    => $email,
+                        self::QUERY_PASSWORD => $password,
+                    )
+                )
+            );
 
-            $retValue = trim($this->response->getRawBody());
+            $retValue = trim($this->response->getContent());
 
             if (strlen($retValue) == 0) {
                 throw new \LogicException(
@@ -823,12 +974,19 @@ class Client
         }
 
         // switch the mining mode
-        $request = $this->getRequest();
-        $request->addQueryParameter(Request::QUERY_ID, $userId);
-        $request->addQueryParameter(Request::QUERY_EMAIL, $email);
-        $request->addQueryParameter(Request::QUERY_PASSWORD, $password);
-        $request->addQueryParameter(Request::QUERY_MINING, $type);
-        $this->response = $request->send();
+        $request        = $this->getRequest();
+        $this->response = $request->post(
+            $this->baseUrl,
+            $this->getRequestHeaders(),
+            http_build_query(
+                array(
+                    self::QUERY_ID       => $userId,
+                    self::QUERY_MINING   => $type,
+                    self::QUERY_EMAIL    => $email,
+                    self::QUERY_PASSWORD => $password,
+                )
+            )
+        );
 
         // the API does not return a result with which we can determine whether the switch was successful or not...
         return ($this->getMiningMode($userId) == $type);
@@ -890,16 +1048,23 @@ class Client
         }
 
         // switch the mining mode
-        $request = $this->getRequest();
-        $request->addQueryParameter(Request::QUERY_ID, $userId);
-        $request->addQueryParameter(Request::QUERY_EMAIL, $email);
-        $request->addQueryParameter(Request::QUERY_PASSWORD, $password);
-        $request->addQueryParameter(Request::QUERY_WITHDRAW, $coinType);
-        $request->addQueryParameter(Request::QUERY_AMOUNT, $amount);
-        $request->addQueryParameter(Request::QUERY_WALLET, $wallet);
-        $this->response = $request->send();
+        $request        = $this->getRequest();
+        $this->response = $request->post(
+            $this->baseUrl,
+            $this->getRequestHeaders(),
+            http_build_query(
+                array(
+                    self::QUERY_ID       => $userId,
+                    self::QUERY_WITHDRAW => $coinType,
+                    self::QUERY_AMOUNT   => $amount,
+                    self::QUERY_WALLET   => $wallet,
+                    self::QUERY_EMAIL    => $email,
+                    self::QUERY_PASSWORD => $password,
+                )
+            )
+        );
 
-        $result = trim($this->response->getRawBody());
+        $result = trim($this->response->getContent());
 
         return ($result == '');
     }
@@ -960,16 +1125,23 @@ class Client
         }
 
         // switch the mining mode
-        $request = $this->getRequest();
-        $request->addQueryParameter(Request::QUERY_ID, $userId);
-        $request->addQueryParameter(Request::QUERY_EMAIL, $email);
-        $request->addQueryParameter(Request::QUERY_PASSWORD, $password);
-        $request->addQueryParameter(Request::QUERY_MANUAL_WITHDRAW, $coinType);
-        $request->addQueryParameter(Request::QUERY_AMOUNT, $amount);
-        $request->addQueryParameter(Request::QUERY_WALLET, $wallet);
-        $this->response = $request->send();
+        $request        = $this->getRequest();
+        $this->response = $request->post(
+            $this->baseUrl,
+            $this->getRequestHeaders(),
+            http_build_query(
+                array(
+                    self::QUERY_ID              => $userId,
+                    self::QUERY_MANUAL_WITHDRAW => $coinType,
+                    self::QUERY_AMOUNT          => $amount,
+                    self::QUERY_WALLET          => $wallet,
+                    self::QUERY_EMAIL           => $email,
+                    self::QUERY_PASSWORD        => $password,
+                )
+            )
+        );
 
-        $result = trim($this->response->getRawBody());
+        $result = trim($this->response->getContent());
 
         return ($result == '');
     }
@@ -1064,16 +1236,23 @@ class Client
         }
 
         // purchase mining power
-        $request = $this->getRequest();
-        $request->addQueryParameter(Request::QUERY_ID, $userId);
-        $request->addQueryParameter(Request::QUERY_EMAIL, $email);
-        $request->addQueryParameter(Request::QUERY_PASSWORD, $password);
-        $request->addQueryParameter(Request::QUERY_CONVERT_FROM, $coinType);
-        $request->addQueryParameter(Request::QUERY_AMOUNT, $amount);
-        $request->addQueryParameter(Request::QUERY_CONVERT_TO, $cloudType);
-        $this->response = $request->send();
+        $request        = $this->getRequest();
+        $this->response = $request->post(
+            $this->baseUrl,
+            $this->getRequestHeaders(),
+            http_build_query(
+                array(
+                    self::QUERY_ID           => $userId,
+                    self::QUERY_CONVERT_FROM => $coinType,
+                    self::QUERY_AMOUNT       => $amount,
+                    self::QUERY_CONVERT_TO   => $cloudType,
+                    self::QUERY_EMAIL        => $email,
+                    self::QUERY_PASSWORD     => $password,
+                )
+            )
+        );
 
-        $result = trim($this->response->getRawBody());
+        $result = trim($this->response->getContent());
 
         return ($result == '');
     }
@@ -1215,25 +1394,40 @@ class Client
     }
 
     /**
-     * This method is used internally to retrieve a Request object. It accepts one parameter, the request method to
-     * use. When building the request, it also passes on whether or not to validate the remote SSL certificate.
+     * This method is used internally to retrieve a Browser object.
      *
      * <code>
-     * $request = $this->getRequest(Request::METHOD_GET);
+     * $request = $this->getRequest();
      * </code>
      *
-     * @param string $requestMethod (Optional) Defaults to Request::METHOD_GET
-     * @return Request
+     * @return Browser
      *
      * Unittests overwrite this method to retrieve a mock request, so
      * @codeCoverageIgnore
      */
-    protected function getRequest($requestMethod = Request::METHOD_GET)
+    protected function getRequest()
     {
-        $retValue = new Request($requestMethod, $this->validateSsl);
-        $retValue->setTimeout(30);
+        $retValue = new Browser();
+        $retValue->getClient()->setTimeout(30);
+        $retValue->getClient()->setVerifyPeer($this->validateSsl);
 
         return $retValue;
+    }
+
+    /**
+     * This method is used internally to build the default request headers.
+     *
+     * <code>
+     * $headers = $this->getRequestHeaders();
+     * </code>
+     *
+     * @return array
+     */
+    protected function getRequestHeaders()
+    {
+        return array(
+            'User-Agent' => 'Capirussa-Eobot/1.3.6 (+http://github.com/rickdenhaan/eobot-php)',
+        );
     }
 
     /**
@@ -1246,7 +1440,7 @@ class Client
      * $response = $client->getLastResponse();
      * </code>
      *
-     * @return \Capirussa\Http\Response|null
+     * @return \Buzz\Message\Response|null
      */
     public function getLastResponse()
     {
