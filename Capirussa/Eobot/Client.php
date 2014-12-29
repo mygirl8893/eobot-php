@@ -64,9 +64,9 @@ class Client
     const COIN_PEERCOIN = 'PPC';
 
     /**
-     * The coin abbreviation for SysCoin
+     * The coin abbreviation for MaidSafeCoin
      */
-    const COIN_SYSCOIN = 'SYS';
+    const COIN_MAIDSAFECOIN = 'MAID';
 
     /**
      * The coin abbreviation for NXT
