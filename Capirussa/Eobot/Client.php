@@ -23,7 +23,7 @@ class Client
     /**
      * The coin abbreviation for BlackCoin
      */
-    const COIN_BLACKCOIN = 'BC';
+    const COIN_BLACKCOIN = 'BLK';
 
     /**
      * The coin abbreviation for Namecoin
@@ -1426,7 +1426,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'Capirussa-Eobot/1.3.6 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'Capirussa-Eobot/1.3.7 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
