@@ -61,19 +61,44 @@ class Client
     const COIN_CURECOIN = 'CURE';
 
     /**
+     * The coin abbreviation for Storjcoin X
+     */
+    const COIN_STORJCOIN_X = 'SJCX';
+
+    /**
+     * The coin abbreviation for Gems
+     */
+    const COIN_GEMS = 'GEMZ';
+
+    /**
+     * The coin abbreviation for Counterparty
+     */
+    const COIN_COUNTERPARTY = 'XCP';
+
+    /**
+     * The coin abbreviation for Stellar
+     */
+    const COIN_STELLAR = 'STR';
+
+    /**
+     * The coin abbreviation for Paycoin
+     */
+    const COIN_PAYCOIN = 'XPY';
+
+    /**
      * The coin abbreviation for Peercoin
      */
     const COIN_PEERCOIN = 'PPC';
 
     /**
-     * The coin abbreviation for MaidSafeCoin
-     */
-    const COIN_MAIDSAFECOIN = 'MAID';
-
-    /**
      * The coin abbreviation for NXT
      */
     const COIN_NXT = 'NXT';
+
+    /**
+     * The coin abbreviation for MaidSafeCoin
+     */
+    const COIN_MAIDSAFECOIN = 'MAID';
 
     /**
      * The Eobot abbreviation for their Cloud SHA-256 miners
@@ -1426,7 +1451,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'Capirussa-Eobot/1.3.7 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'Capirussa-Eobot/1.3.8 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 

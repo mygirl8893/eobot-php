@@ -117,6 +117,11 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_PEERCOIN     => 0.60667,
             Client::COIN_REDDCOIN     => 0.091551,
             Client::COIN_MAIDSAFECOIN => 0.00803005,
+            Client::COIN_STORJCOIN_X  => 0.02068154,
+            Client::COIN_GEMS         => 0.01547432,
+            Client::COIN_COUNTERPARTY => 1.97691607,
+            Client::COIN_STELLAR      => 0.00478602,
+            Client::COIN_PAYCOIN      => 3.92070116,
 
             Client::EO_CLOUD_FOLDING  => 0.05,
             Client::EO_CLOUD_SCRYPT   => 0.07,
@@ -235,7 +240,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balances = $client->getBalance();
 
         $this->assertInternalType('array', $balances);
-        $this->assertCount(16, $balances);
+        $this->assertCount(21, $balances);
 
         $this->assertEquals(0.32751004, $balances['Total']);
         $this->assertEquals(0.00040978, $balances[Client::COIN_BITCOIN]);
@@ -250,6 +255,11 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.00502554, $balances[Client::COIN_PEERCOIN]);
         $this->assertEquals(0.02830923, $balances[Client::COIN_REDDCOIN]);
         $this->assertEquals(0.02748126, $balances[Client::COIN_MAIDSAFECOIN]);
+        $this->assertEquals(0.02639744, $balances[Client::COIN_STORJCOIN_X]);
+        $this->assertEquals(0.03641862, $balances[Client::COIN_GEMS]);
+        $this->assertEquals(0.00636984, $balances[Client::COIN_COUNTERPARTY]);
+        $this->assertEquals(0.06467642, $balances[Client::COIN_STELLAR]);
+        $this->assertEquals(0.00004271, $balances[Client::COIN_PAYCOIN]);
         $this->assertEquals(2.16726154, $balances[Client::EO_CLOUD_FOLDING]);
         $this->assertEquals(0.01115809, $balances[Client::EO_CLOUD_SCRYPT]);
         $this->assertEquals(20.00019989, $balances[Client::EO_CLOUD_SHA256]);
@@ -397,6 +407,21 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::COIN_MAIDSAFECOIN);
         $this->assertEquals(0.02748126, $balance);
+
+        $balance = $client->getBalance(Client::COIN_STORJCOIN_X);
+        $this->assertEquals(0.02639744, $balance);
+
+        $balance = $client->getBalance(Client::COIN_GEMS);
+        $this->assertEquals(0.03641862, $balance);
+
+        $balance = $client->getBalance(Client::COIN_COUNTERPARTY);
+        $this->assertEquals(0.00636984, $balance);
+
+        $balance = $client->getBalance(Client::COIN_STELLAR);
+        $this->assertEquals(0.06467642, $balance);
+
+        $balance = $client->getBalance(Client::COIN_PAYCOIN);
+        $this->assertEquals(0.00004271, $balance);
 
         $balance = $client->getBalance(Client::EO_CLOUD_FOLDING);
         $this->assertEquals(2.16726154, $balance);
@@ -608,6 +633,21 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
         $address = $client->getDepositAddress(Client::COIN_MAIDSAFECOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_STORJCOIN_X);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_GEMS);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_COUNTERPARTY);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_STELLAR);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_PAYCOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
     }
 
