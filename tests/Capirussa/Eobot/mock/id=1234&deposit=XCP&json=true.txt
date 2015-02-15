@@ -5,10 +5,12 @@ Content-Type: application/json; charset=utf-8
 Expires: -1
 Server: Microsoft-IIS/8.5
 x-frame-options: DENY
-X-AspNet-Version: 2.0.50727
 Set-Cookie: ASP.NET_SessionId=x02qrpvfobdxnj45xgn05t55; path=/; secure; HttpOnly
+X-AspNet-Version: 2.0.50727
 X-Powered-By: ASP.NET
-Date: Mon, 18 Aug 2014 18:11:16 GMT
-Content-Length: 3
+Date: Fri, 12 Sep 2014 21:25:53 GMT
+Content-Length: 48
 
 {
+"XCP":"1234567890abcdefghijklmnopqrstuvwx"
+}
