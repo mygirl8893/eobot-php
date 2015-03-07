@@ -11,12 +11,12 @@ Usage
 -----
 
 ```php
-use Capirussa\Eobot;
+use RickDenHaan\Eobot;
 
 try {
     $client = Eobot\Client($userId);
     $currentlyMining = $client->getMiningMode();
-    $client->setMiningMode(Client::COIN_LITECOIN, $userName, $password);
+    $client->setMiningMode(Eobot\Client::COIN_LITECOIN, $userName, $password);
 } catch (\Exception $exception) {
     // something went wrong, fix it and try again!
 }
