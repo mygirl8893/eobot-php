@@ -436,6 +436,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::EO_CLOUD_SHA256);
         $this->assertEquals(20.00019989, $balance);
 
+        $balance = $client->getBalance(Client::EO_CLOUD_FOLDING_CONTRACT);
+        $this->assertEquals(2.16726154, $balance);
+
         $balance = $client->getBalance(Client::EO_CLOUD_SCRYPT_CONTRACT);
         $this->assertEquals(0.01115809, $balance);
 
@@ -485,6 +488,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $miningMode = $client->getMiningMode(4567);
         $this->assertEquals(Client::EO_CLOUD_SCRYPT, $miningMode);
+
+        $miningMode = $client->getMiningMode(8901);
+        $this->assertEquals(Client::EO_CLOUD_FOLDING, $miningMode);
     }
 
     public function testGetMiningMode()
@@ -554,8 +560,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($response);
         $this->assertInstanceof('Buzz\\Message\\Response', $response);
 
-        $response2 = json_decode(trim($response->getContent()), true);
-        $coinValue2 = floatval($response2[Client::COIN_BITCOIN]);
+        $coinValue2 = floatval(trim($response->getContent()));
 
         $this->assertEquals($coinValue2, $coinValue);
     }
@@ -751,15 +756,11 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client->setMiningMode(Client::COIN_BITCOIN, null, null, 'foo');
     }
 
-    /**
-     * @expectedException LogicException
-     * @expectedExceptionMessage Invalid password given
-     */
     public function testSetMiningModeWithInvalidCredentials()
     {
         $client = new MockEobotClient(1234);
 
-        $client->setMiningMode(Client::COIN_DARKCOIN, 'test@example.com', 'incorrectPassword');
+        $this->assertFalse($client->setMiningMode(Client::COIN_DARKCOIN, 'test@example.com', 'incorrectPassword'));
     }
 
     public function testSetMiningModeContract()
@@ -768,6 +769,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($client->setMiningMode(Client::EO_CLOUD_SHA256_CONTRACT, 'test@example.com', 'correctPassword', 3456));
         $this->assertTrue($client->setMiningMode(Client::EO_CLOUD_SCRYPT_CONTRACT, 'test@example.com', 'correctPassword', 4567));
+        $this->assertTrue($client->setMiningMode(Client::EO_CLOUD_FOLDING_CONTRACT, 'test@example.com', 'correctPassword', 8901));
     }
 
     public function testSetMiningMode()
@@ -854,15 +856,13 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client->setAutomaticWithdraw(Client::COIN_BITCOIN, 1, null, null, null, 'foo');
     }
 
-    /**
-     * @expectedException LogicException
-     * @expectedExceptionMessage Invalid password given
-     */
     public function testSetAutomaticWithdrawWithInvalidCredentials()
     {
         $client = new MockEobotClient(1234);
 
-        $client->setAutomaticWithdraw(Client::COIN_BITCOIN, 1, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'incorrectPassword');
+        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
+        // change was successful, so the Client always assumes it worked
+        $this->assertTrue($client->setAutomaticWithdraw(Client::COIN_BITCOIN, 1, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'incorrectPassword'));
     }
 
     public function testSetAutomaticWithdrawWithInvalidWallet()
@@ -972,15 +972,11 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client->withdrawFunds(Client::COIN_BITCOIN, 1, null, null, null, 'foo');
     }
 
-    /**
-     * @expectedException LogicException
-     * @expectedExceptionMessage Invalid password given
-     */
     public function testWithdrawFundsWithInvalidCredentials()
     {
         $client = new MockEobotClient(1234);
 
-        $client->withdrawFunds(Client::COIN_BITCOIN, 1, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'incorrectPassword');
+        $this->assertFalse($client->withdrawFunds(Client::COIN_BITCOIN, 1, '1234567890abcdefghijklmnopqrstuvwx', 'test@example.com', 'incorrectPassword'));
     }
 
     public function testWithdrawFundsWithInvalidWallet()
@@ -1124,15 +1120,11 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::EO_CLOUD_SHA256, null, null, 'foo');
     }
 
-    /**
-     * @expectedException LogicException
-     * @expectedExceptionMessage Invalid password given
-     */
     public function testConvertCoinToCloudWithInvalidCredentials()
     {
         $client = new MockEobotClient(1234);
 
-        $client->convertCoinToCloud(Client::COIN_BITCOIN, 0.00002, Client::EO_CLOUD_SHA256, 'test@example.com', 'incorrectPassword');
+        $this->assertFalse($client->convertCoinToCloud(Client::COIN_BITCOIN, 0.00002, Client::EO_CLOUD_SHA256, 'test@example.com', 'incorrectPassword'));
     }
 
     public function testConvertCoinToCloudWithInsufficientFunds()
@@ -1146,10 +1138,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new MockEobotClient(1234);
 
-        // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
-        // change was successful, so the Client always assumes it worked
         $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_SHA256_CONTRACT, 0.00002, Client::RENTAL_SCRYPT, 'test@example.com', 'correctPassword'));
         $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_SCRYPT_CONTRACT, 0.00002, Client::RENTAL_SHA256, 'test@example.com', 'correctPassword'));
+        $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_FOLDING_CONTRACT, 0.00002, Client::RENTAL_FOLDING, 'test@example.com', 'correctPassword'));
     }
 
     public function testConvertCoinToCloud()
@@ -1158,6 +1149,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
-        $this->assertTrue($client->convertCoinToCloud(Client::COIN_BITCOIN, 0.00002, Client::EO_CLOUD_SCRYPT_CONTRACT, 'test@example.com', 'correctPassword'));
+        $this->assertTrue($client->convertCoinToCloud(Client::COIN_BITCOIN, 0.002, Client::EO_CLOUD_SCRYPT_CONTRACT, 'test@example.com', 'correctPassword'));
     }
 }

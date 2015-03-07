@@ -59,22 +59,34 @@ class MockEobotClient extends Client
     }
 
     /**
-     * Withdraws funds to the given wallet
+     * This method is used to withdraw funds from Eobot to your own (or someone else's) wallet. Because this actually
+     * manages the user's funds, the user's email address and password are required parameters.
      *
-     * @param string    $coinType (Optional) Defaults to Bitcoin
-     * @param int|float $amount   (Optional) Defaults to 1.0
-     * @param string    $wallet   Wallet address to send the funds to
-     * @param string    $email
-     * @param string    $password
-     * @param string    $userId   (Optional) Defaults to null, only required if not set via the constructor
-     * @throws \InvalidArgumentException
-     * @return bool
+     * @see Client::withdrawFunds()
      */
-    public function withdrawFunds($coinType = self::COIN_BITCOIN, $amount = 1.0, $wallet, $email, $password, $userId = null) {
+    public function withdrawFunds($coinType = self::COIN_BITCOIN, $amount = 1.0, $wallet, $email, $password, $userId = null)
+    {
         if ($coinType == self::COIN_BITCOIN && $amount == 0.002) {
             $this->shouldSwitchUserId = true;
         }
 
         return parent::withdrawFunds($coinType, $amount, $wallet, $email, $password, $userId);
+    }
+    
+    /**
+     * This method is used to purchase Eobot mining power using mined (or deposited) coins. Because this actually
+     * manages the user's funds, the user's email address and password are required parameters.
+     *
+     * @see Client::convertCoinToCloud
+     */
+    public function convertCoinToCloud($coinType = self::COIN_BITCOIN, $amount = 1.0, $cloudType = self::EO_CLOUD_SHA256, $email, $password, $userId = null)
+    {
+        if (self::isValidRentalType($cloudType) && $amount == 0.00002) {
+            $this->shouldSwitchUserId = true;
+        } else if ($coinType == self::COIN_BITCOIN && $amount == 0.002) {
+            $this->shouldSwitchUserId = true;
+        }
+
+        return parent::convertCoinToCloud($coinType, $amount, $cloudType, $email, $password, $userId);
     }
 }

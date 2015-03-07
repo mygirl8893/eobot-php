@@ -115,7 +115,8 @@ class Client
     /**
      * The Eobot abbreviation for their Cloud Folding service
      */
-    const EO_CLOUD_FOLDING = 'PPD';
+    const EO_CLOUD_FOLDING          = 'PPD';
+    const EO_CLOUD_FOLDING_CONTRACT = 'PPDCONTRACT';
 
     /**
      * The currency abbreviation for Euro
@@ -288,11 +289,6 @@ class Client
     const QUERY_CONVERT_TO = 'convertto';
 
     /**
-     * Query parameter used to request a JSON response from the API
-     */
-    const QUERY_JSON = 'json';
-
-    /**
      * The Eobot abbreviation for their 24-hour Cloud SHA-256 miner rental service
      */
     const RENTAL_SHA256 = 'GHSTEMP';
@@ -432,18 +428,15 @@ class Client
                     http_build_query(
                         array(
                             self::QUERY_COIN => $coin,
-                            self::QUERY_JSON => 'true',
                         )
                     )
                 ),
                 $this->getRequestHeaders()
             );
 
-            $response = json_decode(trim($this->response->getContent()), true);
+            $coinValueInUsd = trim($this->response->getContent());
 
-            $coinValueInUsd = ($response !== null && isset($response[$coin]) ? $response[$coin] : 0);
-
-            if (!preg_match('/^[0-9.]+$/', $coinValueInUsd) || doubleval($coinValueInUsd) == 0.0) {
+            if (!preg_match('/^[0-9.]+$/', $coinValueInUsd)) {
                 throw new \LogicException(
                     sprintf(
                         '%1$s: Invalid API response received, given response is not a valid currency value: %2$s',
@@ -507,17 +500,15 @@ class Client
                         http_build_query(
                             array(
                                 self::QUERY_COIN => $currency,
-                                self::QUERY_JSON => 'true',
                             )
                         )
                     ),
                     $this->getRequestHeaders()
                 );
 
-                $response     = json_decode(trim($this->response->getContent()), true);
-                $exchangeRate = ($response !== null && isset($response[$currency]) ? $response[$currency] : 0);
+                $exchangeRate = trim($this->response->getContent());
 
-                if (!preg_match('/^[0-9.]+$/', $exchangeRate) || doubleval($exchangeRate) == 0.0) {
+                if (!preg_match('/^[0-9.]+$/', $exchangeRate)) {
                     throw new \LogicException(
                         sprintf(
                             '%1$s: Invalid API response received, given response is not a valid exchange rate: %2$s',
@@ -604,35 +595,41 @@ class Client
                     http_build_query(
                         array(
                             self::QUERY_TOTAL => $userId,
-                            self::QUERY_JSON  => 'true',
                         )
                     )
                 ),
                 $this->getRequestHeaders()
             );
 
-            $balances = json_decode(trim($this->response->getContent()), true);
+            $balances = trim($this->response->getContent());
 
-            if ($balances === null || count($balances) == 0) {
+            if (!strstr($balances, ';') || !strstr($balances, ':')) {
                 throw new \LogicException(
                     sprintf(
                         '%1$s: Invalid API response received, given response does not contain balances: %2$s',
                         __METHOD__,
-                        $this->response->getContent()
+                        $balances
                     )
                 );
             }
 
-            foreach ($balances as $coin => $balance) {
-                if ($coin == self::EO_CLOUD_SHA256_CONTRACT) {
-                    $coin = self::EO_CLOUD_SHA256;
+            $balances = explode(';', $balances);
+            foreach ($balances as $balance) {
+                $balance = explode(':', trim($balance));
+
+                if (trim($balance[0]) == self::EO_CLOUD_SHA256_CONTRACT) {
+                    $balance[0] = self::EO_CLOUD_SHA256;
                 }
 
-                if ($coin == self::EO_CLOUD_SCRYPT_CONTRACT) {
-                    $coin = self::EO_CLOUD_SCRYPT;
+                if (trim($balance[0]) == self::EO_CLOUD_SCRYPT_CONTRACT) {
+                    $balance[0] = self::EO_CLOUD_SCRYPT;
                 }
 
-                $this->balances[$userId][$coin] = floatval($balance);
+                if (trim($balance[0]) == self::EO_CLOUD_FOLDING_CONTRACT) {
+                    $balance[0] = self::EO_CLOUD_FOLDING;
+                }
+
+                $this->balances[$userId][trim($balance[0])] = floatval(trim($balance[1]));
             }
         }
 
@@ -652,6 +649,10 @@ class Client
 
             if ($type == self::EO_CLOUD_SCRYPT_CONTRACT) {
                 $type = self::EO_CLOUD_SCRYPT;
+            }
+
+            if ($type == self::EO_CLOUD_FOLDING_CONTRACT) {
+                $type = self::EO_CLOUD_FOLDING;
             }
 
             if (self::isValidEobotInternalType($type) && isset($this->balances[$userId][$type])) {
@@ -719,26 +720,13 @@ class Client
                 http_build_query(
                     array(
                         self::QUERY_IDMINING => $userId,
-                        self::QUERY_JSON     => 'true',
                     )
                 )
             ),
             $this->getRequestHeaders()
         );
 
-        $response = json_decode(trim($this->response->getContent()), true);
-
-        if ($response === null || !isset($response['mining']) || $response['mining'] == '') {
-            throw new \LogicException(
-                sprintf(
-                    '%1$s: Invalid API response received, given response is not a valid coin type: %2$s',
-                    __METHOD__,
-                    $this->response->getContent()
-                )
-            );
-        } else {
-            $retValue = $response['mining'];
-        }
+        $retValue = trim($this->response->getContent());
 
         if ($retValue == self::EO_CLOUD_SHA256_CONTRACT) {
             $retValue = self::EO_CLOUD_SHA256;
@@ -746,6 +734,20 @@ class Client
 
         if ($retValue == self::EO_CLOUD_SCRYPT_CONTRACT) {
             $retValue = self::EO_CLOUD_SCRYPT;
+        }
+
+        if ($retValue == self::EO_CLOUD_FOLDING_CONTRACT) {
+            $retValue = self::EO_CLOUD_FOLDING;
+        }
+
+        if (!self::isValidCoin($retValue) && !self::isValidEobotInternalType($retValue)) {
+            throw new \LogicException(
+                sprintf(
+                    '%1$s: Invalid API response received, given response is not a valid coin type: %2$s',
+                    __METHOD__,
+                    $retValue
+                )
+            );
         }
 
         return $retValue;
@@ -786,6 +788,13 @@ class Client
             $userId = $this->userId;
         }
 
+        $retValue = array(
+            'MiningSHA-256' => 0.0,
+            'MiningScrypt'  => 0.0,
+            'CloudSHA-256'  => 0.0,
+            'CloudScrypt'   => 0.0,
+        );
+
         // retrieve the type currently being mined by the given user
         $request        = $this->getRequest();
         $this->response = $request->get(
@@ -795,26 +804,36 @@ class Client
                 http_build_query(
                     array(
                         self::QUERY_IDSPEED => $userId,
-                        self::QUERY_JSON    => 'true',
                     )
                 )
             ),
             $this->getRequestHeaders()
         );
 
-        $speeds = json_decode(trim($this->response->getContent()), true);
+        $speeds = trim($this->response->getContent());
 
-        if ($speeds === null || count($speeds) == 0) {
+        if (!strstr($speeds, ';') || !strstr($speeds, ':')) {
             throw new \LogicException(
                 sprintf(
                     '%1$s: Invalid API response received, given response does not contain mining speeds: %2$s',
                     __METHOD__,
-                    $this->response->getContent()
+                    $speeds
                 )
             );
         }
 
-        return $speeds;
+        $speeds = explode(';', $speeds);
+        foreach ($speeds as $speed) {
+            if (trim($speed) == '') {
+                continue;
+            }
+
+            $speed = explode(':', trim($speed));
+
+            $retValue[trim($speed[0])] = floatval(trim($speed[1]));
+        }
+
+        return $retValue;
     }
 
     /**
@@ -871,21 +890,13 @@ class Client
                     array(
                         self::QUERY_ID      => $userId,
                         self::QUERY_DEPOSIT => $coinType,
-                        self::QUERY_JSON    => 'true',
                     )
                 )
             ),
             $this->getRequestHeaders()
         );
 
-        $retValue = '';
-        $response = json_decode(trim($this->response->getContent()), true);
-
-        if ($response !== null && isset($response[$coinType])) {
-            $retValue = $response[$coinType];
-        }
-
-        return $response[$coinType];
+        return trim($this->response->getContent());
     }
 
     /**
@@ -934,14 +945,13 @@ class Client
                     array(
                         self::QUERY_EMAIL    => $email,
                         self::QUERY_PASSWORD => $password,
-                        self::QUERY_JSON     => 'true',
                     )
                 )
             );
 
-            $response = json_decode(trim($this->response->getContent()), true);
+            $retValue = trim($this->response->getContent());
 
-            if ($response === null || !isset($response['userid']) || empty($response['userid'])) {
+            if (strlen($retValue) == 0) {
                 throw new \LogicException(
                     sprintf(
                         '%1$s: Invalid password given for email address "%2$s"',
@@ -950,8 +960,6 @@ class Client
                     )
                 );
             }
-
-            $retValue = $response['userid'];
         }
 
         return intval($retValue);
@@ -1000,13 +1008,25 @@ class Client
         if ($userId === null) {
             $userId = $this->userId;
         }
-
+        
         if ($type == self::EO_CLOUD_SHA256_CONTRACT) {
             $type = self::EO_CLOUD_SHA256;
         }
 
         if ($type == self::EO_CLOUD_SCRYPT_CONTRACT) {
             $type = self::EO_CLOUD_SCRYPT;
+        }
+
+        if ($type == self::EO_CLOUD_FOLDING_CONTRACT) {
+            $type = self::EO_CLOUD_FOLDING;
+        }
+        
+        // get the current mining mode
+        $currentMiningMode = $this->getMiningMode($userId);
+        
+        // check whether we're trying to set the same mining mode
+        if ($currentMiningMode == $type) {
+            return true;
         }
 
         // switch the mining mode
@@ -1020,24 +1040,11 @@ class Client
                     self::QUERY_MINING   => $type,
                     self::QUERY_EMAIL    => $email,
                     self::QUERY_PASSWORD => $password,
-                    self::QUERY_JSON     => 'true',
                 )
             )
         );
 
-        // check whether the server responded with valid json, if not the password was incorrect
-        $response = json_decode(trim($this->response->getContent()), true);
-        if ($response === null) {
-            throw new \LogicException(
-                sprintf(
-                    '%1$s: Invalid password given for email address "%2$s"',
-                    __METHOD__,
-                    $email
-                )
-            );
-        }
-
-        // the API does not return a result with which we can determine whether the switch was successful or not...
+        // check whether the mining mode was successfully changed
         return ($this->getMiningMode($userId) == $type);
     }
 
@@ -1109,25 +1116,15 @@ class Client
                     self::QUERY_WALLET   => $wallet,
                     self::QUERY_EMAIL    => $email,
                     self::QUERY_PASSWORD => $password,
-                    self::QUERY_JSON     => 'true',
                 )
             )
         );
 
-        // check whether the server responded with valid json, if not the password was incorrect
-        $response = json_decode(trim($this->response->getContent()), true);
-        if ($response === null) {
-            throw new \LogicException(
-                sprintf(
-                    '%1$s: Invalid password given for email address "%2$s"',
-                    __METHOD__,
-                    $email
-                )
-            );
-        }
+        $result = trim($this->response->getContent());
 
-        // the API will accept any parameters you throw at it, so this will never fail
-        return true;
+        // unfortunately, the API accepts anything you throw at it, and there's
+        // no read-method to verify that the change was successful
+        return ($result == '');
     }
 
     /**
@@ -1201,22 +1198,9 @@ class Client
                     self::QUERY_WALLET          => $wallet,
                     self::QUERY_EMAIL           => $email,
                     self::QUERY_PASSWORD        => $password,
-                    self::QUERY_JSON            => 'true',
                 )
             )
         );
-
-        $result = json_decode(trim($this->response->getContent()), true);
-
-        if ($result === null) {
-            throw new \LogicException(
-                sprintf(
-                    '%1$s: Invalid password given for email address "%2$s"',
-                    __METHOD__,
-                    $email
-                )
-            );
-        }
 
         // unfortunately, the API does not return a result that indicates whether the withdraw was successful
         $newBalance = $this->getBalance($coinType, $userId, true);
@@ -1305,6 +1289,10 @@ class Client
             $coinType = self::EO_CLOUD_SCRYPT;
         }
 
+        if ($coinType == self::EO_CLOUD_FOLDING_CONTRACT) {
+            $coinType = self::EO_CLOUD_FOLDING;
+        }
+
         if ($cloudType == self::EO_CLOUD_SHA256_CONTRACT) {
             $cloudType = self::EO_CLOUD_SHA256;
         }
@@ -1312,6 +1300,13 @@ class Client
         if ($cloudType == self::EO_CLOUD_SCRYPT_CONTRACT) {
             $cloudType = self::EO_CLOUD_SCRYPT;
         }
+
+        if ($cloudType == self::EO_CLOUD_FOLDING_CONTRACT) {
+            $cloudType = self::EO_CLOUD_FOLDING;
+        }
+        
+        // get the current balance for the coin we're going to convert
+        $oldBalance = $this->getBalance($coinType, $userId, true);
 
         // purchase mining power
         $request        = $this->getRequest();
@@ -1326,25 +1321,12 @@ class Client
                     self::QUERY_CONVERT_TO   => $cloudType,
                     self::QUERY_EMAIL        => $email,
                     self::QUERY_PASSWORD     => $password,
-                    self::QUERY_JSON         => 'true',
                 )
             )
         );
 
-        $result = json_decode(trim($this->response->getContent()), true);
-
-        if ($result === null) {
-            throw new \LogicException(
-                sprintf(
-                    '%1$s: Invalid password given for email address "%2$s"',
-                    __METHOD__,
-                    $email
-                )
-            );
-        }
-
-        // if the conversion succeeded there will be a convert key in the response. Otherwise the response will be empty
-        return isset($result['convert']);
+        // check whether the balance has been successfully reduced
+        return ($this->getBalance($coinType, $userId, true) < $oldBalance);
     }
 
     /**
@@ -1516,7 +1498,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'Capirussa-Eobot/1.4.0 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'Capirussa-Eobot/1.4.1 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 

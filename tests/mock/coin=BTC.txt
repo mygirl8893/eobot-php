@@ -1,13 +1,14 @@
 HTTP/1.1 200 OK
 Cache-Control: no-cache, no-store
 Pragma: no-cache
+Content-Type: application/json; charset=utf-8
 Expires: -1
 Server: Microsoft-IIS/8.5
 x-frame-options: DENY
-X-AspNet-Version: 2.0.50727
 Set-Cookie: ASP.NET_SessionId=x02qrpvfobdxnj45xgn05t55; path=/; secure; HttpOnly
+X-AspNet-Version: 2.0.50727
 X-Powered-By: ASP.NET
-Date: Mon, 18 Aug 2014 18:11:16 GMT
-Content-Length: 0
+Date: Mon, 18 Aug 2014 18:07:49 GMT
+Content-Length: 12
 
-
+458.36000000
