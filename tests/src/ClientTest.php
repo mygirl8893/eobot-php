@@ -1117,14 +1117,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new MockEobotClient();
 
-        $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::EO_CLOUD_FOLDING_CONTRACT, null, null, 'foo');
+        $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::EO_CLOUD_SHA256, null, null, 'foo');
     }
 
     public function testConvertCoinToCloudWithInvalidCredentials()
     {
         $client = new MockEobotClient(1234);
 
-        $this->assertFalse($client->convertCoinToCloud(Client::COIN_BITCOIN, 0.00002, Client::EO_CLOUD_SHA256, 'test@example.com', 'incorrectPassword'));
+        $this->assertFalse($client->convertCoinToCloud(Client::COIN_BITCOIN, 0.00002, Client::EO_CLOUD_FOLDING_CONTRACT, 'test@example.com', 'incorrectPassword'));
     }
 
     public function testConvertCoinToCloudWithInsufficientFunds()
