@@ -1,9 +1,9 @@
 <?php
-require_once(dirname(__FILE__) . '/../../../init.php');
+require_once(dirname(__FILE__) . '/../init.php');
 
-use Capirussa\Eobot;
+use RickDenHaan\Eobot\Client;
 
-class MockEobotClient extends Eobot\Client
+class MockEobotClient extends Client
 {
     /**
      * Base URL for all calls

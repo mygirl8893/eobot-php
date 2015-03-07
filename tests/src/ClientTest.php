@@ -1,10 +1,10 @@
 <?php
-require_once(dirname(__FILE__) . '/../../init.php');
+require_once(dirname(__FILE__) . '/../init.php');
 
-use Capirussa\Eobot\Client;
+use RickDenHaan\Eobot\Client;
 
 /**
- * Tests Capirussa\Eobot\Client
+ * Tests RickDenHaan\Eobot\Client
  *
  */
 class ClientTest extends PHPUnit_Framework_TestCase

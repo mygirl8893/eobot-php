@@ -1,12 +1,12 @@
 <?php
-namespace Capirussa\Eobot;
+namespace RickDenHaan\Eobot;
 
 use Buzz\Browser;
 
 /**
  * Eobot Client is the class that communicates with the Eobot API
  *
- * @package Capirussa\Eobot
+ * @package RickDenHaan\Eobot
  */
 class Client
 {

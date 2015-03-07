@@ -1,5 +1,5 @@
 {
-    "name": "capirussa/eobot-php",
+    "name": "rickdenhaan/eobot-php",
     "type": "library",
     "description": "A PHP library for communicating with the Eobot cloud bitcoin mining service (https://www.eobot.com)",
     "keywords": ["php", "eobot", "bitcoin", "cloud", "miner"],
@@ -7,8 +7,8 @@
     "authors": [
         {
             "name": "Rick den Haan",
-            "email": "rick@capirussa.nl",
-            "homepage": "http://capirussa.nl",
+            "email": "rick.denhaan@gmail.com",
+            "homepage": "http://github.com/rickdenhaan",
             "role": "Developer"
         }
     ],
@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4" : {
-            "Capirussa\\Eobot\\" : "Capirussa/Eobot/"
+            "Capirussa\\Eobot\\" : "src/"
         }
     }
 }
