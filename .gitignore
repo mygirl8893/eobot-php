@@ -2,4 +2,4 @@
 composer.lock
 vendor
 demo.php
-/nbproject/private/
+nbproject
