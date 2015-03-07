@@ -2,7 +2,7 @@ Eobot PHP client
 ================
 
 [![Build Status](https://travis-ci.org/rickdenhaan/eobot-php.png?branch=master)](https://travis-ci.org/rickdenhaan/eobot-php)
-[![Coverage Status](https://coveralls.io/repos/rickdenhaan/eobot-php/badge.png?branch=master)](https://coveralls.io/r/rickdenhaan/eobot-php)
+[![Coverage Status](https://coveralls.io/repos/rickdenhaan/eobot-php/badge.svg?branch=master)](https://coveralls.io/r/rickdenhaan/eobot-php?branch=master)
 
 This simple PHP client communicates with the Eobot Cloud Bitcoin mining service to manage your mining. For more information about Eobot, see https://www.eobot.com
 
