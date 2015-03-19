@@ -289,6 +289,11 @@ class Client
     const QUERY_CONVERT_TO = 'convertto';
 
     /**
+     * Query parameter used to request the USD values for all supported coins
+     */
+    const QUERY_SUPPORTED_COINS = 'supportedcoins';
+
+    /**
      * The Eobot abbreviation for their 24-hour Cloud SHA-256 miner rental service
      */
     const RENTAL_SHA256 = 'GHSTEMP';
@@ -380,22 +385,24 @@ class Client
 
     /**
      * This method returns the current value of a type of cryptocurrency, according to popular exchanges. This method
-     * has two optional arguments:
+     * has three optional arguments:
      *
      * * The cryptocurrency to retrieve the value for, which defaults to Bitcoin
      * * The real-world currency to retrieve the value in, which defaults to US Dollars
+     * * Whether or not to force a fetch from the server (results are cached by default)
      *
      * <code>
      * $client = new Client();
      * $liteCoinValueInEuros = $client->getCoinValue(Client::COIN_LITECOIN, Client::CURRENCY_EUROS);
      * </code>
      *
-     * @param string $coin     (Optional) Defaults to Bitcoin
-     * @param string $currency (Optional) Defaults to US Dollars
+     * @param string $coin       (Optional) Defaults to Bitcoin
+     * @param string $currency   (Optional) Defaults to US Dollars
+     * @param bool   $forceFetch (Optional) Defaults to false, which returns the cached result from a previous fetch
      * @throws \InvalidArgumentException|\LogicException
      * @return float
      */
-    public function getCoinValue($coin = self::COIN_BITCOIN, $currency = self::CURRENCY_US_DOLLAR)
+    public function getCoinValue($coin = self::COIN_BITCOIN, $currency = self::CURRENCY_US_DOLLAR, $forceFetch = false)
     {
         if (!self::isValidCoin($coin) && !self::isValidEobotInternalType($coin) && !self::isValidRentalType($coin)) {
             throw new \InvalidArgumentException(
@@ -418,8 +425,49 @@ class Client
         }
 
         // check whether we have the coin value in USD cached
+        if (!isset($this->coinValues[$coin]) || $forceFetch) {
+            // retrieve USD values for all coins
+            $request        = $this->getRequest();
+            $this->response = $request->get(
+                sprintf(
+                    '%1$s?%2$s',
+                    $this->baseUrl,
+                    http_build_query(
+                        array(
+                            self::QUERY_SUPPORTED_COINS => 'true',
+                        )
+                    )
+                ),
+                $this->getRequestHeaders()
+            );
+
+            $coinValuesInUsd = trim($this->response->getContent());
+
+            $coinValues = explode(';', $coinValuesInUsd);
+
+            foreach ($coinValues as $coinValue) {
+                $properties = explode(',', $coinValue);
+
+                $thisCoin = $properties[0];
+
+                if (self::isValidCoin($thisCoin)) {
+                    $price = null;
+
+                    foreach ($properties as $property) {
+                        if (strpos($property, 'Price:') !== false) {
+                            $price = floatval(str_replace('Price:', '', $property));
+                        }
+                    }
+
+                    if ($price !== null) {
+                        $this->coinValues[$thisCoin] = $price;
+                    }
+                }
+            }
+        }
+
+        // if the coin was not found in the all-coins results, fetch the individual coin
         if (!isset($this->coinValues[$coin])) {
-            // retrieve the coin's value in USD
             $request        = $this->getRequest();
             $this->response = $request->get(
                 sprintf(
@@ -528,11 +576,12 @@ class Client
     }
 
     /**
-     * This method retrieves the current balance of a specific type for the current or given user. This method has two
+     * This method retrieves the current balance of a specific type for the current or given user. This method has three
      * optional arguments:
      *
      * * The type of balance to fetch, which can be a coin type, Eobot type or currency type. Defaults to null, which fetches everything
      * * The Eobot user id to fetch the balances for, which is optional if it was passed to the constructor
+     * * Whether or not to force a fetch from the server (results are cached by default)
      *
      * <code>
      * $client = new Client(1234);
@@ -1498,7 +1547,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'Capirussa-Eobot/1.4.1 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.4.2 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 

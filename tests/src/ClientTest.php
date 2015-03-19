@@ -554,7 +554,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $this->assertNull($client->getLastResponse());
 
-        $coinValue = $client->getCoinValue();
+        $coinValue = $client->getCoinValue(Client::EO_CLOUD_SHA256);
 
         $response = $client->getLastResponse();
         $this->assertNotNull($response);
