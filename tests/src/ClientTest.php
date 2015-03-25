@@ -118,7 +118,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_REDDCOIN     => 0.091551,
             Client::COIN_MAIDSAFECOIN => 0.00803005,
             Client::COIN_STORJCOIN_X  => 0.02068154,
-            Client::COIN_GEMS         => 0.01547432,
+            Client::COIN_MONERO       => 0.72296727,
             Client::COIN_COUNTERPARTY => 1.97691607,
             Client::COIN_STELLAR      => 0.00478602,
             Client::COIN_PAYCOIN      => 3.92070116,
@@ -260,7 +260,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.02830923, $balances[Client::COIN_REDDCOIN]);
         $this->assertEquals(0.02748126, $balances[Client::COIN_MAIDSAFECOIN]);
         $this->assertEquals(0.02639744, $balances[Client::COIN_STORJCOIN_X]);
-        $this->assertEquals(0.03641862, $balances[Client::COIN_GEMS]);
+        $this->assertEquals(0.03641862, $balances[Client::COIN_MONERO]);
         $this->assertEquals(0.00636984, $balances[Client::COIN_COUNTERPARTY]);
         $this->assertEquals(0.06467642, $balances[Client::COIN_STELLAR]);
         $this->assertEquals(0.00004271, $balances[Client::COIN_PAYCOIN]);
@@ -415,7 +415,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::COIN_STORJCOIN_X);
         $this->assertEquals(0.02639744, $balance);
 
-        $balance = $client->getBalance(Client::COIN_GEMS);
+        $balance = $client->getBalance(Client::COIN_MONERO);
         $this->assertEquals(0.03641862, $balance);
 
         $balance = $client->getBalance(Client::COIN_COUNTERPARTY);
@@ -648,7 +648,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $address = $client->getDepositAddress(Client::COIN_STORJCOIN_X);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
-        $address = $client->getDepositAddress(Client::COIN_GEMS);
+        $address = $client->getDepositAddress(Client::COIN_MONERO);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
         $address = $client->getDepositAddress(Client::COIN_COUNTERPARTY);

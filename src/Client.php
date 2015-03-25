@@ -66,9 +66,9 @@ class Client
     const COIN_STORJCOIN_X = 'SJCX';
 
     /**
-     * The coin abbreviation for Gems
+     * The coin abbreviation for Monero
      */
-    const COIN_GEMS = 'GEMZ';
+    const COIN_MONERO = 'XMR';
 
     /**
      * The coin abbreviation for Counterparty
@@ -1547,7 +1547,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.4.2 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.4.3 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 

@@ -14,7 +14,8 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "kriswallsmith/buzz": "0.*"
+        "kriswallsmith/buzz": "0.*",
+        "phpunit/phpunit": "4.*"
     },
     "replaces": {
         "capirussa/eobot-php": "*"
