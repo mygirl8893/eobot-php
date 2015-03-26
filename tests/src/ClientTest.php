@@ -97,7 +97,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new MockEobotClient();
 
-        $client->getCoinValue(Client::COIN_DARKCOIN);
+        $client->getCoinValue(Client::COIN_DASH);
     }
 
     public function testGetCoinValueWithValidCoins()
@@ -310,7 +310,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new MockEobotClient(1234);
 
-        $client->getBalance(Client::COIN_DARKCOIN);
+        $client->getBalance(Client::COIN_DASH);
     }
 
     public function testGetBalanceTotalInCurrency()
@@ -618,7 +618,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $address = $client->getDepositAddress(Client::COIN_CURECOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
-        $address = $client->getDepositAddress(Client::COIN_DARKCOIN);
+        $address = $client->getDepositAddress(Client::COIN_DASH);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
         $address = $client->getDepositAddress(Client::COIN_DOGECOIN);
@@ -760,7 +760,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new MockEobotClient(1234);
 
-        $this->assertFalse($client->setMiningMode(Client::COIN_DARKCOIN, 'test@example.com', 'incorrectPassword'));
+        $this->assertFalse($client->setMiningMode(Client::COIN_DASH, 'test@example.com', 'incorrectPassword'));
     }
 
     public function testSetMiningModeContract()
@@ -1084,7 +1084,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new MockEobotClient();
 
-        $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::COIN_DARKCOIN, null, null);
+        $client->convertCoinToCloud(Client::COIN_BITCOIN, 1, Client::COIN_DASH, null, null);
     }
 
     /**

@@ -41,9 +41,9 @@ class Client
     const COIN_RIPPLE = 'XRP';
 
     /**
-     * The coin abbreviation for Darkcoin
+     * The coin abbreviation for Dash
      */
-    const COIN_DARKCOIN = 'DRK';
+    const COIN_DASH = 'DASH';
 
     /**
      * The coin abbreviation for Reddcoin
@@ -1547,7 +1547,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.4.3 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.4.4 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
