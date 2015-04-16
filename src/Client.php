@@ -81,11 +81,6 @@ class Client
     const COIN_STELLAR = 'STR';
 
     /**
-     * The coin abbreviation for Paycoin
-     */
-    const COIN_PAYCOIN = 'XPY';
-
-    /**
      * The coin abbreviation for Peercoin
      */
     const COIN_PEERCOIN = 'PPC';
@@ -1547,7 +1542,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.4.4 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.4.5 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
