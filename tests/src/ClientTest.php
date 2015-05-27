@@ -108,6 +108,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_BITCOIN      => 458.36,
             Client::COIN_BITSHARESX   => 0.04157706,
             Client::COIN_BLACKCOIN    => 0.040105,
+            Client::COIN_BYTECOIN => 0.01537264,
             Client::COIN_CURECOIN     => 0.033222,
             Client::COIN_DOGECOIN     => 0.000106,
             Client::COIN_LITECOIN     => 3.62,
@@ -207,13 +208,16 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::CURRENCY_HONG_KONG_DOLLAR      => 7.75452,
             Client::CURRENCY_INDIAN_RUPEE          => 60.88,
             Client::CURRENCY_INDONESIAN_RUPIAH     => 11689.78,
+            Client::CURRENCY_ISRAELI_SHEKEL    => 3.8759,
             Client::CURRENCY_JAPANESE_YEN          => 102.563,
             Client::CURRENCY_MEXICAN_PESO          => 13.0479,
+            Client::CURRENCY_MALAYSIAN_RINGGIT => 3.6471,
             Client::CURRENCY_NORWEGIAN_KRONE       => 6.15738,
             Client::CURRENCY_POLISH_ZLOTY          => 3.13386,
             Client::CURRENCY_ROMANIAN_NEW_LEU      => 3.41312,
             Client::CURRENCY_RUSSIAN_RUBLE         => 36.0362,
             Client::CURRENCY_SERBIAN_DINAR         => 85.2002,
+            Client::CURRENCY_SWISS_FRANC       => 0.94965,
             Client::CURRENCY_UKRAINIAN_HRYVNIA     => 15.515,
             Client::CURRENCY_US_DOLLAR             => 1.0,
         );
@@ -243,12 +247,13 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balances = $client->getBalance();
 
         $this->assertInternalType('array', $balances);
-        $this->assertCount(20, $balances);
+        $this->assertCount(21, $balances);
 
         $this->assertEquals(0.32751004, $balances['Total']);
         $this->assertEquals(0.00040978, $balances[Client::COIN_BITCOIN]);
         $this->assertEquals(0.0141392, $balances[Client::COIN_BITSHARESX]);
         $this->assertEquals(0.08188563, $balances[Client::COIN_BLACKCOIN]);
+        $this->assertEquals(0.01537264, $balances[Client::COIN_BYTECOIN]);
         $this->assertEquals(0.05292104, $balances[Client::COIN_CURECOIN]);
         $this->assertEquals(23.78557417, $balances[Client::COIN_DOGECOIN]);
         $this->assertEquals(0.03013698, $balances[Client::COIN_LITECOIN]);
@@ -339,11 +344,17 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::CURRENCY_INDONESIAN_RUPIAH);
         $this->assertEquals(3828.5203153912, $balance);
 
+        $balance = $client->getBalance(Client::CURRENCY_ISRAELI_SHEKEL);
+        $this->assertEquals(1.269396164, $balance);
+
         $balance = $client->getBalance(Client::CURRENCY_INDIAN_RUPEE);
         $this->assertEquals(19.9388112352, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_JAPANESE_YEN);
         $this->assertEquals(33.59041223252, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_MALAYSIAN_RINGGIT);
+        $this->assertEquals(1.1944618669, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_MEXICAN_PESO);
         $this->assertEquals(4.273318250916, $balance);
@@ -362,6 +373,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::CURRENCY_SERBIAN_DINAR);
         $this->assertEquals(27.90392091, $balance);
+
+        $balance = $client->getBalance(Client::CURRENCY_SWISS_FRANC);
+        $this->assertEquals(0.3110199095, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_UKRAINIAN_HRYVNIA);
         $this->assertEquals(5.0813182706, $balance);
@@ -382,6 +396,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::COIN_BLACKCOIN);
         $this->assertEquals(0.08188563, $balance);
+
+        $balance = $client->getBalance(Client::COIN_BYTECOIN);
+        $this->assertEquals(0.01537264, $balance);
 
         $balance = $client->getBalance(Client::COIN_CURECOIN);
         $this->assertEquals(0.05292104, $balance);
@@ -608,6 +625,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEmpty($address);
 
         $address = $client->getDepositAddress(Client::COIN_BLACKCOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_BYTECOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
         $address = $client->getDepositAddress(Client::COIN_CURECOIN);

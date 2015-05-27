@@ -81,6 +81,11 @@ class Client
     const COIN_STELLAR = 'STR';
 
     /**
+     * The coin abbreviation for Bytecoin
+     */
+    const COIN_BYTECOIN = 'BCN';
+
+    /**
      * The coin abbreviation for Peercoin
      */
     const COIN_PEERCOIN = 'PPC';
@@ -207,6 +212,21 @@ class Client
      * The currency abbreviation for Serbian Dinar
      */
     const CURRENCY_SERBIAN_DINAR = 'RSD';
+
+    /**
+     * The currency abbreviation for Malaysian Ringgit
+     */
+    const CURRENCY_MALAYSIAN_RINGGIT = 'MYR';
+
+    /**
+     * The currency abbreviation for Israeli Shekel
+     */
+    const CURRENCY_ISRAELI_SHEKEL = 'ILS';
+
+    /**
+     * The currency abbreviation for Swiss Franc
+     */
+    const CURRENCY_SWISS_FRANC = 'CHF';
 
     /**
      * Query parameter used to request a coin value or currency exchange rate
@@ -1542,7 +1562,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.4.5 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.4.6 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
