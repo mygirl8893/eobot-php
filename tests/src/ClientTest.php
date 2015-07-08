@@ -124,14 +124,10 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_MONERO       => 0.72296727,
             Client::COIN_COUNTERPARTY => 1.97691607,
             Client::COIN_STELLAR      => 0.00478602,
-
             Client::EO_CLOUD_FOLDING  => 0.05,
-            Client::EO_CLOUD_SCRYPT   => 0.07,
             Client::EO_CLOUD_SHA256   => 1.79,
             Client::EO_CLOUD_SHA256_2 => 0.84,
-
             Client::RENTAL_FOLDING    => 0.00013699,
-            Client::RENTAL_SCRYPT     => 0.00000734,
             Client::RENTAL_SHA256     => 0.00047738,
         );
 
@@ -250,7 +246,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balances = $client->getBalance();
 
         $this->assertInternalType('array', $balances);
-        $this->assertCount(22, $balances);
+        $this->assertCount(21, $balances);
 
         $this->assertEquals(0.32751004, $balances['Total']);
         $this->assertEquals(0.00040978, $balances[Client::COIN_BITCOIN]);
@@ -271,7 +267,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.00636984, $balances[Client::COIN_COUNTERPARTY]);
         $this->assertEquals(0.06467642, $balances[Client::COIN_STELLAR]);
         $this->assertEquals(2.16726154, $balances[Client::EO_CLOUD_FOLDING]);
-        $this->assertEquals(0.01115809, $balances[Client::EO_CLOUD_SCRYPT]);
         $this->assertEquals(20.00019989, $balances[Client::EO_CLOUD_SHA256]);
         $this->assertEquals(15.42138465, $balances[Client::EO_CLOUD_SHA256_2]);
     }
@@ -446,9 +441,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::EO_CLOUD_FOLDING);
         $this->assertEquals(2.16726154, $balance);
 
-        $balance = $client->getBalance(Client::EO_CLOUD_SCRYPT);
-        $this->assertEquals(0.01115809, $balance);
-
         $balance = $client->getBalance(Client::EO_CLOUD_SHA256);
         $this->assertEquals(20.00019989, $balance);
 
@@ -457,9 +449,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::EO_CLOUD_FOLDING_CONTRACT);
         $this->assertEquals(2.16726154, $balance);
-
-        $balance = $client->getBalance(Client::EO_CLOUD_SCRYPT_CONTRACT);
-        $this->assertEquals(0.01115809, $balance);
 
         $balance = $client->getBalance(Client::EO_CLOUD_SHA256_CONTRACT);
         $this->assertEquals(20.00019989, $balance);
@@ -510,9 +499,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $miningMode = $client->getMiningMode(3456);
         $this->assertEquals(Client::EO_CLOUD_SHA256, $miningMode);
-
-        $miningMode = $client->getMiningMode(4567);
-        $this->assertEquals(Client::EO_CLOUD_SCRYPT, $miningMode);
 
         $miningMode = $client->getMiningMode(8901);
         $this->assertEquals(Client::EO_CLOUD_FOLDING, $miningMode);
@@ -796,8 +782,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
             'correctPassword', 3456));
         $this->assertTrue($client->setMiningMode(Client::EO_CLOUD_SHA256_2_CONTRACT, 'test@example.com',
             'correctPassword', 9012));
-        $this->assertTrue($client->setMiningMode(Client::EO_CLOUD_SCRYPT_CONTRACT, 'test@example.com',
-            'correctPassword', 4567));
         $this->assertTrue($client->setMiningMode(Client::EO_CLOUD_FOLDING_CONTRACT, 'test@example.com',
             'correctPassword', 8901));
     }
@@ -1182,11 +1166,10 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new MockEobotClient(1234);
 
-        $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_SHA256_2_CONTRACT, 0.00002, Client::RENTAL_SHA256,
+        $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_SHA256_2_CONTRACT, 0.00002,
+            Client::RENTAL_SHA256,
             'test@example.com', 'correctPassword'));
-        $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_SHA256_CONTRACT, 0.00002, Client::RENTAL_SCRYPT,
-            'test@example.com', 'correctPassword'));
-        $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_SCRYPT_CONTRACT, 0.00002, Client::RENTAL_SHA256,
+        $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_SHA256_CONTRACT, 0.00002, Client::RENTAL_SHA256,
             'test@example.com', 'correctPassword'));
         $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_FOLDING_CONTRACT, 0.00002,
             Client::RENTAL_FOLDING, 'test@example.com', 'correctPassword'));
@@ -1198,7 +1181,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         // Unfortunately, the Eobot API does not currently respond in a way that can be used to determine whether the
         // change was successful, so the Client always assumes it worked
-        $this->assertTrue($client->convertCoinToCloud(Client::COIN_BITCOIN, 0.002, Client::EO_CLOUD_SCRYPT_CONTRACT,
+        $this->assertTrue($client->convertCoinToCloud(Client::COIN_BITCOIN, 0.002, Client::EO_CLOUD_SHA256_CONTRACT,
             'test@example.com', 'correctPassword'));
     }
 }

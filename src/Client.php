@@ -113,12 +113,6 @@ class Client
     const EO_CLOUD_SHA256_2_CONTRACT = 'GHS2CONTRACT';
 
     /**
-     * The Eobot abbreviation for their Cloud Scrypt miners
-     */
-    const EO_CLOUD_SCRYPT          = 'SCRYPT';
-    const EO_CLOUD_SCRYPT_CONTRACT = 'SCRYPTCONTRACT';
-
-    /**
      * The Eobot abbreviation for their Cloud Folding service
      */
     const EO_CLOUD_FOLDING          = 'PPD';
@@ -318,11 +312,6 @@ class Client
      * The Eobot abbreviation for their 24-hour Cloud SHA-256 miner rental service
      */
     const RENTAL_SHA256 = 'GHSTEMP';
-
-    /**
-     * The Eobot abbreviation for their 24-hour Cloud Scrypt miner rental service
-     */
-    const RENTAL_SCRYPT = 'SCRYPTTEMP';
 
     /**
      * The Eobot abbreviation for their 24-hour Cloud Folding rental service
@@ -695,10 +684,6 @@ class Client
                     $balance[0] = self::EO_CLOUD_SHA256_2;
                 }
 
-                if (trim($balance[0]) == self::EO_CLOUD_SCRYPT_CONTRACT) {
-                    $balance[0] = self::EO_CLOUD_SCRYPT;
-                }
-
                 if (trim($balance[0]) == self::EO_CLOUD_FOLDING_CONTRACT) {
                     $balance[0] = self::EO_CLOUD_FOLDING;
                 }
@@ -723,10 +708,6 @@ class Client
 
             if ($type == self::EO_CLOUD_SHA256_2_CONTRACT) {
                 $type = self::EO_CLOUD_SHA256_2;
-            }
-
-            if ($type == self::EO_CLOUD_SCRYPT_CONTRACT) {
-                $type = self::EO_CLOUD_SCRYPT;
             }
 
             if ($type == self::EO_CLOUD_FOLDING_CONTRACT) {
@@ -812,10 +793,6 @@ class Client
 
         if ($retValue == self::EO_CLOUD_SHA256_2_CONTRACT) {
             $retValue = self::EO_CLOUD_SHA256_2;
-        }
-
-        if ($retValue == self::EO_CLOUD_SCRYPT_CONTRACT) {
-            $retValue = self::EO_CLOUD_SCRYPT;
         }
 
         if ($retValue == self::EO_CLOUD_FOLDING_CONTRACT) {
@@ -1099,10 +1076,6 @@ class Client
             $type = self::EO_CLOUD_SHA256_2;
         }
 
-        if ($type == self::EO_CLOUD_SCRYPT_CONTRACT) {
-            $type = self::EO_CLOUD_SCRYPT;
-        }
-
         if ($type == self::EO_CLOUD_FOLDING_CONTRACT) {
             $type = self::EO_CLOUD_FOLDING;
         }
@@ -1375,10 +1348,6 @@ class Client
             $coinType = self::EO_CLOUD_SHA256_2;
         }
 
-        if ($coinType == self::EO_CLOUD_SCRYPT_CONTRACT) {
-            $coinType = self::EO_CLOUD_SCRYPT;
-        }
-
         if ($coinType == self::EO_CLOUD_FOLDING_CONTRACT) {
             $coinType = self::EO_CLOUD_FOLDING;
         }
@@ -1389,10 +1358,6 @@ class Client
 
         if ($cloudType == self::EO_CLOUD_SHA256_2_CONTRACT) {
             $cloudType = self::EO_CLOUD_SHA256_2;
-        }
-
-        if ($cloudType == self::EO_CLOUD_SCRYPT_CONTRACT) {
-            $cloudType = self::EO_CLOUD_SCRYPT;
         }
 
         if ($cloudType == self::EO_CLOUD_FOLDING_CONTRACT) {
@@ -1592,7 +1557,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.4.7 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.5.0 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
