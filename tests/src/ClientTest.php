@@ -71,6 +71,45 @@ class ClientTest extends PHPUnit_Framework_TestCase
                                    ->getVerifyPeer());
     }
 
+    public function testSetTimeout()
+    {
+        $client = new Client();
+
+        $this->assertEquals(30, $this->getObjectAttribute($client, 'timeout'));
+
+        $client->setTimeout(10);
+
+        $this->assertEquals(10, $this->getObjectAttribute($client, 'timeout'));
+    }
+
+    public function testSetTimeoutToRequestPassthrough()
+    {
+        $client = new Client();
+
+        $this->assertEquals(30, $this->getObjectAttribute($client, 'timeout'));
+
+        // getting the request is done through a protected function, we have to call that through reflection
+        $reflectionClient = new ReflectionObject($client);
+        $reflectionMethod = $reflectionClient->getMethod('getRequest');
+        $reflectionMethod->setAccessible(true);
+
+        $request = $reflectionMethod->invoke($client);
+
+        /* @type $request \Buzz\Browser */
+
+        $this->assertEquals(30, $request->getClient()
+                                        ->getTimeout());
+
+        $client->setTimeout(10);
+
+        $this->assertEquals(10, $this->getObjectAttribute($client, 'timeout'));
+
+        $request = $reflectionMethod->invoke($client);
+
+        $this->assertEquals(10, $request->getClient()
+                                        ->getTimeout());
+    }
+
     public function testGetCoinValueWithoutParameters()
     {
         $client = new MockEobotClient();

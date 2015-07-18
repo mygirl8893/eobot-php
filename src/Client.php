@@ -2,6 +2,7 @@
 namespace RickDenHaan\Eobot;
 
 use Buzz\Browser;
+use Buzz\Client\Curl;
 
 /**
  * Eobot Client is the class that communicates with the Eobot API
@@ -353,6 +354,13 @@ class Client
      * @type bool
      */
     private $validateSsl = true;
+
+    /**
+     * The timeout to use when connecting to Eobot (in seconds).
+     *
+     * @type int
+     */
+    private $timeout = 30;
 
     /**
      * This property contains the base URL for all API requests.
@@ -1525,6 +1533,22 @@ class Client
     }
 
     /**
+     * This methods can be used to configure the connection timeout. Provide an integer in seconds.
+     *
+     * <code>
+     * $client = new Client();
+     * $client->setTimeout(10);
+     * </code>
+     *
+     * @param int $timeout
+     * @return void
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = (int)$timeout;
+    }
+
+    /**
      * This method is used internally to retrieve a Browser object.
      *
      * <code>
@@ -1538,8 +1562,9 @@ class Client
      */
     protected function getRequest()
     {
-        $retValue = new Browser();
-        $retValue->getClient()->setTimeout(30);
+        $retValue = new Browser(new Curl());
+        $retValue->getClient()
+                 ->setTimeout($this->timeout);
         $retValue->getClient()->setVerifyPeer($this->validateSsl);
 
         return $retValue;
@@ -1557,7 +1582,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.5.0 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.5.1 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
