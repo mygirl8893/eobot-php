@@ -591,11 +591,86 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $speeds = $client->getSpeed();
 
         $this->assertInternalType('array', $speeds);
-        $this->assertCount(4, $speeds);
+        $this->assertCount(5, $speeds);
         $this->assertEquals(0.0, $speeds['MiningSHA-256']);
         $this->assertEquals(0.0, $speeds['MiningScrypt']);
         $this->assertEquals(20.0001998933406, $speeds['CloudSHA-256']);
+        $this->assertEquals(10.5013062743518, $speeds['Cloud2SHA-256']);
         $this->assertEquals(0.0111580929310733, $speeds['CloudScrypt']);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage no user ID is known
+     */
+    public function testGetEstimatesWithoutParameters()
+    {
+        $client = new MockEobotClient();
+
+        $client->getEstimates();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid currency given
+     */
+    public function testGetEstimatesWithInvalidCurrency()
+    {
+        $client = new MockEobotClient();
+
+        $client->getEstimates('foo');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage must be numeric
+     */
+    public function testGetEstimatesWithInvalidUserId()
+    {
+        $client = new MockEobotClient();
+
+        $client->getEstimates(Client::CURRENCY_US_DOLLAR, 'foo');
+    }
+
+    /**
+     * @expectedException LogicException
+     * @expectedExceptionMessage Invalid API response
+     */
+    public function testGetEstimatesWithInvalidApiResponse()
+    {
+        $client = new MockEobotClient(2345);
+
+        $client->getEstimates();
+    }
+
+    public function testGetEstimates()
+    {
+        $client = new MockEobotClient(1234);
+
+        $estimates = $client->getEstimates();
+
+        $this->assertInternalType('array', $estimates);
+        $this->assertCount(5, $estimates);
+        $this->assertEquals(0.0, $estimates['MiningSHA-256']);
+        $this->assertEquals(0.0, $estimates['MiningScrypt']);
+        $this->assertEquals(3.36369763, $estimates['CloudSHA-256']);
+        $this->assertEquals(8.40883507, $estimates['Cloud2SHA-256']);
+        $this->assertEquals(1.0111580929310733, $estimates['CloudScrypt']);
+    }
+
+    public function testGetEstimatesInCurrency()
+    {
+        $client = new MockEobotClient(1234);
+
+        $estimates = $client->getEstimates(Client::CURRENCY_EURO);
+
+        $this->assertInternalType('array', $estimates);
+        $this->assertCount(5, $estimates);
+        $this->assertEquals(0.0, $estimates['MiningSHA-256']);
+        $this->assertEquals(0.0, $estimates['MiningScrypt']);
+        $this->assertEquals(2.51733075973, $estimates['CloudSHA-256']);
+        $this->assertEquals(6.29302080736, $estimates['Cloud2SHA-256']);
+        $this->assertEquals(0.7567325159, $estimates['CloudScrypt']);
     }
 
     public function testGetLastResponse()

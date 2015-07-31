@@ -9,6 +9,6 @@ Set-Cookie: ASP.NET_SessionId=es52qt3rqytqic45ttkimo45; path=/; secure; HttpOnly
 X-AspNet-Version: 2.0.50727
 X-Powered-By: ASP.NET
 Date: Mon, 18 Aug 2014 19:44:02 GMT
-Content-Length: 110
+Content-Length: 141
 
-MiningSHA-256:0.00000000;MiningScrypt:0.00000000;CloudSHA-256:20.0001998933406;CloudScrypt:0.0111580929310733;
+MiningSHA-256:0.00000000;MiningScrypt:0.00000000;CloudSHA-256:20.0001998933406;Cloud2SHA-256:10.5013062743518;CloudScrypt:0.0111580929310733;

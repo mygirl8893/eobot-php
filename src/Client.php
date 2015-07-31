@@ -250,6 +250,11 @@ class Client
     const QUERY_IDSPEED = 'idspeed';
 
     /**
+     * Query parameter used to check what the user's current mining income is
+     */
+    const QUERY_IDESTIMATES = 'idestimates';
+
+    /**
      * Query parameter used to identify a user when changing a setting
      */
     const QUERY_ID = 'id';
@@ -823,9 +828,10 @@ class Client
     /**
      * This method returns the current mining and cloud speeds. It expects one optional parameter, which is the Eobot
      * user identifier. If the user identifier was not passed into the constructor, it is required here. This method
-     * returns an array with four values: the current mining speed for SHA-256 mining (in GHS), the current mining
-     * speed for Scrypt mining (in KHS), the current Eobot cloud mining speed for SHA-256 mining (in GHS) and the
-     * current Eobot cloud mining speed for Scrypt mining (in KHS).
+     * returns an array with five values: the current mining speed for SHA-256 mining (in GHS), the current mining
+     * speed for Scrypt mining (in KHS), the current Eobot cloud mining speed for SHA-256 mining (in GHS), the current
+     * Eobot cloud mining speed for SHA-256 v2 mining (in GHS) and the current Eobot cloud mining speed for Scrypt
+     * mining (in KHS).
      *
      * @param int $userId (Optional) Defaults to null
      * @throws \InvalidArgumentException|\LogicException
@@ -859,10 +865,11 @@ class Client
             'MiningSHA-256' => 0.0,
             'MiningScrypt'  => 0.0,
             'CloudSHA-256'  => 0.0,
+            'Cloud2SHA-256' => 0.0,
             'CloudScrypt'   => 0.0,
         );
 
-        // retrieve the type currently being mined by the given user
+        // retrieve the current mining speeds for the given user
         $request        = $this->getRequest();
         $this->response = $request->get(
             sprintf(
@@ -898,6 +905,108 @@ class Client
             $speed = explode(':', trim($speed));
 
             $retValue[trim($speed[0])] = floatval(trim($speed[1]));
+        }
+
+        return $retValue;
+    }
+
+    /**
+     * This method returns the current mining and cloud estimates. It expects two optional parameters, which are the
+     * currency to return the results in and the Eobot user identifier. If the user identifier was not passed into the
+     * constructor, it is required here. This method returns an array with five values: the estimated monthly income
+     * for SHA-256 mining, Scrypt mining, Eobot cloud SHA-256 mining, Eobot cloud SHA-256 v2 mining and for Eobot cloud
+     * Scrypt mining.
+     *
+     * @param string $currency (Optional) Defaults to US Dollars
+     * @param int    $userId   (Optional) Defaults to null
+     * @throws \InvalidArgumentException|\LogicException
+     * @return array
+     */
+    public function getEstimates($currency = self::CURRENCY_US_DOLLAR, $userId = null)
+    {
+        if (!$this->isValidCurrency($currency)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid currency given',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($this->userId === null && $userId === null) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: No user ID given, and no user ID is known from the constructor',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($userId !== null && preg_match('/[^0-9]/', $userId)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%1$s: Invalid user ID provided, must be numeric',
+                    __METHOD__
+                )
+            );
+        }
+
+        if ($userId === null) {
+            $userId = $this->userId;
+        }
+
+        $retValue = array(
+            'MiningSHA-256' => 0.0,
+            'MiningScrypt'  => 0.0,
+            'CloudSHA-256'  => 0.0,
+            'Cloud2SHA-256' => 0.0,
+            'CloudScrypt'   => 0.0,
+        );
+
+        // retrieve the estimates for the given user
+        $request        = $this->getRequest();
+        $this->response = $request->get(
+            sprintf(
+                '%1$s?%2$s',
+                $this->baseUrl,
+                http_build_query(
+                    array(
+                        self::QUERY_IDESTIMATES => $userId,
+                    )
+                )
+            ),
+            $this->getRequestHeaders()
+        );
+
+        $estimates = trim($this->response->getContent());
+
+        if (!strstr($estimates, ';') || !strstr($estimates, ':')) {
+            throw new \LogicException(
+                sprintf(
+                    '%1$s: Invalid API response received, given response does not contain mining estimates: %2$s',
+                    __METHOD__,
+                    $estimates
+                )
+            );
+        }
+
+        $estimates = explode(';', $estimates);
+        foreach ($estimates as $estimate) {
+            if (trim($estimate) == '') {
+                continue;
+            }
+
+            $estimate = explode(':', trim($estimate));
+
+            $retValue[trim($estimate[0])] = floatval(trim($estimate[1]));
+        }
+
+        if ($currency != self::CURRENCY_US_DOLLAR) {
+            $exchangeRate = $this->getExchangeRate($currency);
+
+            foreach ($retValue as $estimate => $value) {
+                $retValue[$estimate] = $value * $exchangeRate;
+            }
         }
 
         return $retValue;
@@ -1075,7 +1184,7 @@ class Client
         if ($userId === null) {
             $userId = $this->userId;
         }
-        
+
         if ($type == self::EO_CLOUD_SHA256_CONTRACT) {
             $type = self::EO_CLOUD_SHA256;
         }
@@ -1087,10 +1196,10 @@ class Client
         if ($type == self::EO_CLOUD_FOLDING_CONTRACT) {
             $type = self::EO_CLOUD_FOLDING;
         }
-        
+
         // get the current mining mode
         $currentMiningMode = $this->getMiningMode($userId);
-        
+
         // check whether we're trying to set the same mining mode
         if ($currentMiningMode == $type) {
             return true;
@@ -1582,7 +1691,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.5.1 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.5.2 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
