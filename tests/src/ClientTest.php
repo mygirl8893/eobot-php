@@ -152,6 +152,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_BYTECOIN     => 0.01537264,
             Client::COIN_CURECOIN     => 0.033222,
             Client::COIN_DOGECOIN     => 0.000106,
+            Client::COIN_ETHERIUM => 0.8333462,
             Client::COIN_LITECOIN     => 3.62,
             Client::COIN_NAMECOIN     => 0.874518,
             Client::COIN_RIPPLE       => 0.084194,
@@ -285,7 +286,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balances = $client->getBalance();
 
         $this->assertInternalType('array', $balances);
-        $this->assertCount(21, $balances);
+        $this->assertCount(22, $balances);
 
         $this->assertEquals(0.32751004, $balances['Total']);
         $this->assertEquals(0.00040978, $balances[Client::COIN_BITCOIN]);
@@ -294,6 +295,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.01537264, $balances[Client::COIN_BYTECOIN]);
         $this->assertEquals(0.05292104, $balances[Client::COIN_CURECOIN]);
         $this->assertEquals(23.78557417, $balances[Client::COIN_DOGECOIN]);
+        $this->assertEquals(15.2361832, $balances[Client::COIN_ETHERIUM]);
         $this->assertEquals(0.03013698, $balances[Client::COIN_LITECOIN]);
         $this->assertEquals(0.00188207, $balances[Client::COIN_NAMECOIN]);
         $this->assertEquals(0.03115914, $balances[Client::COIN_RIPPLE]);
@@ -443,6 +445,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::COIN_DOGECOIN);
         $this->assertEquals(23.78557417, $balance);
+
+        $balance = $client->getBalance(Client::COIN_ETHERIUM);
+        $this->assertEquals(15.2361832, $balance);
 
         $balance = $client->getBalance(Client::COIN_LITECOIN);
         $this->assertEquals(0.03013698, $balance);
@@ -750,6 +755,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
         $address = $client->getDepositAddress(Client::COIN_DOGECOIN);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_ETHERIUM);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
         $address = $client->getDepositAddress(Client::COIN_LITECOIN);

@@ -102,6 +102,11 @@ class Client
     const COIN_MAIDSAFECOIN = 'MAID';
 
     /**
+     * The coin abbreviation for Etherium
+     */
+    const COIN_ETHERIUM = 'ETH';
+
+    /**
      * The Eobot abbreviation for their Cloud SHA-256 miners
      */
     const EO_CLOUD_SHA256          = 'GHS';
@@ -1691,7 +1696,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.5.2 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.5.3 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
