@@ -13,11 +13,11 @@ php:
 before_script:
   - composer self-update
   - composer install
-  - composer require satooshi/php-coveralls:dev-master
 
 script:
   - mkdir -p build/logs
-  - phpunit --colors --coverage-clover build/logs/clover.xml ./tests
+  - php vendor/bin/phpunit --colors=always --coverage-clover build/logs/clover.xml ./tests
 
 after_script:
+  - composer require satooshi/php-coveralls:dev-master
   - php vendor/bin/coveralls -v
