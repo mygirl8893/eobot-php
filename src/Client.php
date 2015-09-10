@@ -52,9 +52,9 @@ class Client
     const COIN_REDDCOIN = 'RDD';
 
     /**
-     * The coin abbreviation for BitSharesX
+     * The coin abbreviation for BitShares
      */
-    const COIN_BITSHARESX = 'BTS';
+    const COIN_BITSHARES = 'BTS';
 
     /**
      * The coin abbreviation for CureCoin
@@ -105,6 +105,11 @@ class Client
      * The coin abbreviation for Etherium
      */
     const COIN_ETHERIUM = 'ETH';
+
+    /**
+     * The coin abbreviation for Gridcoin
+     */
+    const COIN_GRIDCOIN = 'GRC';
 
     /**
      * The Eobot abbreviation for their Cloud SHA-256 miners

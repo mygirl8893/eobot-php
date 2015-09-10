@@ -13,33 +13,24 @@ class MockEobotBrowser extends \Buzz\Browser
 
     public function get($url, $headers = array())
     {
-        $fileName = substr($url, strlen($this->baseUrl) + 1) . '.txt';
-        return $this->loadMockResponse($fileName);
+        $parameters = substr($url, strlen($this->baseUrl) + 1);
+
+        return $this->loadMockResponse($parameters);
     }
 
     public function post($url, $headers = array(), $content = '')
     {
-        $fileName = substr($url, strlen($this->baseUrl) + 1) . $content . '.txt';
-        return $this->loadMockResponse($fileName);
+        $parameters = substr($url, strlen($this->baseUrl) + 1) . $content;
+
+        return $this->loadMockResponse($parameters);
     }
 
-    private function loadMockResponse($filename)
+    private function loadMockResponse($parameters)
     {
-        $path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+        $parametersArray = array();
+        parse_str($parameters, $parametersArray);
 
-        // @codeCoverageIgnoreStart
-        if (file_exists($path . $filename)) {
-            $simulatedResponse = file_get_contents($path . $filename);
-        } else {
-            echo 'Mock file not found: ' . $filename . PHP_EOL;
-            $simulatedResponse = file_get_contents($path . 'mock_generic_error.txt');
-        }
-        // @codeCoverageIgnoreEnd
-
-        // the response should contain \r\n line endings, but Git sometimes screws that up
-        if (!strpos($simulatedResponse, "\r\n")) {
-            $simulatedResponse = str_replace(array("\r", "\n"), "\r\n", $simulatedResponse);
-        }
+        $simulatedResponse = MockEobotResponder::getResponse($parametersArray);
 
         $response = new \Buzz\Message\Response();
 

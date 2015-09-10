@@ -18,6 +18,8 @@ spl_autoload_register(
             require_once(dirname(__FILE__) . '/mock/MockEobotBrowser.php');
         } else if ($className === 'MockEobotClient') {
             require_once(dirname(__FILE__) . '/mock/MockEobotClient.php');
+        } else if ($className === 'MockEobotResponder') {
+            require_once(dirname(__FILE__) . '/mock/MockEobotResponder.php');
         } else if (preg_match('/^RickDenHaan\\\\Eobot/', $className)) {
             $filePath = dirname(__FILE__) . '/../src/' . str_replace('RickDenHaan\\Eobot\\', '', $className) . '.php';
             if (file_exists($filePath)) {
