@@ -12,8 +12,8 @@ php:
 
 before_script:
   - composer self-update
+  - composer install
   - composer require satooshi/php-coveralls:dev-master
-  - composer update
 
 script:
   - mkdir -p build/logs
