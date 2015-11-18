@@ -77,9 +77,9 @@ class Client
     const COIN_COUNTERPARTY = 'XCP';
 
     /**
-     * The coin abbreviation for Stellar
+     * The coin abbreviation for Lumens
      */
-    const COIN_STELLAR = 'STR';
+    const COIN_LUMENS = 'XLM';
 
     /**
      * The coin abbreviation for Bytecoin
@@ -112,16 +112,21 @@ class Client
     const COIN_GRIDCOIN = 'GRC';
 
     /**
-     * The Eobot abbreviation for their Cloud SHA-256 miners
+     * The Eobot abbreviation for their Cloud SHA-256 v3 miners
      */
-    const EO_CLOUD_SHA256          = 'GHS';
-    const EO_CLOUD_SHA256_CONTRACT = 'GHSCONTRACT';
+    const EO_CLOUD_SHA256_3          = 'GHS';
+    const EO_CLOUD_SHA256_3_CONTRACT = 'GHSCONTRACT';
 
     /**
      * The Eobot abbreviation for their 2nd generation Cloud SHA-256 miners
      */
     const EO_CLOUD_SHA256_2          = 'GHS2';
     const EO_CLOUD_SHA256_2_CONTRACT = 'GHS2CONTRACT';
+
+    /* @deprecated */
+    const EO_CLOUD_SHA256 = 'GHS';
+    /* @deprecated */
+    const EO_CLOUD_SHA256_CONTRACT = 'GHSCONTRACT';
 
     /**
      * The Eobot abbreviation for their Cloud Folding service
@@ -609,10 +614,12 @@ class Client
     }
 
     /**
-     * This method retrieves the current balance of a specific type for the current or given user. This method has three
+     * This method retrieves the current balance of a specific type for the current or given user. This method has
+     * three
      * optional arguments:
      *
-     * * The type of balance to fetch, which can be a coin type, Eobot type or currency type. Defaults to null, which fetches everything
+     * * The type of balance to fetch, which can be a coin type, Eobot type or currency type. Defaults to null, which
+     * fetches everything
      * * The Eobot user id to fetch the balances for, which is optional if it was passed to the constructor
      * * Whether or not to force a fetch from the server (results are cached by default)
      *
@@ -699,8 +706,8 @@ class Client
             foreach ($balances as $balance) {
                 $balance = explode(':', trim($balance));
 
-                if (trim($balance[0]) == self::EO_CLOUD_SHA256_CONTRACT) {
-                    $balance[0] = self::EO_CLOUD_SHA256;
+                if (trim($balance[0]) == self::EO_CLOUD_SHA256_3_CONTRACT) {
+                    $balance[0] = self::EO_CLOUD_SHA256_3;
                 }
 
                 if (trim($balance[0]) == self::EO_CLOUD_SHA256_2_CONTRACT) {
@@ -725,8 +732,8 @@ class Client
             $this->response = $response;
             $retValue       = ($this->balances[$userId]['Total'] * $exchangeRate);
         } else {
-            if ($type == self::EO_CLOUD_SHA256_CONTRACT) {
-                $type = self::EO_CLOUD_SHA256;
+            if ($type == self::EO_CLOUD_SHA256_3_CONTRACT) {
+                $type = self::EO_CLOUD_SHA256_3;
             }
 
             if ($type == self::EO_CLOUD_SHA256_2_CONTRACT) {
@@ -810,8 +817,8 @@ class Client
 
         $retValue = trim($this->response->getContent());
 
-        if ($retValue == self::EO_CLOUD_SHA256_CONTRACT) {
-            $retValue = self::EO_CLOUD_SHA256;
+        if ($retValue == self::EO_CLOUD_SHA256_3_CONTRACT) {
+            $retValue = self::EO_CLOUD_SHA256_3;
         }
 
         if ($retValue == self::EO_CLOUD_SHA256_2_CONTRACT) {
@@ -1091,7 +1098,8 @@ class Client
      * user ID was given to the client, and no email address and password are given, an exception is thrown.
      *
      * @param string $email    (Optional) Defaults to null, required if the user ID was not set via the constructor
-     * @param string $password (Optional) Defaults to null, required if the user ID was not set via the constructor, or if $email is set
+     * @param string $password (Optional) Defaults to null, required if the user ID was not set via the constructor, or
+     *                         if $email is set
      * @throws \LogicException
      * @return int
      */
@@ -1195,8 +1203,8 @@ class Client
             $userId = $this->userId;
         }
 
-        if ($type == self::EO_CLOUD_SHA256_CONTRACT) {
-            $type = self::EO_CLOUD_SHA256;
+        if ($type == self::EO_CLOUD_SHA256_3_CONTRACT) {
+            $type = self::EO_CLOUD_SHA256_3;
         }
 
         if ($type == self::EO_CLOUD_SHA256_2_CONTRACT) {
@@ -1247,8 +1255,14 @@ class Client
      * @throws \InvalidArgumentException
      * @return bool
      */
-    public function setAutomaticWithdraw($coinType = self::COIN_BITCOIN, $amount = 1.0, $wallet, $email, $password, $userId = null)
-    {
+    public function setAutomaticWithdraw(
+        $coinType = self::COIN_BITCOIN,
+        $amount = 1.0,
+        $wallet,
+        $email,
+        $password,
+        $userId = null
+    ) {
         if (!self::isValidCoin($coinType)) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -1326,8 +1340,14 @@ class Client
      * @throws \InvalidArgumentException
      * @return bool
      */
-    public function withdrawFunds($coinType = self::COIN_BITCOIN, $amount = 1.0, $wallet, $email, $password, $userId = null)
-    {
+    public function withdrawFunds(
+        $coinType = self::COIN_BITCOIN,
+        $amount = 1.0,
+        $wallet,
+        $email,
+        $password,
+        $userId = null
+    ) {
         if (!self::isValidCoin($coinType)) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -1407,8 +1427,14 @@ class Client
      * @throws \InvalidArgumentException
      * @return bool
      */
-    public function convertCoinToCloud($coinType = self::COIN_BITCOIN, $amount = 1.0, $cloudType = self::EO_CLOUD_SHA256, $email, $password, $userId = null)
-    {
+    public function convertCoinToCloud(
+        $coinType = self::COIN_BITCOIN,
+        $amount = 1.0,
+        $cloudType = self::EO_CLOUD_SHA256_3,
+        $email,
+        $password,
+        $userId = null
+    ) {
         if (!self::isValidCoin($coinType) && !self::isValidEobotInternalType($coinType)) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -1467,8 +1493,8 @@ class Client
             $userId = $this->userId;
         }
 
-        if ($coinType == self::EO_CLOUD_SHA256_CONTRACT) {
-            $coinType = self::EO_CLOUD_SHA256;
+        if ($coinType == self::EO_CLOUD_SHA256_3_CONTRACT) {
+            $coinType = self::EO_CLOUD_SHA256_3;
         }
 
         if ($coinType == self::EO_CLOUD_SHA256_2_CONTRACT) {
@@ -1479,8 +1505,8 @@ class Client
             $coinType = self::EO_CLOUD_FOLDING;
         }
 
-        if ($cloudType == self::EO_CLOUD_SHA256_CONTRACT) {
-            $cloudType = self::EO_CLOUD_SHA256;
+        if ($cloudType == self::EO_CLOUD_SHA256_3_CONTRACT) {
+            $cloudType = self::EO_CLOUD_SHA256_3;
         }
 
         if ($cloudType == self::EO_CLOUD_SHA256_2_CONTRACT) {
@@ -1578,7 +1604,7 @@ class Client
      * or `false`.
      *
      * <code>
-     * $isValid = Client::isValidEobotInternalType(Client::EO_CLOUD_SHA256);
+     * $isValid = Client::isValidEobotInternalType(Client::EO_CLOUD_SHA256_3);
      * </code>
      *
      * @param string $type
@@ -1684,7 +1710,8 @@ class Client
         $retValue = new Browser(new Curl());
         $retValue->getClient()
                  ->setTimeout($this->timeout);
-        $retValue->getClient()->setVerifyPeer($this->validateSsl);
+        $retValue->getClient()
+                 ->setVerifyPeer($this->validateSsl);
 
         return $retValue;
     }
@@ -1701,7 +1728,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.5.4 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.6.0 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 

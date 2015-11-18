@@ -79,7 +79,14 @@ class MockEobotClient extends Client
      *
      * @see Client::convertCoinToCloud
      */
-    public function convertCoinToCloud($coinType = self::COIN_BITCOIN, $amount = 1.0, $cloudType = self::EO_CLOUD_SHA256, $email, $password, $userId = null)
+    public function convertCoinToCloud(
+        $coinType = self::COIN_BITCOIN,
+        $amount = 1.0,
+        $cloudType = self::EO_CLOUD_SHA256_3,
+        $email,
+        $password,
+        $userId = null
+    )
     {
         if (self::isValidRentalType($cloudType) && $amount == 0.00002) {
             $this->shouldSwitchUserId = true;
