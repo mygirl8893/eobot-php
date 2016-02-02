@@ -116,7 +116,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $coinValue = $client->getCoinValue();
 
-        $this->assertEquals(239.51, $coinValue);
+        $this->assertEquals(378.99, $coinValue);
     }
 
     /**
@@ -132,7 +132,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException LogicException
-     * @expectedExceptionMessage Invalid API response
+     * @expectedExceptionMessage Failed to retrieve value in USD for coin:
      */
     public function testGetCoinValueWithInvalidApiResponse()
     {
@@ -146,30 +146,32 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client = new MockEobotClient();
 
         $coins = array(
-            Client::COIN_BITCOIN      => 239.51,
-            Client::COIN_BITSHARES    => 0.00444021,
-            Client::COIN_BLACKCOIN    => 0.02531201,
-            Client::COIN_BYTECOIN     => 0.00005984,
-            Client::COIN_COUNTERPARTY => 0.92357389,
-            Client::COIN_CURECOIN     => 0.01073379,
-            Client::COIN_DOGECOIN     => 0.00012923,
-            Client::COIN_ETHERIUM     => 1.15773517,
-            Client::COIN_GRIDCOIN     => 0.0013353,
-            Client::COIN_LITECOIN     => 2.9510757,
-            Client::COIN_LUMENS       => 0.00220185,
-            Client::COIN_MAIDSAFECOIN => 0.02252202,
-            Client::COIN_MONERO       => 0.52178501,
-            Client::COIN_NAMECOIN     => 0.41365257,
-            Client::COIN_NXT          => 0.00852383,
-            Client::COIN_PEERCOIN     => 0.39906844,
-            Client::COIN_REDDCOIN     => 0.00001207,
-            Client::COIN_RIPPLE       => 0.00766181,
-            Client::COIN_STORJCOIN_X  => 0.01743132,
+            Client::COIN_BITCOIN      => 378.99,
+            Client::COIN_BITSHARES    => 0.00336616,
+            Client::COIN_BLACKCOIN    => 0.02747326,
+            Client::COIN_BYTECOIN     => 0.00003278,
+            Client::COIN_COUNTERPARTY => 0.68706107,
+            Client::COIN_CURECOIN     => 0.00720565,
+            Client::COIN_DOGECOIN     => 0.00027966,
+            Client::COIN_ETHERIUM     => 2.24435704,
+            Client::COIN_FACTOM       => 0.90754598,
+            Client::COIN_GRIDCOIN     => 0.005964,
+            Client::COIN_LITECOIN     => 3.06900745,
+            Client::COIN_LUMENS       => 0.00167083,
+            Client::COIN_MAIDSAFECOIN => 0.02012823,
+            Client::COIN_MONERO       => 0.49839172,
+            Client::COIN_NAMECOIN     => 0.40521139,
+            Client::COIN_NXT          => 0.00837119,
+            Client::COIN_PEERCOIN     => 0.43636065,
+            Client::COIN_REDDCOIN     => 0.00002293,
+            Client::COIN_RIPPLE       => 0.00647743,
             Client::EO_CLOUD_FOLDING  => 0.05,
-            Client::EO_CLOUD_SHA256_2 => 0.55,
-            Client::EO_CLOUD_SHA256_3 => 0.005,
-            Client::RENTAL_FOLDING    => 0.00013699,
-            Client::RENTAL_SHA256     => 0.00101718,
+            Client::EO_CLOUD_SETI     => 0.8,
+            Client::EO_CLOUD_SHA256_2 => 0.11,
+            Client::EO_CLOUD_SHA256_3 => 0.45,
+            Client::RENTAL_FOLDING    => 0.00014,
+            Client::RENTAL_SCRYPT     => 0.02464,
+            Client::RENTAL_SHA256_3   => 0.00114,
         );
 
         foreach ($coins as $coin => $expectedValue) {
@@ -196,11 +198,31 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $coinValue = $client->getCoinValue(Client::COIN_BITCOIN, Client::CURRENCY_US_DOLLAR);
 
-        $this->assertEquals(239.51, $coinValue);
+        $this->assertEquals(378.99, $coinValue);
 
         $coinValue = $client->getCoinValue(Client::COIN_BITCOIN, Client::CURRENCY_EURO);
 
-        $this->assertEquals(220.3492, $coinValue);
+        $this->assertEquals(349.9284517857, $coinValue);
+    }
+
+    public function testGetCoinValueWithCache()
+    {
+        $cachePool = new MockEobotCachePool();
+
+        $client = new MockEobotClient();
+        $client->setCachePool($cachePool);
+
+        $this->assertFalse($cachePool->hasItem('eobot_coin_values_supported'));
+        $client->getCoinValue(Client::COIN_BITCOIN);
+
+        $this->assertTrue($cachePool->hasItem('eobot_coin_values_supported'));
+        $client->getCoinValue(Client::COIN_BITCOIN);
+
+        $this->assertFalse($cachePool->hasItem('eobot_coin_value_' . Client::EO_CLOUD_SHA256_3));
+        $client->getCoinValue(Client::EO_CLOUD_SHA256_3);
+
+        $this->assertTrue($cachePool->hasItem('eobot_coin_value_' . Client::EO_CLOUD_SHA256_3));
+        $client->getCoinValue(Client::EO_CLOUD_SHA256_3);
     }
 
     public function testGetExchangeRateWithoutParameters()
@@ -209,7 +231,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $exchangeRate = $client->getExchangeRate();
 
-        $this->assertEquals(0.92, $exchangeRate);
+        $this->assertEquals(0.92331843, $exchangeRate);
     }
 
     /**
@@ -225,7 +247,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException LogicException
-     * @expectedExceptionMessage Invalid API response
+     * @expectedExceptionMessage Failed to retrieve exchange rate from USD for currency:
      */
     public function testGetExchangeRateWithInvalidApiResponse()
     {
@@ -239,26 +261,26 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client = new MockEobotClient();
 
         $currencies = array(
-            Client::CURRENCY_BRITISH_POUND         => 0.67,
-            Client::CURRENCY_CANADIAN_DOLLAR       => 1.26,
-            Client::CURRENCY_CHINESE_YUAN_RENMINBI => 6.23,
-            Client::CURRENCY_CZECH_KORUNA          => 25.24,
-            Client::CURRENCY_DANISH_KRONE          => 6.88,
-            Client::CURRENCY_EURO                  => 0.92,
-            Client::CURRENCY_HONG_KONG_DOLLAR      => 7.75,
-            Client::CURRENCY_INDIAN_RUPEE          => 62.22,
-            Client::CURRENCY_INDONESIAN_RUPIAH     => 12996.0,
-            Client::CURRENCY_ISRAELI_SHEKEL        => 4.04,
-            Client::CURRENCY_JAPANESE_YEN          => 120.3,
-            Client::CURRENCY_MALAYSIAN_RINGGIT     => 3.68,
-            Client::CURRENCY_MEXICAN_PESO          => 15.13,
-            Client::CURRENCY_NORWEGIAN_KRONE       => 8.2,
-            Client::CURRENCY_POLISH_ZLOTY          => 3.82,
-            Client::CURRENCY_ROMANIAN_NEW_LEU      => 4.1,
-            Client::CURRENCY_RUSSIAN_RUBLE         => 59.36,
-            Client::CURRENCY_SERBIAN_DINAR         => 110.89,
-            Client::CURRENCY_SWISS_FRANC           => 0.99,
-            Client::CURRENCY_UKRAINIAN_HRYVNIA     => 23.63,
+            Client::CURRENCY_BRITISH_POUND         => 0.70205004,
+            Client::CURRENCY_CANADIAN_DOLLAR       => 1.3977,
+            Client::CURRENCY_CHINESE_YUAN_RENMINBI => 6.57705,
+            Client::CURRENCY_CZECH_KORUNA          => 24.946,
+            Client::CURRENCY_DANISH_KRONE          => 6.8889,
+            Client::CURRENCY_EURO                  => 0.92331843,
+            Client::CURRENCY_HONG_KONG_DOLLAR      => 7.78205,
+            Client::CURRENCY_INDIAN_RUPEE          => 67.88995,
+            Client::CURRENCY_INDONESIAN_RUPIAH     => 13680.5,
+            Client::CURRENCY_ISRAELI_SHEKEL        => 3.9614,
+            Client::CURRENCY_JAPANESE_YEN          => 121.12,
+            Client::CURRENCY_MALAYSIAN_RINGGIT     => 4.14295,
+            Client::CURRENCY_MEXICAN_PESO          => 18.1109,
+            Client::CURRENCY_NORWEGIAN_KRONE       => 8.6807,
+            Client::CURRENCY_POLISH_ZLOTY          => 4.08195,
+            Client::CURRENCY_ROMANIAN_NEW_LEU      => 4.18825,
+            Client::CURRENCY_RUSSIAN_RUBLE         => 75.7245,
+            Client::CURRENCY_SERBIAN_DINAR         => 113.26,
+            Client::CURRENCY_SWISS_FRANC           => 1.023,
+            Client::CURRENCY_UKRAINIAN_HRYVNIA     => 25.65,
             Client::CURRENCY_US_DOLLAR             => 1.0,
         );
 
@@ -266,6 +288,34 @@ class ClientTest extends PHPUnit_Framework_TestCase
             $exchangeRate = $client->getExchangeRate($currency);
 
             $this->assertEquals($expectedRate, $exchangeRate, $currency);
+        }
+    }
+
+    public function testGetExchangeRateWithCache()
+    {
+        $cachePool = new MockEobotCachePool();
+
+        $client = new MockEobotClient();
+        $client->setCachePool($cachePool);
+
+        $this->assertFalse($cachePool->hasItem('eobot_exchange_rates_supported'));
+        $client->getExchangeRate(Client::CURRENCY_EURO);
+
+        $this->assertTrue($cachePool->hasItem('eobot_exchange_rates_supported'));
+        $client->getExchangeRate(Client::CURRENCY_EURO);
+
+        $this->assertFalse($cachePool->hasItem('eobot_exchange_rate_' . Client::CURRENCY_AUSTRALIAN_DOLLAR));
+        try {
+            $client->getExchangeRate(Client::CURRENCY_AUSTRALIAN_DOLLAR);
+        } catch (Exception $e) {
+            // ignore
+        }
+
+        $this->assertTrue($cachePool->hasItem('eobot_exchange_rate_' . Client::CURRENCY_AUSTRALIAN_DOLLAR));
+        try {
+            $client->getExchangeRate(Client::CURRENCY_AUSTRALIAN_DOLLAR);
+        } catch (Exception $e) {
+            // ignore
         }
     }
 
@@ -289,7 +339,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $balances);
         $this->assertCount(23, $balances);
 
-        $this->assertEquals(0.32751004, $balances['Total']);
         $this->assertEquals(0.00040978, $balances[Client::COIN_BITCOIN]);
         $this->assertEquals(0.0141392, $balances[Client::COIN_BITSHARES]);
         $this->assertEquals(0.08188563, $balances[Client::COIN_BLACKCOIN]);
@@ -297,6 +346,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.05292104, $balances[Client::COIN_CURECOIN]);
         $this->assertEquals(23.78557417, $balances[Client::COIN_DOGECOIN]);
         $this->assertEquals(15.2361832, $balances[Client::COIN_ETHERIUM]);
+        $this->assertEquals(0.02639744, $balances[Client::COIN_FACTOM]);
         $this->assertEquals(0.15432515, $balances[Client::COIN_GRIDCOIN]);
         $this->assertEquals(0.03013698, $balances[Client::COIN_LITECOIN]);
         $this->assertEquals(0.06467642, $balances[Client::COIN_LUMENS]);
@@ -306,10 +356,10 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.00502554, $balances[Client::COIN_PEERCOIN]);
         $this->assertEquals(0.02830923, $balances[Client::COIN_REDDCOIN]);
         $this->assertEquals(0.02748126, $balances[Client::COIN_MAIDSAFECOIN]);
-        $this->assertEquals(0.02639744, $balances[Client::COIN_STORJCOIN_X]);
         $this->assertEquals(0.03641862, $balances[Client::COIN_MONERO]);
         $this->assertEquals(0.00636984, $balances[Client::COIN_COUNTERPARTY]);
         $this->assertEquals(2.16726154, $balances[Client::EO_CLOUD_FOLDING]);
+        $this->assertEquals(4.73192563, $balances[Client::EO_CLOUD_SETI]);
         $this->assertEquals(15.42138465, $balances[Client::EO_CLOUD_SHA256_2]);
         $this->assertEquals(20.00019989, $balances[Client::EO_CLOUD_SHA256_3]);
     }
@@ -344,7 +394,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $client = new MockEobotClient();
 
-        $client->getBalance(null, 2345);
+        $vd = $client->getBalance(null, 2345);
+
+        var_dump($vd);
     }
 
     /**
@@ -363,64 +415,64 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client = new MockEobotClient(1234);
 
         $balance = $client->getBalance(Client::CURRENCY_BRITISH_POUND);
-        $this->assertEquals(0.2194317268, $balance);
+        $this->assertEquals(0.2299284366824, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_CANADIAN_DOLLAR);
-        $this->assertEquals(0.4126626504, $balance);
+        $this->assertEquals(0.457760782908, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_CHINESE_YUAN_RENMINBI);
-        $this->assertEquals(2.0403875492, $balance);
+        $this->assertEquals(2.154049908582, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_CZECH_KORUNA);
-        $this->assertEquals(8.2663534096, $balance);
+        $this->assertEquals(8.17006545784, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_DANISH_KRONE);
-        $this->assertEquals(2.2532690752, $balance);
+        $this->assertEquals(2.256183914556, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_EURO);
-        $this->assertEquals(0.3013092368, $balance);
+        $this->assertEquals(0.30239605594204, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_HONG_KONG_DOLLAR);
-        $this->assertEquals(2.53820281, $balance);
+        $this->assertEquals(2.548699506782, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_INDONESIAN_RUPIAH);
-        $this->assertEquals(4256.32047984, $balance);
+        $this->assertEquals(4480.50110222, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_ISRAELI_SHEKEL);
-        $this->assertEquals(1.3231405616, $balance);
+        $this->assertEquals(1.297398272456, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_INDIAN_RUPEE);
-        $this->assertEquals(20.3776746888, $balance);
+        $this->assertEquals(22.234640240098, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_JAPANESE_YEN);
-        $this->assertEquals(39.399457812, $balance);
+        $this->assertEquals(39.6680160448, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_MALAYSIAN_RINGGIT);
-        $this->assertEquals(1.2052369472, $balance);
+        $this->assertEquals(1.356857720218, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_MEXICAN_PESO);
-        $this->assertEquals(4.9552269052, $balance);
+        $this->assertEquals(5.931501583436, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_NORWEGIAN_KRONE);
-        $this->assertEquals(2.685582328, $balance);
+        $this->assertEquals(2.843016404228, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_POLISH_ZLOTY);
-        $this->assertEquals(1.2510883528, $balance);
+        $this->assertEquals(1.336879607778, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_ROMANIAN_NEW_LEU);
-        $this->assertEquals(1.342791164, $balance);
+        $this->assertEquals(1.37169392503, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_RUSSIAN_RUBLE);
-        $this->assertEquals(19.4409959744, $balance);
+        $this->assertEquals(24.80053402398, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_SERBIAN_DINAR);
-        $this->assertEquals(36.3175883356, $balance);
+        $this->assertEquals(37.0937871304, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_SWISS_FRANC);
-        $this->assertEquals(0.3242349396, $balance);
+        $this->assertEquals(0.33504277092, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_UKRAINIAN_HRYVNIA);
-        $this->assertEquals(7.7390622452, $balance);
+        $this->assertEquals(8.400632526, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_US_DOLLAR);
         $this->assertEquals(0.32751004, $balance);
@@ -451,6 +503,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::COIN_ETHERIUM);
         $this->assertEquals(15.2361832, $balance);
 
+        $balance = $client->getBalance(Client::COIN_FACTOM);
+        $this->assertEquals(0.02639744, $balance);
+
         $balance = $client->getBalance(Client::COIN_GRIDCOIN);
         $this->assertEquals(0.15432515, $balance);
 
@@ -474,9 +529,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::COIN_MAIDSAFECOIN);
         $this->assertEquals(0.02748126, $balance);
-
-        $balance = $client->getBalance(Client::COIN_STORJCOIN_X);
-        $this->assertEquals(0.02639744, $balance);
 
         $balance = $client->getBalance(Client::COIN_MONERO);
         $this->assertEquals(0.03641862, $balance);
@@ -504,6 +556,20 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::EO_CLOUD_SHA256_3_CONTRACT);
         $this->assertEquals(20.00019989, $balance);
+    }
+
+    public function testGetBalanceWithCache()
+    {
+        $cachePool = new MockEobotCachePool();
+
+        $client = new MockEobotClient(1234);
+        $client->setCachePool($cachePool);
+
+        $this->assertFalse($cachePool->hasItem('eobot_balance_all_1234'));
+        $client->getBalance(Client::EO_CLOUD_SETI_CONTRACT);
+
+        $this->assertTrue($cachePool->hasItem('eobot_balance_all_1234'));
+        $client->getBalance(Client::EO_CLOUD_SETI_CONTRACT);
     }
 
     /**
@@ -561,6 +627,20 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(Client::COIN_BITCOIN, $miningMode);
     }
 
+    public function testGetMiningModeWithCache()
+    {
+        $cachePool = new MockEobotCachePool();
+
+        $client = new MockEobotClient(7890);
+        $client->setCachePool($cachePool);
+
+        $this->assertFalse($cachePool->hasItem('eobot_mining_mode_7890'));
+        $client->getMiningMode();
+
+        $this->assertTrue($cachePool->hasItem('eobot_mining_mode_7890'));
+        $client->getMiningMode();
+    }
+
     /**
      * @expectedException InvalidArgumentException
      * @expectedExceptionMessage no user ID is known
@@ -604,9 +684,23 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertCount(5, $speeds);
         $this->assertEquals(0.0, $speeds['MiningSHA-256']);
         $this->assertEquals(0.0, $speeds['MiningScrypt']);
-        $this->assertEquals(20.0001998933406, $speeds['CloudSHA-256']);
-        $this->assertEquals(10.5013062743518, $speeds['Cloud2SHA-256']);
-        $this->assertEquals(0.0111580929310733, $speeds['CloudScrypt']);
+        $this->assertEquals(20.00019989, $speeds['CloudSHA-256']);
+        $this->assertEquals(10.50130627, $speeds['Cloud2SHA-256']);
+        $this->assertEquals(0.01115809, $speeds['CloudScrypt']);
+    }
+
+    public function testGetSpeedWithCache()
+    {
+        $cachePool = new MockEobotCachePool();
+
+        $client = new MockEobotClient(1234);
+        $client->setCachePool($cachePool);
+
+        $this->assertFalse($cachePool->hasItem('eobot_mining_speeds_1234'));
+        $client->getSpeed();
+
+        $this->assertTrue($cachePool->hasItem('eobot_mining_speeds_1234'));
+        $client->getSpeed();
     }
 
     /**
@@ -678,9 +772,23 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertCount(5, $estimates);
         $this->assertEquals(0.0, $estimates['MiningSHA-256']);
         $this->assertEquals(0.0, $estimates['MiningScrypt']);
-        $this->assertEquals(3.0946018196, $estimates['CloudSHA-256']);
-        $this->assertEquals(7.7361282644, $estimates['Cloud2SHA-256']);
-        $this->assertEquals(0.93026544549659, $estimates['CloudScrypt']);
+        $this->assertEquals(3.1057640147263, $estimates['CloudSHA-256']);
+        $this->assertEquals(7.7640323949613, $estimates['Cloud2SHA-256']);
+        $this->assertEquals(0.93362090284691, $estimates['CloudScrypt']);
+    }
+
+    public function testGetEstimatesWithCache()
+    {
+        $cachePool = new MockEobotCachePool();
+
+        $client = new MockEobotClient(1234);
+        $client->setCachePool($cachePool);
+
+        $this->assertFalse($cachePool->hasItem('eobot_mining_estimates_1234'));
+        $client->getEstimates();
+
+        $this->assertTrue($cachePool->hasItem('eobot_mining_estimates_1234'));
+        $client->getEstimates();
     }
 
     public function testGetLastResponse()
@@ -693,9 +801,10 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $response = $client->getLastResponse();
         $this->assertNotNull($response);
-        $this->assertInstanceof('Buzz\\Message\\Response', $response);
+        $this->assertInstanceOf('Buzz\\Message\\Response', $response);
 
-        $coinValue2 = floatval(trim($response->getContent()));
+        $parsedResponse = json_decode(trim($response->getContent()), true);
+        $coinValue2     = floatval($parsedResponse[Client::EO_CLOUD_SHA256_3]);
 
         $this->assertEquals($coinValue2, $coinValue);
     }
@@ -765,6 +874,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $address = $client->getDepositAddress(Client::COIN_ETHERIUM);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
+        $address = $client->getDepositAddress(Client::COIN_FACTOM);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
         $address = $client->getDepositAddress(Client::COIN_GRIDCOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
@@ -789,9 +901,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $address = $client->getDepositAddress(Client::COIN_MAIDSAFECOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
-        $address = $client->getDepositAddress(Client::COIN_STORJCOIN_X);
-        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
-
         $address = $client->getDepositAddress(Client::COIN_MONERO);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
@@ -800,6 +909,20 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $address = $client->getDepositAddress(Client::COIN_LUMENS);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+    }
+
+    public function testGetDepositAddressWithCache()
+    {
+        $cachePool = new MockEobotCachePool();
+
+        $client = new MockEobotClient(1234);
+        $client->setCachePool($cachePool);
+
+        $this->assertFalse($cachePool->hasItem('eobot_deposit_address_1234_' . Client::COIN_BITCOIN));
+        $client->getDepositAddress(Client::COIN_BITCOIN);
+
+        $this->assertTrue($cachePool->hasItem('eobot_deposit_address_1234_' . Client::COIN_BITCOIN));
+        $client->getDepositAddress(Client::COIN_BITCOIN);
     }
 
     /**
@@ -914,6 +1037,8 @@ class ClientTest extends PHPUnit_Framework_TestCase
             'correctPassword', 3456));
         $this->assertTrue($client->setMiningMode(Client::EO_CLOUD_FOLDING_CONTRACT, 'test@example.com',
             'correctPassword', 8901));
+        $this->assertTrue($client->setMiningMode(Client::EO_CLOUD_SETI_CONTRACT, 'test@example.com',
+            'correctPassword', 7890));
     }
 
     public function testSetMiningMode()
@@ -1297,13 +1422,13 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client = new MockEobotClient(1234);
 
         $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_SHA256_2_CONTRACT, 0.00002,
-            Client::RENTAL_SHA256,
-            'test@example.com', 'correctPassword'));
+            Client::RENTAL_SHA256_3, 'test@example.com', 'correctPassword'));
         $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_SHA256_3_CONTRACT, 0.00002,
-            Client::RENTAL_SHA256,
-            'test@example.com', 'correctPassword'));
+            Client::EO_CLOUD_SETI_CONTRACT, 'test@example.com', 'correctPassword'));
         $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_FOLDING_CONTRACT, 0.00002,
             Client::RENTAL_FOLDING, 'test@example.com', 'correctPassword'));
+        $this->assertTrue($client->convertCoinToCloud(Client::EO_CLOUD_SETI_CONTRACT, 0.00002,
+            Client::RENTAL_SCRYPT, 'test@example.com', 'correctPassword'));
     }
 
     public function testConvertCoinToCloud()

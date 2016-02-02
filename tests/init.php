@@ -20,6 +20,10 @@ spl_autoload_register(
             require_once(dirname(__FILE__) . '/mock/MockEobotClient.php');
         } else if ($className === 'MockEobotResponder') {
             require_once(dirname(__FILE__) . '/mock/MockEobotResponder.php');
+        } else if ($className === 'MockEobotCachePool') {
+            require_once(dirname(__FILE__) . '/mock/MockEobotCachePool.php');
+        } else if ($className === 'MockEobotCacheItem') {
+            require_once(dirname(__FILE__) . '/mock/MockEobotCacheItem.php');
         } else if (preg_match('/^RickDenHaan\\\\Eobot/', $className)) {
             $filePath = dirname(__FILE__) . '/../src/' . str_replace('RickDenHaan\\Eobot\\', '', $className) . '.php';
             if (file_exists($filePath)) {

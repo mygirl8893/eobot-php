@@ -20,53 +20,55 @@ class MockEobotResponder
      * @type float[]
      */
     private static $coinValues = array(
-        Client::COIN_BITCOIN                   => 239.51,
-        Client::COIN_BITSHARES                 => 0.00444021,
-        Client::COIN_BLACKCOIN                 => 0.02531201,
-        Client::COIN_BYTECOIN              => 0.00005984,
-        Client::COIN_COUNTERPARTY          => 0.92357389,
-        Client::COIN_CURECOIN              => 0.01073379,
-        // Client::COIN_DASH                      => 2.40377661, // DASH is used to simulate an invalid API response
-        Client::COIN_DOGECOIN              => 0.00012923,
-        Client::COIN_ETHERIUM              => 1.15773517,
-        Client::COIN_GRIDCOIN              => 0.0013353,
-        Client::COIN_LITECOIN              => 2.9510757,
-        Client::COIN_LUMENS                => 0.00220185,
-        Client::COIN_MAIDSAFECOIN          => 0.02252202,
-        Client::COIN_MONERO                => 0.52178501,
-        Client::COIN_NAMECOIN              => 0.41365257,
-        Client::COIN_NXT                   => 0.00852383,
-        Client::COIN_PEERCOIN              => 0.39906844,
-        Client::COIN_REDDCOIN              => 0.00001207,
-        Client::COIN_RIPPLE                => 0.00766181,
-        Client::COIN_STORJCOIN_X           => 0.01743132,
-        // Client::CURRENCY_AUSTRALIAN_DOLLAR     => 1.29, // AUD is used to simulate an invalid API response
-        Client::CURRENCY_BRITISH_POUND         => 0.67,
-        Client::CURRENCY_CANADIAN_DOLLAR       => 1.26,
-        Client::CURRENCY_CHINESE_YUAN_RENMINBI => 6.23,
-        Client::CURRENCY_CZECH_KORUNA          => 25.24,
-        Client::CURRENCY_DANISH_KRONE          => 6.88,
-        Client::CURRENCY_EURO                  => 0.92,
-        Client::CURRENCY_HONG_KONG_DOLLAR      => 7.75,
-        Client::CURRENCY_INDIAN_RUPEE          => 62.22,
-        Client::CURRENCY_INDONESIAN_RUPIAH     => 12996.0,
-        Client::CURRENCY_ISRAELI_SHEKEL        => 4.04,
-        Client::CURRENCY_JAPANESE_YEN          => 120.3,
-        Client::CURRENCY_MALAYSIAN_RINGGIT     => 3.68,
-        Client::CURRENCY_MEXICAN_PESO          => 15.13,
-        Client::CURRENCY_NORWEGIAN_KRONE       => 8.2,
-        Client::CURRENCY_POLISH_ZLOTY      => 3.82,
-        Client::CURRENCY_ROMANIAN_NEW_LEU  => 4.1,
-        Client::CURRENCY_RUSSIAN_RUBLE     => 59.36,
-        Client::CURRENCY_SERBIAN_DINAR     => 110.89,
-        Client::CURRENCY_SWISS_FRANC       => 0.99,
-        Client::CURRENCY_UKRAINIAN_HRYVNIA => 23.63,
-        Client::CURRENCY_US_DOLLAR         => 1.0,
-        Client::EO_CLOUD_FOLDING           => 0.05,
-        Client::EO_CLOUD_SHA256_2          => 0.55,
-        Client::EO_CLOUD_SHA256_3          => 0.005,
-        Client::RENTAL_FOLDING             => 0.00013699,
-        Client::RENTAL_SHA256              => 0.00101718,
+        Client::COIN_BITCOIN                   => 378.99,
+        Client::COIN_BITSHARES                 => 0.00336616,
+        Client::COIN_BLACKCOIN                 => 0.02747326,
+        Client::COIN_BYTECOIN                  => 0.00003278,
+        Client::COIN_COUNTERPARTY              => 0.68706107,
+        Client::COIN_CURECOIN                  => 0.00720565,
+        // Client::COIN_DASH                      => 3.97048867, // DASH is used to simulate an invalid API response
+        Client::COIN_DOGECOIN                  => 0.00027966,
+        Client::COIN_ETHERIUM                  => 2.24435704,
+        Client::COIN_FACTOM                    => 0.90754598,
+        Client::COIN_GRIDCOIN                  => 0.005964,
+        Client::COIN_LITECOIN                  => 3.06900745,
+        Client::COIN_LUMENS                    => 0.00167083,
+        Client::COIN_MAIDSAFECOIN              => 0.02012823,
+        Client::COIN_MONERO                    => 0.49839172,
+        Client::COIN_NAMECOIN                  => 0.40521139,
+        Client::COIN_NXT                       => 0.00837119,
+        Client::COIN_PEERCOIN                  => 0.43636065,
+        Client::COIN_REDDCOIN                  => 0.00002293,
+        Client::COIN_RIPPLE                    => 0.00647743,
+        // Client::CURRENCY_AUSTRALIAN_DOLLAR     => 1.41147321, // AUD is used to simulate an invalid API response
+        Client::CURRENCY_BRITISH_POUND         => 0.70205004,
+        Client::CURRENCY_CANADIAN_DOLLAR       => 1.3977,
+        Client::CURRENCY_CHINESE_YUAN_RENMINBI => 6.57705,
+        Client::CURRENCY_CZECH_KORUNA          => 24.946,
+        Client::CURRENCY_DANISH_KRONE          => 6.8889,
+        Client::CURRENCY_EURO                  => 0.92331843,
+        Client::CURRENCY_HONG_KONG_DOLLAR      => 7.78205,
+        Client::CURRENCY_INDIAN_RUPEE          => 67.88995,
+        Client::CURRENCY_INDONESIAN_RUPIAH     => 13680.5,
+        Client::CURRENCY_ISRAELI_SHEKEL        => 3.9614,
+        Client::CURRENCY_JAPANESE_YEN          => 121.12,
+        Client::CURRENCY_MALAYSIAN_RINGGIT     => 4.14295,
+        Client::CURRENCY_MEXICAN_PESO          => 18.1109,
+        Client::CURRENCY_NORWEGIAN_KRONE       => 8.6807,
+        Client::CURRENCY_POLISH_ZLOTY          => 4.08195,
+        Client::CURRENCY_ROMANIAN_NEW_LEU      => 4.18825,
+        Client::CURRENCY_RUSSIAN_RUBLE         => 75.7245,
+        Client::CURRENCY_SERBIAN_DINAR         => 113.26,
+        Client::CURRENCY_SWISS_FRANC           => 1.023,
+        Client::CURRENCY_UKRAINIAN_HRYVNIA     => 25.65,
+        Client::CURRENCY_US_DOLLAR             => 1.0,
+        Client::EO_CLOUD_FOLDING               => 0.05,
+        Client::EO_CLOUD_SETI                  => 0.8,
+        Client::EO_CLOUD_SHA256_2              => 0.11,
+        Client::EO_CLOUD_SHA256_3              => 0.45,
+        Client::RENTAL_FOLDING                 => 0.00014,
+        Client::RENTAL_SCRYPT                  => 0.02464,
+        Client::RENTAL_SHA256_3                => 0.00114,
     );
 
     /**
@@ -84,6 +86,7 @@ class MockEobotResponder
             Client::COIN_COUNTERPARTY          => 0.00636984,
             Client::COIN_CURECOIN              => 0.05292104,
             // Client::COIN_DASH                  => 0.01324434, // DASH is used to simulate an invalid API response
+            Client::COIN_FACTOM                => 0.02639744,
             Client::COIN_DOGECOIN              => 23.78557417,
             Client::COIN_ETHERIUM              => 15.2361832,
             Client::COIN_GRIDCOIN              => 0.15432515,
@@ -96,10 +99,10 @@ class MockEobotResponder
             Client::COIN_PEERCOIN              => 0.00502554,
             Client::COIN_REDDCOIN              => 0.02830923,
             Client::COIN_RIPPLE                => 0.03115914,
-            Client::COIN_STORJCOIN_X           => 0.02639744,
             Client::EO_CLOUD_SHA256_2_CONTRACT => 15.42138465,
             Client::EO_CLOUD_SHA256_3_CONTRACT => 20.00019989,
             Client::EO_CLOUD_FOLDING           => 2.16726154,
+            Client::EO_CLOUD_SETI              => 4.73192563,
         ),
         12345 => array(
             'Total'                            => 0.32751004,
@@ -111,6 +114,7 @@ class MockEobotResponder
             Client::COIN_CURECOIN              => 0.05292104,
             // Client::COIN_DASH                  => 0.01324434, // DASH is used to simulate an invalid API response
             Client::COIN_DOGECOIN              => 23.78557417,
+            Client::COIN_FACTOM                => 0.02639744,
             Client::COIN_ETHERIUM              => 15.2361832,
             Client::COIN_GRIDCOIN              => 0.15432515,
             Client::COIN_LITECOIN              => 0.03013698,
@@ -122,10 +126,10 @@ class MockEobotResponder
             Client::COIN_PEERCOIN              => 0.00502554,
             Client::COIN_REDDCOIN              => 0.02830923,
             Client::COIN_RIPPLE                => 0.03115914,
-            Client::COIN_STORJCOIN_X           => 0.02639744,
             Client::EO_CLOUD_SHA256_2_CONTRACT => 15.42136465,
             Client::EO_CLOUD_SHA256_3_CONTRACT => 20.00017989,
             Client::EO_CLOUD_FOLDING_CONTRACT  => 2.16724154,
+            Client::EO_CLOUD_SETI_CONTRACT     => 4.73190563,
         ),
     );
 
@@ -172,6 +176,7 @@ class MockEobotResponder
             Client::COIN_DASH         => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_DOGECOIN     => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_ETHERIUM     => '1234567890abcdefghijklmnopqrstuvwx',
+            Client::COIN_FACTOM       => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_GRIDCOIN     => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_LITECOIN     => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_LUMENS       => '1234567890abcdefghijklmnopqrstuvwx',
@@ -182,7 +187,6 @@ class MockEobotResponder
             Client::COIN_PEERCOIN     => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_REDDCOIN     => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_RIPPLE       => '1234567890abcdefghijklmnopqrstuvwx',
-            Client::COIN_STORJCOIN_X  => '1234567890abcdefghijklmnopqrstuvwx',
         ),
     );
 
@@ -195,6 +199,7 @@ class MockEobotResponder
         1234 => Client::COIN_BITCOIN,
         2345 => 'invalid', // simulates an invalid API response
         3456 => Client::EO_CLOUD_SHA256_3_CONTRACT,
+        7890 => Client::EO_CLOUD_SETI_CONTRACT,
         8901 => Client::EO_CLOUD_FOLDING_CONTRACT,
         9012 => Client::EO_CLOUD_SHA256_2_CONTRACT,
     );
@@ -225,31 +230,49 @@ class MockEobotResponder
         $responseText = '';
 
         // generate a mock response for coin value requests
-        if (count($parameters) == 1 && isset($parameters['coin'])) {
+        if (count($parameters) == 2 && isset($parameters['coin']) && isset($parameters['json'])) {
             if (!isset(self::$coinValues[$parameters['coin']])) {
                 $responseText = 'invalid';
             } else {
-                $responseText = number_format(self::$coinValues[$parameters['coin']], 8, '.', '');
+                $responseText = sprintf('{"%s":"%s"}', $parameters['coin'],
+                    number_format(self::$coinValues[$parameters['coin']], 8, '.', ''));
             }
         }
 
         // generate a mock response for a request for all supported coins
-        if (count($parameters) == 1 && isset($parameters['supportedcoins']) && $parameters['supportedcoins'] == 'true') {
+        if (count($parameters) == 2 && isset($parameters['supportedcoins']) && $parameters['supportedcoins'] == 'true' && isset($parameters['json'])) {
             $responseParts = array();
 
             foreach (self::$coinValues as $coin => $value) {
                 if (Client::isValidCoin($coin)) {
-                    $part = array(
+                    $responseParts[] = sprintf(
+                        '"%s":{"Image":"%s","BigImage":"%s","Price":%s}',
                         $coin,
-                        'Image:https://www.eobot.com/' . strtolower($coin) . '.png',
-                        'Price:' . number_format($value, 8, '.', ''),
+                        'https://www.eobot.com/' . strtolower($coin) . '.png',
+                        'https://www.eobot.com/' . strtolower($coin) . 'big.png',
+                        number_format($value, 8, '.', '')
                     );
-
-                    $responseParts[] = implode(',', $part);
                 }
             }
 
-            $responseText = implode(';', $responseParts);
+            $responseText = sprintf('{%s}', implode(',', $responseParts));
+        }
+
+        // generate a mock response for a request for all supported currencies
+        if (count($parameters) == 2 && isset($parameters['supportedfiat']) && $parameters['supportedfiat'] == 'true' && isset($parameters['json'])) {
+            $responseParts = array();
+
+            foreach (self::$coinValues as $coin => $value) {
+                if (Client::isValidCurrency($coin)) {
+                    $responseParts[] = sprintf(
+                        '"%s":{"Price":%s}',
+                        $coin,
+                        number_format($value, 8, '.', '')
+                    );
+                }
+            }
+
+            $responseText = sprintf('{%s}', implode(',', $responseParts));
         }
 
         // generate a mock response for user ID lookup requests
@@ -268,9 +291,10 @@ class MockEobotResponder
         }
 
         // generate a mock response for deposit wallet address requests
-        if (count($parameters) == 2 && isset($parameters['id']) && isset($parameters['deposit'])) {
+        if (count($parameters) == 3 && isset($parameters['id']) && isset($parameters['deposit']) && isset($parameters['json'])) {
             if (isset(self::$depositWallets[$parameters['id']]) && isset(self::$depositWallets[$parameters['id']][$parameters['deposit']])) {
-                $responseText = self::$depositWallets[$parameters['id']][$parameters['deposit']];
+                $responseText = sprintf('{"%s":"%s"}', $parameters['deposit'],
+                    self::$depositWallets[$parameters['id']][$parameters['deposit']]);
             }
         }
 
@@ -290,58 +314,53 @@ class MockEobotResponder
         }
 
         // generate a mock response for estimated income requests
-        if (count($parameters) == 1 && isset($parameters['idestimates'])) {
+        if (count($parameters) == 2 && isset($parameters['idestimates']) && isset($parameters['json'])) {
             if (isset(self::$estimatedIncomes[$parameters['idestimates']])) {
                 $responseParts = array();
 
                 foreach (self::$estimatedIncomes[$parameters['idestimates']] as $type => $estimate) {
                     $estimate = number_format($estimate, 16, '.', '');
                     $estimate = preg_replace('/0*$/', '', $estimate);
-                    $estimate = str_pad($estimate, 10, '0', STR_PAD_RIGHT);
 
-                    $responseParts[] = $type . ':' . $estimate;
+                    $responseParts[] = sprintf('"%s":%s', $type, $estimate);
                 }
 
-                $responseText = implode(';', $responseParts) . ';';
+                $responseText = sprintf('{%s}', implode(',', $responseParts));
             }
         }
 
         // generate a mock response for what a user is currently mining
-        if (count($parameters) == 1 && isset($parameters['idmining'])) {
+        if (count($parameters) == 2 && isset($parameters['idmining']) && isset($parameters['json'])) {
             if (isset(self::$miningModes[$parameters['idmining']])) {
-                $responseText = self::$miningModes[$parameters['idmining']];
+                $responseText = sprintf('{"mining":"%s"}', self::$miningModes[$parameters['idmining']]);
             }
         }
 
         // generate a mock response for current mining speed requests
-        if (count($parameters) == 1 && isset($parameters['idspeed'])) {
+        if (count($parameters) == 2 && isset($parameters['idspeed']) && isset($parameters['json'])) {
             if (isset(self::$miningSpeeds[$parameters['idspeed']])) {
                 $responseParts = array();
 
                 foreach (self::$miningSpeeds[$parameters['idspeed']] as $type => $speed) {
-                    $speed = number_format($speed, 16, '.', '');
-                    $speed = preg_replace('/0*$/', '', $speed);
-                    $speed = str_pad($speed, 10, '0', STR_PAD_RIGHT);
-
-                    $responseParts[] = $type . ':' . $speed;
+                    $responseParts[] = sprintf('"%s":"%s"', $type, number_format($speed, 8, '.', ''));
                 }
 
-                $responseText = implode(';', $responseParts) . ';';
+                $responseText = sprintf('{%s}', implode(',', $responseParts));
             }
         }
 
         // generate a mock response for balance requests
-        if (count($parameters) == 1 && isset($parameters['total'])) {
+        if (count($parameters) == 2 && isset($parameters['total']) && isset($parameters['json'])) {
             if (!isset(self::$coinBalances[$parameters['total']])) {
                 $responseText = 'invalid';
             } else {
                 $responseParts = array();
 
                 foreach (self::$coinBalances[$parameters['total']] as $coin => $balance) {
-                    $responseParts[] = $coin . ':' . $balance;
+                    $responseParts[] = sprintf('"%s":"%s"', $coin, $balance);
                 }
 
-                $responseText = implode(';', $responseParts);
+                $responseText = sprintf('{%s}', implode(',', $responseParts));
             }
         }
 

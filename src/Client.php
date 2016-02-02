@@ -3,6 +3,7 @@ namespace RickDenHaan\Eobot;
 
 use Buzz\Browser;
 use Buzz\Client\Curl;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * Eobot Client is the class that communicates with the Eobot API
@@ -62,11 +63,6 @@ class Client
     const COIN_CURECOIN = 'CURE';
 
     /**
-     * The coin abbreviation for Storjcoin X
-     */
-    const COIN_STORJCOIN_X = 'SJCX';
-
-    /**
      * The coin abbreviation for Monero
      */
     const COIN_MONERO = 'XMR';
@@ -112,10 +108,9 @@ class Client
     const COIN_GRIDCOIN = 'GRC';
 
     /**
-     * The Eobot abbreviation for their Cloud SHA-256 v3 miners
+     * The coin abbreviation for Factom
      */
-    const EO_CLOUD_SHA256_3          = 'GHS';
-    const EO_CLOUD_SHA256_3_CONTRACT = 'GHSCONTRACT';
+    const COIN_FACTOM = 'FCT';
 
     /**
      * The Eobot abbreviation for their 2nd generation Cloud SHA-256 miners
@@ -123,10 +118,11 @@ class Client
     const EO_CLOUD_SHA256_2          = 'GHS2';
     const EO_CLOUD_SHA256_2_CONTRACT = 'GHS2CONTRACT';
 
-    /* @deprecated */
-    const EO_CLOUD_SHA256 = 'GHS';
-    /* @deprecated */
-    const EO_CLOUD_SHA256_CONTRACT = 'GHSCONTRACT';
+    /**
+     * The Eobot abbreviation for their Cloud SHA-256 v3 miners
+     */
+    const EO_CLOUD_SHA256_3          = 'GHS';
+    const EO_CLOUD_SHA256_3_CONTRACT = 'GHSCONTRACT';
 
     /**
      * The Eobot abbreviation for their Cloud Folding service
@@ -135,9 +131,10 @@ class Client
     const EO_CLOUD_FOLDING_CONTRACT = 'PPDCONTRACT';
 
     /**
-     * The currency abbreviation for Euro
+     * The Eobot abbreviation for their Cloud SETI service
      */
-    const CURRENCY_EURO = 'EUR';
+    const EO_CLOUD_SETI          = 'BPPD';
+    const EO_CLOUD_SETI_CONTRACT = 'BPPDCONTRACT';
 
     /**
      * The currency abbreviation for US Dollar
@@ -145,9 +142,14 @@ class Client
     const CURRENCY_US_DOLLAR = 'USD';
 
     /**
-     * The currency abbreviation for Russian Ruble
+     * The currency abbreviation for Euro
      */
-    const CURRENCY_RUSSIAN_RUBLE = 'RUB';
+    const CURRENCY_EURO = 'EUR';
+
+    /**
+     * The currency abbreviation for Japanese Yen
+     */
+    const CURRENCY_JAPANESE_YEN = 'JPY';
 
     /**
      * The currency abbreviation for British Pound
@@ -155,9 +157,14 @@ class Client
     const CURRENCY_BRITISH_POUND = 'GBP';
 
     /**
-     * The currency abbreviation for Indonesian Rupiah
+     * The currency abbreviation for Russian Ruble
      */
-    const CURRENCY_INDONESIAN_RUPIAH = 'IDR';
+    const CURRENCY_RUSSIAN_RUBLE = 'RUB';
+
+    /**
+     * The currency abbreviation for Chinese Yuan Renminbi
+     */
+    const CURRENCY_CHINESE_YUAN_RENMINBI = 'CNY';
 
     /**
      * The currency abbreviation for Canadian Dollar
@@ -170,29 +177,24 @@ class Client
     const CURRENCY_AUSTRALIAN_DOLLAR = 'AUD';
 
     /**
-     * The currency abbreviation for Japanese Yen
-     */
-    const CURRENCY_JAPANESE_YEN = 'JPY';
-
-    /**
      * The currency abbreviation for Mexican Peso
      */
     const CURRENCY_MEXICAN_PESO = 'MXN';
 
     /**
-     * The currency abbreviation for Chinese Yuan Renminbi
+     * The currency abbreviation for Indonesian Rupiah
      */
-    const CURRENCY_CHINESE_YUAN_RENMINBI = 'CNY';
-
-    /**
-     * The currency abbreviation for Czech Koruna
-     */
-    const CURRENCY_CZECH_KORUNA = 'CZK';
+    const CURRENCY_INDONESIAN_RUPIAH = 'IDR';
 
     /**
      * The currency abbreviation for Norwegian Krone
      */
     const CURRENCY_NORWEGIAN_KRONE = 'NOK';
+
+    /**
+     * The currency abbreviation for Czech Koruna
+     */
+    const CURRENCY_CZECH_KORUNA = 'CZK';
 
     /**
      * The currency abbreviation for Polish Zloty
@@ -330,9 +332,24 @@ class Client
     const QUERY_SUPPORTED_COINS = 'supportedcoins';
 
     /**
+     * Query parameter used to request the exchange rates from USD for all supported currencies
+     */
+    const QUERY_SUPPORTED_CURRENCIES = 'supportedfiat';
+
+    /**
+     * Query parameter used to request a JSON response from the server
+     */
+    const QUERY_JSON = 'json';
+
+    /**
+     * The Eobot abbreviation for their 24-hour Cloud SCRYPT miner rental service
+     */
+    const RENTAL_SCRYPT = 'SCRYPTTEMP';
+
+    /**
      * The Eobot abbreviation for their 24-hour Cloud SHA-256 miner rental service
      */
-    const RENTAL_SHA256 = 'GHSTEMP';
+    const RENTAL_SHA256_3 = 'GHSTEMP';
 
     /**
      * The Eobot abbreviation for their 24-hour Cloud Folding rental service
@@ -347,25 +364,11 @@ class Client
     protected $userId = null;
 
     /**
-     * Local cache of exchange rates
+     * The local cache to use for GET requests
      *
-     * @type array
+     * @type CacheItemPoolInterface
      */
-    protected $exchangeRates = array();
-
-    /**
-     * Local cache of coin values
-     *
-     * @type array
-     */
-    protected $coinValues = array();
-
-    /**
-     * Local cache of coin balances
-     *
-     * @type array
-     */
-    protected $balances = array();
+    protected $cachePool = null;
 
     /**
      * A boolean indicator which can be set to false so that the Eobot SSL certificate is not verified. **Not
@@ -404,10 +407,11 @@ class Client
      * $client = new Client(1234);
      * </code>
      *
-     * @param int $userId (Optional) Defaults to null
+     * @param int                    $userId    (Optional) Defaults to null
+     * @param CacheItemPoolInterface $cachePool (Optional) Defaults to null
      * @throws \InvalidArgumentException
      */
-    public function __construct($userId = null)
+    public function __construct($userId = null, CacheItemPoolInterface $cachePool = null)
     {
         if ($userId !== null && preg_match('/[^0-9]/', $userId)) {
             throw new \InvalidArgumentException(
@@ -418,7 +422,8 @@ class Client
             );
         }
 
-        $this->userId = $userId;
+        $this->userId    = $userId;
+        $this->cachePool = $cachePool;
     }
 
     /**
@@ -462,80 +467,128 @@ class Client
             );
         }
 
-        // check whether we have the coin value in USD cached
-        if (!isset($this->coinValues[$coin]) || $forceFetch) {
-            // retrieve USD values for all coins
-            $request        = $this->getRequest();
-            $this->response = $request->get(
+        $coinValues             = array();
+        $supportedCoinsResponse = null;
+
+        // check whether we have the coin values in USD for all supported coins cached
+        if (($this->cachePool !== null && $this->cachePool->hasItem('eobot_coin_values_supported')) && !$forceFetch) {
+            // retrieve USD values for all supported coins
+            $cachedSupportedCoinValues = $this->cachePool->getItem('eobot_coin_values_supported');
+
+            if ($cachedSupportedCoinValues->isHit()) {
+                $supportedCoinsResponse = $cachedSupportedCoinValues->get();
+            }
+        }
+
+        // if not, or we're asked to force-fetch a result, get the supported coins from the server
+        if ($supportedCoinsResponse === null) {
+            $request                = $this->getRequest();
+            $supportedCoinsResponse = $request->get(
                 sprintf(
                     '%1$s?%2$s',
                     $this->baseUrl,
                     http_build_query(
                         array(
                             self::QUERY_SUPPORTED_COINS => 'true',
+                            self::QUERY_JSON            => 'true',
                         )
                     )
                 ),
                 $this->getRequestHeaders()
             );
 
-            $coinValuesInUsd = trim($this->response->getContent());
+            // store this response into the cache
+            if ($this->cachePool !== null) {
+                $cachedSupportedCoinValues = $this->cachePool->getItem('eobot_coin_values_supported');
+                $cachedSupportedCoinValues->set($supportedCoinsResponse);
+                $cachedSupportedCoinValues->expiresAfter(new \DateInterval('PT5M'));
 
-            $coinValues = explode(';', $coinValuesInUsd);
+                $this->cachePool->save($cachedSupportedCoinValues);
+            }
+        }
 
-            foreach ($coinValues as $coinValue) {
-                $properties = explode(',', $coinValue);
+        $this->response = $supportedCoinsResponse;
 
-                $thisCoin = $properties[0];
+        // get the response content
+        $coinValuesInUsd = json_decode(trim($this->response->getContent()), true);
+        if (is_array($coinValuesInUsd) && !empty($coinValuesInUsd)) {
+            foreach ($coinValuesInUsd as $thisCoin => $values) {
+                $thisCoin = strtoupper($thisCoin);
 
-                if (self::isValidCoin($thisCoin)) {
-                    $price = null;
+                if (self::isValidCoin($thisCoin) || self::isValidEobotInternalType($thisCoin) || self::isValidRentalType($thisCoin)) {
+                    $coinValues[$thisCoin] = floatval($values['Price']);
+                }
+            }
+        }
 
-                    foreach ($properties as $property) {
-                        if (strpos($property, 'Price:') !== false) {
-                            $price = floatval(str_replace('Price:', '', $property));
-                        }
-                    }
+        // if the coin was not found in the all-supported-coins results, fetch the individual coin
+        if (!isset($coinValues[$coin])) {
+            $specificCoinResponse = null;
 
-                    if ($price !== null) {
-                        $this->coinValues[$thisCoin] = $price;
+            // check whether the request for this specific coin was cached
+            if (($this->cachePool !== null && $this->cachePool->hasItem('eobot_coin_value_' . $coin)) && !$forceFetch) {
+                // retrieve USD value for this coin
+                $cachedSpecificCoinValue = $this->cachePool->getItem('eobot_coin_value_' . $coin);
+
+                if ($cachedSpecificCoinValue->isHit()) {
+                    $specificCoinResponse = $cachedSpecificCoinValue->get();
+                }
+            }
+
+            // if not, or we're asked to force-fetch a result, get the coin value from the server
+            if ($specificCoinResponse === null) {
+                $request              = $this->getRequest();
+                $specificCoinResponse = $request->get(
+                    sprintf(
+                        '%1$s?%2$s',
+                        $this->baseUrl,
+                        http_build_query(
+                            array(
+                                self::QUERY_COIN => $coin,
+                                self::QUERY_JSON => 'true',
+                            )
+                        )
+                    ),
+                    $this->getRequestHeaders()
+                );
+
+                // store this response into the cache
+                if ($this->cachePool !== null) {
+                    $cachedSpecificCoinValue = $this->cachePool->getItem('eobot_coin_value_' . $coin);
+                    $cachedSpecificCoinValue->set($specificCoinResponse);
+                    $cachedSpecificCoinValue->expiresAfter(new \DateInterval('PT5M'));
+
+                    $this->cachePool->save($cachedSpecificCoinValue);
+                }
+            }
+
+            $this->response = $specificCoinResponse;
+
+            // get the response content
+            $coinValueInUsd = json_decode(trim($this->response->getContent()), true);
+            if (is_array($coinValueInUsd) && !empty($coinValueInUsd)) {
+                foreach ($coinValueInUsd as $thisCoin => $value) {
+                    $thisCoin = strtoupper($thisCoin);
+
+                    if (self::isValidCoin($thisCoin) || self::isValidEobotInternalType($thisCoin) || self::isValidRentalType($thisCoin)) {
+                        $coinValues[$thisCoin] = $value;
                     }
                 }
             }
         }
 
-        // if the coin was not found in the all-coins results, fetch the individual coin
-        if (!isset($this->coinValues[$coin])) {
-            $request        = $this->getRequest();
-            $this->response = $request->get(
+        // if we still don't have a value for this coin, throw an exception
+        if (!isset($coinValues[$coin])) {
+            throw new \LogicException(
                 sprintf(
-                    '%1$s?%2$s',
-                    $this->baseUrl,
-                    http_build_query(
-                        array(
-                            self::QUERY_COIN => $coin,
-                        )
-                    )
-                ),
-                $this->getRequestHeaders()
+                    '%1$s: Failed to retrieve value in USD for coin: %2$s',
+                    __METHOD__,
+                    $coin
+                )
             );
-
-            $coinValueInUsd = trim($this->response->getContent());
-
-            if (!preg_match('/^[0-9.]+$/', $coinValueInUsd)) {
-                throw new \LogicException(
-                    sprintf(
-                        '%1$s: Invalid API response received, given response is not a valid currency value: %2$s',
-                        __METHOD__,
-                        $coinValueInUsd
-                    )
-                );
-            }
-
-            $this->coinValues[$coin] = floatval($coinValueInUsd);
         }
 
-        $retValue = $this->coinValues[$coin];
+        $retValue = $coinValues[$coin];
 
         // check whether we were asked to retrieve a different currency
         if ($currency != self::CURRENCY_US_DOLLAR) {
@@ -550,7 +603,8 @@ class Client
 
     /**
      * This method retrieves the current exchange rate of the given currency in relation to US Dollars. This method
-     * has one optional argument, which is the currency to retrieve. This defaults to Euros.
+     * has two optional arguments: the currency to retrieve (this defaults to Euros) and whether or not to force a
+     * fetch from the server (exchange rates are cached by default).
      *
      * <code>
      * $client = new Client();
@@ -558,10 +612,11 @@ class Client
      * </code>
      *
      * @param string $currency
+     * @param bool   $forceFetch (Optional) Defaults to false, which returns the cached result from a previous fetch
      * @throws \InvalidArgumentException|\LogicException
      * @return float
      */
-    public function getExchangeRate($currency = self::CURRENCY_EURO)
+    public function getExchangeRate($currency = self::CURRENCY_EURO, $forceFetch = false)
     {
         $retValue = 1.0;
 
@@ -575,39 +630,128 @@ class Client
                 );
             }
 
-            // check whether we have the exchange rate cached
-            if (!isset($this->exchangeRates[$currency])) {
-                // retrieve the currency's exchange rate
-                $request        = $this->getRequest();
-                $this->response = $request->get(
+            $exchangeRates               = array();
+            $supportedCurrenciesResponse = null;
+
+            // check whether we have the exchange rates from USD for all supported currencies cached
+            if (($this->cachePool !== null && $this->cachePool->hasItem('eobot_exchange_rates_supported')) && !$forceFetch) {
+                // retrieve exchange rates from USD for all supported currencies
+                $cachedSupportedExchangeRates = $this->cachePool->getItem('eobot_exchange_rates_supported');
+
+                if ($cachedSupportedExchangeRates->isHit()) {
+                    $supportedCurrenciesResponse = $cachedSupportedExchangeRates->get();
+                }
+            }
+
+            // if not, or we're asked to force-fetch a result, get the supported currencies from the server
+            if ($supportedCurrenciesResponse === null) {
+                $request                     = $this->getRequest();
+                $supportedCurrenciesResponse = $request->get(
                     sprintf(
                         '%1$s?%2$s',
                         $this->baseUrl,
                         http_build_query(
                             array(
-                                self::QUERY_COIN => $currency,
+                                self::QUERY_SUPPORTED_CURRENCIES => 'true',
+                                self::QUERY_JSON                 => 'true',
                             )
                         )
                     ),
                     $this->getRequestHeaders()
                 );
 
-                $exchangeRate = trim($this->response->getContent());
+                // store this response into the cache
+                if ($this->cachePool !== null) {
+                    $cachedSupportedExchangeRates = $this->cachePool->getItem('eobot_exchange_rates_supported');
+                    $cachedSupportedExchangeRates->set($supportedCurrenciesResponse);
+                    $cachedSupportedExchangeRates->expiresAfter(new \DateInterval('PT10M'));
 
-                if (!preg_match('/^[0-9.]+$/', $exchangeRate)) {
-                    throw new \LogicException(
-                        sprintf(
-                            '%1$s: Invalid API response received, given response is not a valid exchange rate: %2$s',
-                            __METHOD__,
-                            $exchangeRate
-                        )
-                    );
+                    $this->cachePool->save($cachedSupportedExchangeRates);
                 }
-
-                $this->exchangeRates[$currency] = floatval($exchangeRate);
             }
 
-            $retValue = $this->exchangeRates[$currency];
+            $this->response = $supportedCurrenciesResponse;
+
+            // get the response content
+            $exchangeRatesFromUsd = json_decode(trim($this->response->getContent()), true);
+            if (is_array($exchangeRatesFromUsd) && !empty($exchangeRatesFromUsd)) {
+                foreach ($exchangeRatesFromUsd as $thisCurrency => $values) {
+                    $thisCurrency = strtoupper($thisCurrency);
+
+                    if (self::isValidCurrency($thisCurrency)) {
+                        $exchangeRates[$thisCurrency] = floatval($values['Price']);
+                    }
+                }
+            }
+
+            // if the currency was not found in the all-supported-currencies results, fetch the individual currency
+            if (!isset($exchangeRates[$currency])) {
+                $specificCurrencyResponse = null;
+
+                // check whether the request for this specific currency was cached
+                if (($this->cachePool !== null && $this->cachePool->hasItem('eobot_exchange_rate_' . $currency)) && !$forceFetch) {
+                    // retrieve exchange rate from USD for this currency
+                    $cachedSpecificCurrency = $this->cachePool->getItem('eobot_exchange_rate_' . $currency);
+
+                    if ($cachedSpecificCurrency->isHit()) {
+                        $specificCurrencyResponse = $cachedSpecificCurrency->get();
+                    }
+                }
+
+                // if not, or we're asked to force-fetch a result, get the exchange rate from the server
+                if ($specificCurrencyResponse === null) {
+                    $request                  = $this->getRequest();
+                    $specificCurrencyResponse = $request->get(
+                        sprintf(
+                            '%1$s?%2$s',
+                            $this->baseUrl,
+                            http_build_query(
+                                array(
+                                    self::QUERY_COIN => $currency,
+                                    self::QUERY_JSON => 'true',
+                                )
+                            )
+                        ),
+                        $this->getRequestHeaders()
+                    );
+
+                    // store this response into the cache
+                    if ($this->cachePool !== null) {
+                        $cachedSpecificCurrency = $this->cachePool->getItem('eobot_exchange_rate_' . $currency);
+                        $cachedSpecificCurrency->set($specificCurrencyResponse);
+                        $cachedSpecificCurrency->expiresAfter(new \DateInterval('PT5M'));
+
+                        $this->cachePool->save($cachedSpecificCurrency);
+                    }
+                }
+
+                $this->response = $specificCurrencyResponse;
+
+                // get the response content
+                $exchangeRateFromUsd = json_decode(trim($this->response->getContent()), true);
+                if (is_array($exchangeRateFromUsd) && !empty($exchangeRateFromUsd)) {
+                    foreach ($exchangeRateFromUsd as $thisCurrency => $value) {
+                        $thisCurrency = strtoupper($thisCurrency);
+
+                        if (self::isValidCurrency($thisCurrency)) {
+                            $exchangeRates[$thisCurrency] = $value;
+                        }
+                    }
+                }
+            }
+
+            // if we still don't have an exchange rate for this currency, throw an exception
+            if (!isset($exchangeRates[$currency])) {
+                throw new \LogicException(
+                    sprintf(
+                        '%1$s: Failed to retrieve exchange rate from USD for currency: %2$s',
+                        __METHOD__,
+                        $currency
+                    )
+                );
+            }
+
+            $retValue = $exchangeRates[$currency];
         }
 
         return $retValue;
@@ -615,8 +759,7 @@ class Client
 
     /**
      * This method retrieves the current balance of a specific type for the current or given user. This method has
-     * three
-     * optional arguments:
+     * three optional arguments:
      *
      * * The type of balance to fetch, which can be a coin type, Eobot type or currency type. Defaults to null, which
      * fetches everything
@@ -672,80 +815,112 @@ class Client
             $userId = $this->userId;
         }
 
-        if ($forceFetch || !isset($this->balances[$userId])) {
-            $this->balances[$userId] = array();
+        $balances          = array();
+        $balanceTotalInUsd = 0.0;
+        $balancesResponse  = null;
 
+        // check whether we have the balances for this user cached
+        if (($this->cachePool !== null && $this->cachePool->hasItem('eobot_balance_all_' . $userId)) && !$forceFetch) {
+            // retrieve the balances from cache
+            $cachedBalances = $this->cachePool->getItem('eobot_balance_all_' . $userId);
+
+            if ($cachedBalances->isHit()) {
+                $balancesResponse = $cachedBalances->get();
+            }
+        }
+
+        // if not, or we're asked to force-fetch a result, get the balances from the server
+        if ($balancesResponse === null) {
             // retrieve the balances for the given user
-            $request        = $this->getRequest();
-            $this->response = $request->get(
+            $request          = $this->getRequest();
+            $balancesResponse = $request->get(
                 sprintf(
                     '%1$s?%2$s',
                     $this->baseUrl,
                     http_build_query(
                         array(
                             self::QUERY_TOTAL => $userId,
+                            self::QUERY_JSON  => 'true',
                         )
                     )
                 ),
                 $this->getRequestHeaders()
             );
 
-            $balances = trim($this->response->getContent());
+            // store this response into the cache
+            if ($this->cachePool !== null) {
+                $cachedBalances = $this->cachePool->getItem('eobot_balance_all_' . $userId);
+                $cachedBalances->set($balancesResponse);
+                $cachedBalances->expiresAfter(new \DateInterval('PT1M'));
 
-            if (!strstr($balances, ';') || !strstr($balances, ':')) {
-                throw new \LogicException(
-                    sprintf(
-                        '%1$s: Invalid API response received, given response does not contain balances: %2$s',
-                        __METHOD__,
-                        $balances
-                    )
-                );
+                $this->cachePool->save($cachedBalances);
             }
+        }
 
-            $balances = explode(';', $balances);
-            foreach ($balances as $balance) {
-                $balance = explode(':', trim($balance));
+        $this->response = $balancesResponse;
 
-                if (trim($balance[0]) == self::EO_CLOUD_SHA256_3_CONTRACT) {
-                    $balance[0] = self::EO_CLOUD_SHA256_3;
+        // get the response content
+        $allBalances = json_decode(trim($this->response->getContent()), true);
+        if (is_array($allBalances) && !empty($allBalances)) {
+            foreach ($allBalances as $thisItem => $balance) {
+                $thisItem = strtoupper($thisItem);
+
+                if ($thisItem == self::EO_CLOUD_SHA256_2_CONTRACT) {
+                    $thisItem = self::EO_CLOUD_SHA256_2;
+                } elseif ($thisItem == self::EO_CLOUD_SHA256_3_CONTRACT) {
+                    $thisItem = self::EO_CLOUD_SHA256_3;
+                } elseif ($thisItem == self::EO_CLOUD_FOLDING_CONTRACT) {
+                    $thisItem = self::EO_CLOUD_FOLDING;
+                } elseif ($thisItem == self::EO_CLOUD_SETI_CONTRACT) {
+                    $thisItem = self::EO_CLOUD_SETI;
                 }
 
-                if (trim($balance[0]) == self::EO_CLOUD_SHA256_2_CONTRACT) {
-                    $balance[0] = self::EO_CLOUD_SHA256_2;
+                if (self::isValidCoin($thisItem) || self::isValidEobotInternalType($thisItem) || self::isValidRentalType($thisItem)) {
+                    $balances[$thisItem] = floatval($balance);
+                } elseif ($thisItem == 'TOTAL') {
+                    $balanceTotalInUsd = floatval($balance);
                 }
-
-                if (trim($balance[0]) == self::EO_CLOUD_FOLDING_CONTRACT) {
-                    $balance[0] = self::EO_CLOUD_FOLDING;
-                }
-
-                $this->balances[$userId][trim($balance[0])] = floatval(trim($balance[1]));
             }
         }
 
         if ($type === null) {
-            $retValue = $this->balances[$userId];
-        } elseif (self::isValidCoin($type) && isset($this->balances[$userId][$type])) {
-            $retValue = $this->balances[$userId][$type];
+            if (empty($balances)) {
+                throw new \LogicException(
+                    sprintf(
+                        '%1$s: Invalid API response, response does not contain any balances: %2$s',
+                        __METHOD__,
+                        $this->response->getContent()
+                    )
+                );
+            }
+
+            $retValue = $balances;
+        } elseif (self::isValidCoin($type) && isset($balances[$type])) {
+            $retValue = $balances[$type];
         } elseif (self::isValidCurrency($type)) {
             $response       = $this->response;
             $exchangeRate   = $this->getExchangeRate($type);
             $this->response = $response;
-            $retValue       = ($this->balances[$userId]['Total'] * $exchangeRate);
+            $retValue       = ($balanceTotalInUsd * $exchangeRate);
         } else {
-            if ($type == self::EO_CLOUD_SHA256_3_CONTRACT) {
-                $type = self::EO_CLOUD_SHA256_3;
-            }
-
             if ($type == self::EO_CLOUD_SHA256_2_CONTRACT) {
                 $type = self::EO_CLOUD_SHA256_2;
+            }
+
+            if ($type == self::EO_CLOUD_SHA256_3_CONTRACT) {
+                $type = self::EO_CLOUD_SHA256_3;
             }
 
             if ($type == self::EO_CLOUD_FOLDING_CONTRACT) {
                 $type = self::EO_CLOUD_FOLDING;
             }
 
-            if (self::isValidEobotInternalType($type) && isset($this->balances[$userId][$type])) {
-                $retValue = $this->balances[$userId][$type];
+            if ($type == self::EO_CLOUD_SETI_CONTRACT) {
+                $type = self::EO_CLOUD_SETI;
+            }
+
+            if (self::isValidEobotInternalType($type) || self::isValidRentalType($type) && isset($balances[$type])) {
+                $retValue = $balances[$type];
             } else {
                 throw new \LogicException(
                     sprintf(
@@ -761,8 +936,9 @@ class Client
     }
 
     /**
-     * This method returns the coin type currently being mined. It expects one optional parameter, which is the Eobot
-     * user identifier. If the user identifier was not passed into the constructor, it is required here.
+     * This method returns the coin type currently being mined. It expects two optional parameters, which are the Eobot
+     * user identifier (if it was not passed into the constructor, it is required here) and whether or not to force a
+     * fetch from the server (response is cached for 1 minute by default).
      *
      * <code>
      * $client = new Client(1234);
@@ -772,11 +948,12 @@ class Client
      * $type = $client->getMiningMode(1234);
      * </code>
      *
-     * @param int $userId (Optional) Defaults to null
+     * @param int  $userId     (Optional) Defaults to null
+     * @param bool $forceFetch (Optional) Defaults to false
      * @throws \InvalidArgumentException|\LogicException
      * @return string
      */
-    public function getMiningMode($userId = null)
+    public function getMiningMode($userId = null, $forceFetch = false)
     {
         if ($this->userId === null && $userId === null) {
             throw new \InvalidArgumentException(
@@ -800,36 +977,73 @@ class Client
             $userId = $this->userId;
         }
 
-        // retrieve the type currently being mined by the given user
-        $request        = $this->getRequest();
-        $this->response = $request->get(
-            sprintf(
-                '%1$s?%2$s',
-                $this->baseUrl,
-                http_build_query(
-                    array(
-                        self::QUERY_IDMINING => $userId,
+        $miningModeResponse = null;
+
+        // check whether we have the mining mode for this user cached
+        if (($this->cachePool !== null && $this->cachePool->hasItem('eobot_mining_mode_' . $userId)) && !$forceFetch) {
+            // retrieve the mining mode from cache
+            $cachedMiningMode = $this->cachePool->getItem('eobot_mining_mode_' . $userId);
+
+            if ($cachedMiningMode->isHit()) {
+                $miningModeResponse = $cachedMiningMode->get();
+            }
+        }
+
+        // if not, or we're asked to force-fetch a result, get the mining mode from the server
+        if ($miningModeResponse === null) {
+            // retrieve the type currently being mined by the given user
+            $request            = $this->getRequest();
+            $miningModeResponse = $request->get(
+                sprintf(
+                    '%1$s?%2$s',
+                    $this->baseUrl,
+                    http_build_query(
+                        array(
+                            self::QUERY_IDMINING => $userId,
+                            self::QUERY_JSON     => 'true',
+                        )
                     )
-                )
-            ),
-            $this->getRequestHeaders()
-        );
+                ),
+                $this->getRequestHeaders()
+            );
 
-        $retValue = trim($this->response->getContent());
+            // store this response into the cache
+            if ($this->cachePool !== null) {
+                $cachedMiningMode = $this->cachePool->getItem('eobot_mining_mode_' . $userId);
+                $cachedMiningMode->set($miningModeResponse);
+                $cachedMiningMode->expiresAfter(new \DateInterval('PT1M'));
 
-        if ($retValue == self::EO_CLOUD_SHA256_3_CONTRACT) {
-            $retValue = self::EO_CLOUD_SHA256_3;
+                $this->cachePool->save($cachedMiningMode);
+            }
+        }
+
+        $this->response = $miningModeResponse;
+
+        // get the response content
+        $miningData = json_decode(trim($this->response->getContent()), true);
+
+        $retValue = null;
+        if (is_array($miningData) && !empty($miningData)) {
+            $retValue = strtoupper($miningData['mining']);
         }
 
         if ($retValue == self::EO_CLOUD_SHA256_2_CONTRACT) {
             $retValue = self::EO_CLOUD_SHA256_2;
         }
 
+        if ($retValue == self::EO_CLOUD_SHA256_3_CONTRACT) {
+            $retValue = self::EO_CLOUD_SHA256_3;
+        }
+
         if ($retValue == self::EO_CLOUD_FOLDING_CONTRACT) {
             $retValue = self::EO_CLOUD_FOLDING;
         }
 
-        if (!self::isValidCoin($retValue) && !self::isValidEobotInternalType($retValue)) {
+        if ($retValue == self::EO_CLOUD_SETI_CONTRACT) {
+            $retValue = self::EO_CLOUD_SETI;
+        }
+
+        if (!self::isValidCoin($retValue) && !self::isValidEobotInternalType($retValue) && !self::isValidRentalType($retValue)) {
             throw new \LogicException(
                 sprintf(
                     '%1$s: Invalid API response received, given response is not a valid coin type: %2$s',
@@ -843,18 +1057,23 @@ class Client
     }
 
     /**
-     * This method returns the current mining and cloud speeds. It expects one optional parameter, which is the Eobot
-     * user identifier. If the user identifier was not passed into the constructor, it is required here. This method
-     * returns an array with five values: the current mining speed for SHA-256 mining (in GHS), the current mining
-     * speed for Scrypt mining (in KHS), the current Eobot cloud mining speed for SHA-256 mining (in GHS), the current
-     * Eobot cloud mining speed for SHA-256 v2 mining (in GHS) and the current Eobot cloud mining speed for Scrypt
-     * mining (in KHS).
+     * This method returns the current mining and cloud speeds. It expects two optional parameter, which are the Eobot
+     * user identifier (if the user identifier was not passed into the constructor, it is required here) and whether or
+     * not to fetch a fresh result from the server (response is cached for 10 minutes by default). This method returns
+     * an array with five values:
      *
-     * @param int $userId (Optional) Defaults to null
+     * * MiningSHA-256: The current mining speed for SHA-256 mining (in GHS)
+     * * MiningScrypt : The current mining speed for SCRYPT mining (in MHS)
+     * * Cloud2SHA-256: The current Eobot cloud mining speed for SHA-256 v2 mining (in GHS)
+     * * CloudSHA-256 : The current Eobot cloud mining speed for SHA-256 v3 mining (in GHS)
+     * * CloudScrypt  : The current Eobot cloud mining speed for SCRYPT mining (in MHS)
+     *
+     * @param int  $userId     (Optional) Defaults to null
+     * @param bool $forceFetch (Optional) Defaults to false
      * @throws \InvalidArgumentException|\LogicException
      * @return array
      */
-    public function getSpeed($userId = null)
+    public function getSpeed($userId = null, $forceFetch = false)
     {
         if ($this->userId === null && $userId === null) {
             throw new \InvalidArgumentException(
@@ -886,60 +1105,84 @@ class Client
             'CloudScrypt'   => 0.0,
         );
 
-        // retrieve the current mining speeds for the given user
-        $request        = $this->getRequest();
-        $this->response = $request->get(
-            sprintf(
-                '%1$s?%2$s',
-                $this->baseUrl,
-                http_build_query(
-                    array(
-                        self::QUERY_IDSPEED => $userId,
+        $miningSpeedsResponse = null;
+
+        // check whether we have the mining speeds for this user cached
+        if (($this->cachePool !== null && $this->cachePool->hasItem('eobot_mining_speeds_' . $userId)) && !$forceFetch) {
+            // retrieve the mining speeds from cache
+            $cachedMiningSpeeds = $this->cachePool->getItem('eobot_mining_speeds_' . $userId);
+
+            if ($cachedMiningSpeeds->isHit()) {
+                $miningSpeedsResponse = $cachedMiningSpeeds->get();
+            }
+        }
+
+        // if not, or we're asked to force-fetch a result, get the mining speeds from the server
+        if ($miningSpeedsResponse === null) {
+            // retrieve the current mining speeds for the given user
+            $request              = $this->getRequest();
+            $miningSpeedsResponse = $request->get(
+                sprintf(
+                    '%1$s?%2$s',
+                    $this->baseUrl,
+                    http_build_query(
+                        array(
+                            self::QUERY_IDSPEED => $userId,
+                            self::QUERY_JSON    => 'true',
+                        )
                     )
-                )
-            ),
-            $this->getRequestHeaders()
-        );
+                ),
+                $this->getRequestHeaders()
+            );
 
-        $speeds = trim($this->response->getContent());
+            // store this response into the cache
+            if ($this->cachePool !== null) {
+                $cachedMiningSpeeds = $this->cachePool->getItem('eobot_mining_speeds_' . $userId);
+                $cachedMiningSpeeds->set($miningSpeedsResponse);
+                $cachedMiningSpeeds->expiresAfter(new \DateInterval('PT10M'));
 
-        if (!strstr($speeds, ';') || !strstr($speeds, ':')) {
+                $this->cachePool->save($cachedMiningSpeeds);
+            }
+        }
+
+        $this->response = $miningSpeedsResponse;
+
+        // get the response content
+        $miningSpeeds = json_decode(trim($this->response->getContent()), true);
+        if (is_array($miningSpeeds) && !empty($miningSpeeds)) {
+            foreach ($miningSpeeds as $type => $speed) {
+                if (array_key_exists($type, $retValue)) {
+                    $retValue[$type] = floatval($speed);
+                }
+            }
+        } else {
             throw new \LogicException(
                 sprintf(
                     '%1$s: Invalid API response received, given response does not contain mining speeds: %2$s',
                     __METHOD__,
-                    $speeds
+                    $this->response->getContent()
                 )
             );
-        }
-
-        $speeds = explode(';', $speeds);
-        foreach ($speeds as $speed) {
-            if (trim($speed) == '') {
-                continue;
-            }
-
-            $speed = explode(':', trim($speed));
-
-            $retValue[trim($speed[0])] = floatval(trim($speed[1]));
         }
 
         return $retValue;
     }
 
     /**
-     * This method returns the current mining and cloud estimates. It expects two optional parameters, which are the
-     * currency to return the results in and the Eobot user identifier. If the user identifier was not passed into the
-     * constructor, it is required here. This method returns an array with five values: the estimated monthly income
+     * This method returns the current mining and cloud estimates. It expects three optional parameters, which are the
+     * currency to return the results in, the Eobot user identifier (if the user identifier was not passed into the
+     * constructor, it is required here) and whether or not to force fetch a fresh result from the server (response is
+     * cached for 10 minutes by default). This method returns an array with five values: the estimated monthly income
      * for SHA-256 mining, Scrypt mining, Eobot cloud SHA-256 mining, Eobot cloud SHA-256 v2 mining and for Eobot cloud
      * Scrypt mining.
      *
-     * @param string $currency (Optional) Defaults to US Dollars
-     * @param int    $userId   (Optional) Defaults to null
+     * @param string $currency   (Optional) Defaults to US Dollars
+     * @param int    $userId     (Optional) Defaults to null
+     * @param bool   $forceFetch (Optional) Defaults to false
      * @throws \InvalidArgumentException|\LogicException
      * @return array
      */
-    public function getEstimates($currency = self::CURRENCY_US_DOLLAR, $userId = null)
+    public function getEstimates($currency = self::CURRENCY_US_DOLLAR, $userId = null, $forceFetch = false)
     {
         if (!$this->isValidCurrency($currency)) {
             throw new \InvalidArgumentException(
@@ -980,42 +1223,64 @@ class Client
             'CloudScrypt'   => 0.0,
         );
 
-        // retrieve the estimates for the given user
-        $request        = $this->getRequest();
-        $this->response = $request->get(
-            sprintf(
-                '%1$s?%2$s',
-                $this->baseUrl,
-                http_build_query(
-                    array(
-                        self::QUERY_IDESTIMATES => $userId,
+        $miningEstimatesResponse = null;
+
+        // check whether we have the mining estimates for this user cached
+        if (($this->cachePool !== null && $this->cachePool->hasItem('eobot_mining_estimates_' . $userId)) && !$forceFetch) {
+            // retrieve the mining estimates from cache
+            $cachedMiningEstimates = $this->cachePool->getItem('eobot_mining_estimates_' . $userId);
+
+            if ($cachedMiningEstimates->isHit()) {
+                $miningEstimatesResponse = $cachedMiningEstimates->get();
+            }
+        }
+
+        // if not, or we're asked to force-fetch a result, get the mining estimates from the server
+        if ($miningEstimatesResponse === null) {
+            // retrieve the current mining estimates for the given user
+            $request                 = $this->getRequest();
+            $miningEstimatesResponse = $request->get(
+                sprintf(
+                    '%1$s?%2$s',
+                    $this->baseUrl,
+                    http_build_query(
+                        array(
+                            self::QUERY_IDESTIMATES => $userId,
+                            self::QUERY_JSON        => 'true',
+                        )
                     )
-                )
-            ),
-            $this->getRequestHeaders()
-        );
+                ),
+                $this->getRequestHeaders()
+            );
 
-        $estimates = trim($this->response->getContent());
+            // store this response into the cache
+            if ($this->cachePool !== null) {
+                $cachedMiningEstimates = $this->cachePool->getItem('eobot_mining_estimates_' . $userId);
+                $cachedMiningEstimates->set($miningEstimatesResponse);
+                $cachedMiningEstimates->expiresAfter(new \DateInterval('PT10M'));
 
-        if (!strstr($estimates, ';') || !strstr($estimates, ':')) {
+                $this->cachePool->save($cachedMiningEstimates);
+            }
+        }
+
+        $this->response = $miningEstimatesResponse;
+
+        // get the response content
+        $miningEstimates = json_decode(trim($this->response->getContent()), true);
+        if (is_array($miningEstimates) && !empty($miningEstimates)) {
+            foreach ($miningEstimates as $type => $estimate) {
+                if (array_key_exists($type, $retValue)) {
+                    $retValue[$type] = floatval($estimate);
+                }
+            }
+        } else {
             throw new \LogicException(
                 sprintf(
                     '%1$s: Invalid API response received, given response does not contain mining estimates: %2$s',
                     __METHOD__,
-                    $estimates
+                    $this->response->getContent()
                 )
             );
-        }
-
-        $estimates = explode(';', $estimates);
-        foreach ($estimates as $estimate) {
-            if (trim($estimate) == '') {
-                continue;
-            }
-
-            $estimate = explode(':', trim($estimate));
-
-            $retValue[trim($estimate[0])] = floatval(trim($estimate[1]));
         }
 
         if ($currency != self::CURRENCY_US_DOLLAR) {
@@ -1073,23 +1338,63 @@ class Client
             $userId = $this->userId;
         }
 
-        // retrieve the deposit address for this coin type
-        $request        = $this->getRequest();
-        $this->response = $request->get(
-            sprintf(
-                '%1$s?%2$s',
-                $this->baseUrl,
-                http_build_query(
-                    array(
-                        self::QUERY_ID      => $userId,
-                        self::QUERY_DEPOSIT => $coinType,
-                    )
-                )
-            ),
-            $this->getRequestHeaders()
-        );
+        $depositResponse = null;
 
-        return trim($this->response->getContent());
+        // check whether we have the deposit address for this user and coin cached
+        if ($this->cachePool !== null && $this->cachePool->hasItem('eobot_deposit_address_' . $userId . '_' . $coinType)) {
+            // retrieve the deposit address from cache
+            $cachedDepositAddress = $this->cachePool->getItem('eobot_deposit_address_' . $userId . '_' . $coinType);
+
+            if ($cachedDepositAddress->isHit()) {
+                $depositResponse = $cachedDepositAddress->get();
+            }
+        }
+
+        // if not, get the deposit address from the server
+        if ($depositResponse === null) {
+            // retrieve the deposit address for the given user and coin type
+            $request         = $this->getRequest();
+            $depositResponse = $request->get(
+                sprintf(
+                    '%1$s?%2$s',
+                    $this->baseUrl,
+                    http_build_query(
+                        array(
+                            self::QUERY_ID      => $userId,
+                            self::QUERY_DEPOSIT => $coinType,
+                            self::QUERY_JSON    => 'true',
+                        )
+                    )
+                ),
+                $this->getRequestHeaders()
+            );
+
+            // store this response into the cache
+            if ($this->cachePool !== null) {
+                $cachedDepositAddress = $this->cachePool->getItem('eobot_deposit_address_' . $userId . '_' . $coinType);
+                $cachedDepositAddress->set($depositResponse);
+                $cachedDepositAddress->expiresAfter(new \DateInterval('PT30M'));
+
+                $this->cachePool->save($cachedDepositAddress);
+            }
+        }
+
+        $this->response = $depositResponse;
+
+        // get the response content
+        $retValue       = '';
+        $depositAddress = json_decode(trim($this->response->getContent()), true);
+        if (is_array($depositAddress) && !empty($depositAddress)) {
+            foreach ($depositAddress as $type => $address) {
+                $type = strtoupper($type);
+
+                if ($type == $coinType) {
+                    $retValue = $address;
+                }
+            }
+        }
+
+        return $retValue;
     }
 
     /**
@@ -1203,20 +1508,24 @@ class Client
             $userId = $this->userId;
         }
 
-        if ($type == self::EO_CLOUD_SHA256_3_CONTRACT) {
-            $type = self::EO_CLOUD_SHA256_3;
-        }
-
         if ($type == self::EO_CLOUD_SHA256_2_CONTRACT) {
             $type = self::EO_CLOUD_SHA256_2;
+        }
+
+        if ($type == self::EO_CLOUD_SHA256_3_CONTRACT) {
+            $type = self::EO_CLOUD_SHA256_3;
         }
 
         if ($type == self::EO_CLOUD_FOLDING_CONTRACT) {
             $type = self::EO_CLOUD_FOLDING;
         }
 
+        if ($type == self::EO_CLOUD_SETI_CONTRACT) {
+            $type = self::EO_CLOUD_SETI;
+        }
+
         // get the current mining mode
-        $currentMiningMode = $this->getMiningMode($userId);
+        $currentMiningMode = $this->getMiningMode($userId, true);
 
         // check whether we're trying to set the same mining mode
         if ($currentMiningMode == $type) {
@@ -1239,7 +1548,7 @@ class Client
         );
 
         // check whether the mining mode was successfully changed
-        return ($this->getMiningMode($userId) == $type);
+        return ($this->getMiningMode($userId, true) == $type);
     }
 
     /**
@@ -1493,28 +1802,36 @@ class Client
             $userId = $this->userId;
         }
 
-        if ($coinType == self::EO_CLOUD_SHA256_3_CONTRACT) {
-            $coinType = self::EO_CLOUD_SHA256_3;
-        }
-
         if ($coinType == self::EO_CLOUD_SHA256_2_CONTRACT) {
             $coinType = self::EO_CLOUD_SHA256_2;
+        }
+
+        if ($coinType == self::EO_CLOUD_SHA256_3_CONTRACT) {
+            $coinType = self::EO_CLOUD_SHA256_3;
         }
 
         if ($coinType == self::EO_CLOUD_FOLDING_CONTRACT) {
             $coinType = self::EO_CLOUD_FOLDING;
         }
 
-        if ($cloudType == self::EO_CLOUD_SHA256_3_CONTRACT) {
-            $cloudType = self::EO_CLOUD_SHA256_3;
+        if ($coinType == self::EO_CLOUD_SETI_CONTRACT) {
+            $coinType = self::EO_CLOUD_SETI;
         }
 
         if ($cloudType == self::EO_CLOUD_SHA256_2_CONTRACT) {
             $cloudType = self::EO_CLOUD_SHA256_2;
         }
 
+        if ($cloudType == self::EO_CLOUD_SHA256_3_CONTRACT) {
+            $cloudType = self::EO_CLOUD_SHA256_3;
+        }
+
         if ($cloudType == self::EO_CLOUD_FOLDING_CONTRACT) {
             $cloudType = self::EO_CLOUD_FOLDING;
+        }
+
+        if ($cloudType == self::EO_CLOUD_SETI_CONTRACT) {
+            $cloudType = self::EO_CLOUD_SETI;
         }
 
         // get the current balance for the coin we're going to convert
@@ -1678,7 +1995,7 @@ class Client
     }
 
     /**
-     * This methods can be used to configure the connection timeout. Provide an integer in seconds.
+     * This method can be used to configure the connection timeout. Provide an integer in seconds.
      *
      * <code>
      * $client = new Client();
@@ -1691,6 +2008,17 @@ class Client
     public function setTimeout($timeout)
     {
         $this->timeout = (int)$timeout;
+    }
+
+    /**
+     * This method replaces the cache pool set via the constructor.
+     *
+     * @param CacheItemPoolInterface $cachePool (Optional) Defaults to null, which disables caching
+     * @return void
+     */
+    public function setCachePool(CacheItemPoolInterface $cachePool = null)
+    {
+        $this->cachePool = $cachePool;
     }
 
     /**
@@ -1728,7 +2056,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.6.0 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.7.0 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
