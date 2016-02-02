@@ -263,7 +263,7 @@ class MockEobotResponder
             $responseParts = array();
 
             foreach (self::$coinValues as $coin => $value) {
-                if (Client::isValidCurrency($coin)) {
+                if (Client::isValidCurrency($coin) && $coin != Client::CURRENCY_CANADIAN_DOLLAR) {
                     $responseParts[] = sprintf(
                         '"%s":{"Price":%s}',
                         $coin,

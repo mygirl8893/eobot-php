@@ -304,16 +304,16 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($cachePool->hasItem('eobot_exchange_rates_supported'));
         $client->getExchangeRate(Client::CURRENCY_EURO);
 
-        $this->assertFalse($cachePool->hasItem('eobot_exchange_rate_' . Client::CURRENCY_AUSTRALIAN_DOLLAR));
+        $this->assertFalse($cachePool->hasItem('eobot_exchange_rate_' . Client::CURRENCY_CANADIAN_DOLLAR));
         try {
-            $client->getExchangeRate(Client::CURRENCY_AUSTRALIAN_DOLLAR);
+            $client->getExchangeRate(Client::CURRENCY_CANADIAN_DOLLAR);
         } catch (Exception $e) {
             // ignore
         }
 
-        $this->assertTrue($cachePool->hasItem('eobot_exchange_rate_' . Client::CURRENCY_AUSTRALIAN_DOLLAR));
+        $this->assertTrue($cachePool->hasItem('eobot_exchange_rate_' . Client::CURRENCY_CANADIAN_DOLLAR));
         try {
-            $client->getExchangeRate(Client::CURRENCY_AUSTRALIAN_DOLLAR);
+            $client->getExchangeRate(Client::CURRENCY_CANADIAN_DOLLAR);
         } catch (Exception $e) {
             // ignore
         }
