@@ -321,6 +321,7 @@ class MockEobotResponder
                 foreach (self::$estimatedIncomes[$parameters['idestimates']] as $type => $estimate) {
                     $estimate = number_format($estimate, 16, '.', '');
                     $estimate = preg_replace('/0*$/', '', $estimate);
+                    $estimate = preg_replace('/\.$/', '.0', $estimate);
 
                     $responseParts[] = sprintf('"%s":%s', $type, $estimate);
                 }
