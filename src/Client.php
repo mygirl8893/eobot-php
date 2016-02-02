@@ -719,7 +719,7 @@ class Client
                     if ($this->cachePool !== null) {
                         $cachedSpecificCurrency = $this->cachePool->getItem('eobot_exchange_rate_' . $currency);
                         $cachedSpecificCurrency->set($specificCurrencyResponse);
-                        $cachedSpecificCurrency->expiresAfter(new \DateInterval('PT5M'));
+                        $cachedSpecificCurrency->expiresAfter(new \DateInterval('PT10M'));
 
                         $this->cachePool->save($cachedSpecificCurrency);
                     }
