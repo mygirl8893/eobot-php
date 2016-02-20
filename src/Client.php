@@ -2056,7 +2056,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.7.0 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.8Updated .0 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
