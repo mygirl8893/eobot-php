@@ -24,7 +24,6 @@ class MockEobotResponder
         Client::COIN_BITSHARES                 => 0.00336616,
         Client::COIN_BLACKCOIN                 => 0.02747326,
         Client::COIN_BYTECOIN                  => 0.00003278,
-        Client::COIN_COUNTERPARTY              => 0.68706107,
         Client::COIN_CURECOIN                  => 0.00720565,
         // Client::COIN_DASH                      => 3.97048867, // DASH is used to simulate an invalid API response
         Client::COIN_DOGECOIN                  => 0.00027966,
@@ -36,6 +35,7 @@ class MockEobotResponder
         Client::COIN_MAIDSAFECOIN              => 0.02012823,
         Client::COIN_MONERO                    => 0.49839172,
         Client::COIN_NAMECOIN                  => 0.40521139,
+        Client::COIN_NEM                       => 0.68706107,
         Client::COIN_NXT                       => 0.00837119,
         Client::COIN_PEERCOIN                  => 0.43636065,
         Client::COIN_REDDCOIN                  => 0.00002293,
@@ -83,7 +83,6 @@ class MockEobotResponder
             Client::COIN_BITSHARES             => 0.0141392,
             Client::COIN_BLACKCOIN             => 0.08188563,
             Client::COIN_BYTECOIN              => 0.01537264,
-            Client::COIN_COUNTERPARTY          => 0.00636984,
             Client::COIN_CURECOIN              => 0.05292104,
             // Client::COIN_DASH                  => 0.01324434, // DASH is used to simulate an invalid API response
             Client::COIN_FACTOM                => 0.02639744,
@@ -95,6 +94,7 @@ class MockEobotResponder
             Client::COIN_MAIDSAFECOIN          => 0.02748126,
             Client::COIN_MONERO                => 0.03641862,
             Client::COIN_NAMECOIN              => 0.00188207,
+            Client::COIN_NEM                   => 0.00636984,
             Client::COIN_NXT                   => 0.10494402,
             Client::COIN_PEERCOIN              => 0.00502554,
             Client::COIN_REDDCOIN              => 0.02830923,
@@ -110,7 +110,6 @@ class MockEobotResponder
             Client::COIN_BITSHARES             => 0.0141392,
             Client::COIN_BLACKCOIN             => 0.08188563,
             Client::COIN_BYTECOIN              => 0.01537264,
-            Client::COIN_COUNTERPARTY          => 0.00636984,
             Client::COIN_CURECOIN              => 0.05292104,
             // Client::COIN_DASH                  => 0.01324434, // DASH is used to simulate an invalid API response
             Client::COIN_DOGECOIN              => 23.78557417,
@@ -122,6 +121,7 @@ class MockEobotResponder
             Client::COIN_MAIDSAFECOIN          => 0.02748126,
             Client::COIN_MONERO                => 0.72296727,
             Client::COIN_NAMECOIN              => 0.00188207,
+            Client::COIN_NEM                   => 0.00636984,
             Client::COIN_NXT                   => 0.10494402,
             Client::COIN_PEERCOIN              => 0.00502554,
             Client::COIN_REDDCOIN              => 0.02830923,
@@ -171,7 +171,6 @@ class MockEobotResponder
             Client::COIN_BITSHARES    => 'n/a', // BTS does not have a deposit address
             Client::COIN_BLACKCOIN    => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_BYTECOIN     => '1234567890abcdefghijklmnopqrstuvwx',
-            Client::COIN_COUNTERPARTY => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_CURECOIN     => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_DASH         => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_DOGECOIN     => '1234567890abcdefghijklmnopqrstuvwx',
@@ -183,6 +182,7 @@ class MockEobotResponder
             Client::COIN_MAIDSAFECOIN => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_MONERO       => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_NAMECOIN     => '1234567890abcdefghijklmnopqrstuvwx',
+            Client::COIN_NEM          => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_NXT          => 'NXT-1234-5678-90AB-CDEF',
             Client::COIN_PEERCOIN     => '1234567890abcdefghijklmnopqrstuvwx',
             Client::COIN_REDDCOIN     => '1234567890abcdefghijklmnopqrstuvwx',

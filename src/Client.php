@@ -68,9 +68,9 @@ class Client
     const COIN_MONERO = 'XMR';
 
     /**
-     * The coin abbreviation for Counterparty
+     * The coin abbreviation for NEM
      */
-    const COIN_COUNTERPARTY = 'XCP';
+    const COIN_NEM = 'XEM';
 
     /**
      * The coin abbreviation for Lumens

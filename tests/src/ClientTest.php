@@ -150,7 +150,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_BITSHARES    => 0.00336616,
             Client::COIN_BLACKCOIN    => 0.02747326,
             Client::COIN_BYTECOIN     => 0.00003278,
-            Client::COIN_COUNTERPARTY => 0.68706107,
             Client::COIN_CURECOIN     => 0.00720565,
             Client::COIN_DOGECOIN     => 0.00027966,
             Client::COIN_ETHERIUM     => 2.24435704,
@@ -160,6 +159,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_LUMENS       => 0.00167083,
             Client::COIN_MAIDSAFECOIN => 0.02012823,
             Client::COIN_MONERO       => 0.49839172,
+            Client::COIN_NEM          => 0.68706107,
             Client::COIN_NAMECOIN     => 0.40521139,
             Client::COIN_NXT          => 0.00837119,
             Client::COIN_PEERCOIN     => 0.43636065,
@@ -357,7 +357,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.02830923, $balances[Client::COIN_REDDCOIN]);
         $this->assertEquals(0.02748126, $balances[Client::COIN_MAIDSAFECOIN]);
         $this->assertEquals(0.03641862, $balances[Client::COIN_MONERO]);
-        $this->assertEquals(0.00636984, $balances[Client::COIN_COUNTERPARTY]);
+        $this->assertEquals(0.00636984, $balances[Client::COIN_NEM]);
         $this->assertEquals(2.16726154, $balances[Client::EO_CLOUD_FOLDING]);
         $this->assertEquals(4.73192563, $balances[Client::EO_CLOUD_SETI]);
         $this->assertEquals(15.42138465, $balances[Client::EO_CLOUD_SHA256_2]);
@@ -533,7 +533,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balance = $client->getBalance(Client::COIN_MONERO);
         $this->assertEquals(0.03641862, $balance);
 
-        $balance = $client->getBalance(Client::COIN_COUNTERPARTY);
+        $balance = $client->getBalance(Client::COIN_NEM);
         $this->assertEquals(0.00636984, $balance);
 
         $balance = $client->getBalance(Client::COIN_LUMENS);
@@ -904,7 +904,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $address = $client->getDepositAddress(Client::COIN_MONERO);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
-        $address = $client->getDepositAddress(Client::COIN_COUNTERPARTY);
+        $address = $client->getDepositAddress(Client::COIN_NEM);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
         $address = $client->getDepositAddress(Client::COIN_LUMENS);
