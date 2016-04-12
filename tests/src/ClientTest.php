@@ -116,7 +116,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $coinValue = $client->getCoinValue();
 
-        $this->assertEquals(378.99, $coinValue);
+        $this->assertEquals(427.86, $coinValue);
     }
 
     /**
@@ -146,32 +146,32 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client = new MockEobotClient();
 
         $coins = array(
-            Client::COIN_BITCOIN      => 378.99,
-            Client::COIN_BITSHARES    => 0.00336616,
-            Client::COIN_BLACKCOIN    => 0.02747326,
-            Client::COIN_BYTECOIN     => 0.00003278,
-            Client::COIN_CURECOIN     => 0.00720565,
-            Client::COIN_DOGECOIN     => 0.00027966,
-            Client::COIN_ETHERIUM     => 2.24435704,
-            Client::COIN_FACTOM       => 0.90754598,
-            Client::COIN_GRIDCOIN     => 0.005964,
-            Client::COIN_LITECOIN     => 3.06900745,
-            Client::COIN_LUMENS       => 0.00167083,
-            Client::COIN_MAIDSAFECOIN => 0.02012823,
-            Client::COIN_MONERO       => 0.49839172,
-            Client::COIN_NEM          => 0.68706107,
-            Client::COIN_NAMECOIN     => 0.40521139,
-            Client::COIN_NXT          => 0.00837119,
-            Client::COIN_PEERCOIN     => 0.43636065,
-            Client::COIN_REDDCOIN     => 0.00002293,
-            Client::COIN_RIPPLE       => 0.00647743,
+            Client::COIN_BITCOIN      => 427.86,
+            Client::COIN_BITSHARES    => 0.00464736,
+            Client::COIN_BLACKCOIN    => 0.02895027,
+            Client::COIN_BYTECOIN     => 0.00004436,
+            Client::COIN_CURECOIN     => 0.02148741,
+            Client::COIN_DOGECOIN     => 0.00022725,
+            Client::COIN_ETHERIUM     => 7.24943019,
+            Client::COIN_FACTOM       => 1.12261534,
+            Client::COIN_GRIDCOIN     => 0.00937663,
+            Client::COIN_LITECOIN     => 3.29834657,
+            Client::COIN_LUMENS       => 0.0018429,
+            Client::COIN_MAIDSAFECOIN => 0.07044485,
+            Client::COIN_MONERO       => 0.90132942,
+            Client::COIN_NEM          => 0.00137615,
+            Client::COIN_NAMECOIN     => 0.43390515,
+            Client::COIN_NXT          => 0.0072229,
+            Client::COIN_PEERCOIN     => 0.42862533,
+            Client::COIN_REDDCOIN     => 0.00003867,
+            Client::COIN_RIPPLE       => 0.00593452,
             Client::EO_CLOUD_FOLDING  => 0.05,
             Client::EO_CLOUD_SETI     => 0.8,
-            Client::EO_CLOUD_SHA256_2 => 0.11,
-            Client::EO_CLOUD_SHA256_3 => 0.45,
+            Client::EO_CLOUD_SHA256_2 => 0.15,
+            Client::EO_CLOUD_SHA256_3 => 0.22,
             Client::RENTAL_FOLDING    => 0.00014,
-            Client::RENTAL_SCRYPT     => 0.02464,
-            Client::RENTAL_SHA256_3   => 0.00114,
+            Client::RENTAL_SCRYPT     => 0.02143,
+            Client::RENTAL_SHA256_3   => 0.00076,
         );
 
         foreach ($coins as $coin => $expectedValue) {
@@ -198,11 +198,11 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $coinValue = $client->getCoinValue(Client::COIN_BITCOIN, Client::CURRENCY_US_DOLLAR);
 
-        $this->assertEquals(378.99, $coinValue);
+        $this->assertEquals(427.86, $coinValue);
 
         $coinValue = $client->getCoinValue(Client::COIN_BITCOIN, Client::CURRENCY_EURO);
 
-        $this->assertEquals(349.9284517857, $coinValue);
+        $this->assertEquals(375.6782928078, $coinValue);
     }
 
     public function testGetCoinValueWithCache()
@@ -231,7 +231,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $exchangeRate = $client->getExchangeRate();
 
-        $this->assertEquals(0.92331843, $exchangeRate);
+        $this->assertEquals(0.87804023, $exchangeRate);
     }
 
     /**
@@ -261,26 +261,26 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client = new MockEobotClient();
 
         $currencies = array(
-            Client::CURRENCY_BRITISH_POUND         => 0.70205004,
-            Client::CURRENCY_CANADIAN_DOLLAR       => 1.3977,
-            Client::CURRENCY_CHINESE_YUAN_RENMINBI => 6.57705,
-            Client::CURRENCY_CZECH_KORUNA          => 24.946,
-            Client::CURRENCY_DANISH_KRONE          => 6.8889,
-            Client::CURRENCY_EURO                  => 0.92331843,
-            Client::CURRENCY_HONG_KONG_DOLLAR      => 7.78205,
-            Client::CURRENCY_INDIAN_RUPEE          => 67.88995,
-            Client::CURRENCY_INDONESIAN_RUPIAH     => 13680.5,
-            Client::CURRENCY_ISRAELI_SHEKEL        => 3.9614,
-            Client::CURRENCY_JAPANESE_YEN          => 121.12,
-            Client::CURRENCY_MALAYSIAN_RINGGIT     => 4.14295,
-            Client::CURRENCY_MEXICAN_PESO          => 18.1109,
-            Client::CURRENCY_NORWEGIAN_KRONE       => 8.6807,
-            Client::CURRENCY_POLISH_ZLOTY          => 4.08195,
-            Client::CURRENCY_ROMANIAN_NEW_LEU      => 4.18825,
-            Client::CURRENCY_RUSSIAN_RUBLE         => 75.7245,
-            Client::CURRENCY_SERBIAN_DINAR         => 113.26,
-            Client::CURRENCY_SWISS_FRANC           => 1.023,
-            Client::CURRENCY_UKRAINIAN_HRYVNIA     => 25.65,
+            Client::CURRENCY_BRITISH_POUND         => 0.70072178,
+            Client::CURRENCY_CANADIAN_DOLLAR       => 1.27535,
+            Client::CURRENCY_CHINESE_YUAN_RENMINBI => 6.46505,
+            Client::CURRENCY_CZECH_KORUNA          => 23.725,
+            Client::CURRENCY_DANISH_KRONE          => 6.53415,
+            Client::CURRENCY_EURO                  => 0.87804023,
+            Client::CURRENCY_HONG_KONG_DOLLAR      => 7.75441,
+            Client::CURRENCY_INDIAN_RUPEE          => 66.325,
+            Client::CURRENCY_INDONESIAN_RUPIAH     => 13077.5,
+            Client::CURRENCY_ISRAELI_SHEKEL        => 3.76665,
+            Client::CURRENCY_JAPANESE_YEN          => 108.5605,
+            Client::CURRENCY_MALAYSIAN_RINGGIT     => 3.85545,
+            Client::CURRENCY_MEXICAN_PESO          => 17.445,
+            Client::CURRENCY_NORWEGIAN_KRONE       => 8.1684,
+            Client::CURRENCY_POLISH_ZLOTY          => 3.7668,
+            Client::CURRENCY_ROMANIAN_NEW_LEU      => 3.92665,
+            Client::CURRENCY_RUSSIAN_RUBLE         => 65.2655,
+            Client::CURRENCY_SERBIAN_DINAR         => 108.075,
+            Client::CURRENCY_SWISS_FRANC           => 0.955435,
+            Client::CURRENCY_UKRAINIAN_HRYVNIA     => 25.445,
             Client::CURRENCY_US_DOLLAR             => 1.0,
         );
 
@@ -337,7 +337,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balances = $client->getBalance();
 
         $this->assertInternalType('array', $balances);
-        $this->assertCount(23, $balances);
+        $this->assertCount(24, $balances);
 
         $this->assertEquals(0.00040978, $balances[Client::COIN_BITCOIN]);
         $this->assertEquals(0.0141392, $balances[Client::COIN_BITSHARES]);
@@ -358,6 +358,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.02748126, $balances[Client::COIN_MAIDSAFECOIN]);
         $this->assertEquals(0.03641862, $balances[Client::COIN_MONERO]);
         $this->assertEquals(0.00636984, $balances[Client::COIN_NEM]);
+        $this->assertEquals(0.18739263, $balances[Client::COIN_VOXELS]);
         $this->assertEquals(2.16726154, $balances[Client::EO_CLOUD_FOLDING]);
         $this->assertEquals(4.73192563, $balances[Client::EO_CLOUD_SETI]);
         $this->assertEquals(15.42138465, $balances[Client::EO_CLOUD_SHA256_2]);
@@ -415,64 +416,64 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client = new MockEobotClient(1234);
 
         $balance = $client->getBalance(Client::CURRENCY_BRITISH_POUND);
-        $this->assertEquals(0.2299284366824, $balance);
+        $this->assertEquals(0.22949341819667, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_CANADIAN_DOLLAR);
-        $this->assertEquals(0.457760782908, $balance);
+        $this->assertEquals(0.417689929514, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_CHINESE_YUAN_RENMINBI);
-        $this->assertEquals(2.154049908582, $balance);
+        $this->assertEquals(2.117368784102, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_CZECH_KORUNA);
-        $this->assertEquals(8.17006545784, $balance);
+        $this->assertEquals(7.770175699, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_DANISH_KRONE);
-        $this->assertEquals(2.256183914556, $balance);
+        $this->assertEquals(2.139999727866, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_EURO);
-        $this->assertEquals(0.30239605594204, $balance);
+        $this->assertEquals(0.28756699084891, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_HONG_KONG_DOLLAR);
-        $this->assertEquals(2.548699506782, $balance);
+        $this->assertEquals(2.5396471292764, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_INDONESIAN_RUPIAH);
-        $this->assertEquals(4480.50110222, $balance);
+        $this->assertEquals(4283.0125481, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_ISRAELI_SHEKEL);
-        $this->assertEquals(1.297398272456, $balance);
+        $this->assertEquals(1.233615692166, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_INDIAN_RUPEE);
-        $this->assertEquals(22.234640240098, $balance);
+        $this->assertEquals(21.722103403, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_JAPANESE_YEN);
-        $this->assertEquals(39.6680160448, $balance);
+        $this->assertEquals(35.55465369742, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_MALAYSIAN_RINGGIT);
-        $this->assertEquals(1.356857720218, $balance);
+        $this->assertEquals(1.262698583718, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_MEXICAN_PESO);
-        $this->assertEquals(5.931501583436, $balance);
+        $this->assertEquals(5.7134126478, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_NORWEGIAN_KRONE);
-        $this->assertEquals(2.843016404228, $balance);
+        $this->assertEquals(2.675233010736, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_POLISH_ZLOTY);
-        $this->assertEquals(1.336879607778, $balance);
+        $this->assertEquals(1.233664818672, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_ROMANIAN_NEW_LEU);
-        $this->assertEquals(1.37169392503, $balance);
+        $this->assertEquals(1.286017298566, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_RUSSIAN_RUBLE);
-        $this->assertEquals(24.80053402398, $balance);
+        $this->assertEquals(21.37510651562, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_SERBIAN_DINAR);
-        $this->assertEquals(37.0937871304, $balance);
+        $this->assertEquals(35.395647573, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_SWISS_FRANC);
-        $this->assertEquals(0.33504277092, $balance);
+        $this->assertEquals(0.3129145550674, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_UKRAINIAN_HRYVNIA);
-        $this->assertEquals(8.400632526, $balance);
+        $this->assertEquals(8.3334929678, $balance);
 
         $balance = $client->getBalance(Client::CURRENCY_US_DOLLAR);
         $this->assertEquals(0.32751004, $balance);
@@ -538,6 +539,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::COIN_LUMENS);
         $this->assertEquals(0.06467642, $balance);
+
+        $balance = $client->getBalance(Client::COIN_VOXELS);
+        $this->assertEquals(0.18739263, $balance);
 
         $balance = $client->getBalance(Client::EO_CLOUD_FOLDING);
         $this->assertEquals(2.16726154, $balance);
@@ -772,9 +776,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertCount(5, $estimates);
         $this->assertEquals(0.0, $estimates['MiningSHA-256']);
         $this->assertEquals(0.0, $estimates['MiningScrypt']);
-        $this->assertEquals(3.1057640147263, $estimates['CloudSHA-256']);
-        $this->assertEquals(7.7640323949613, $estimates['Cloud2SHA-256']);
-        $this->assertEquals(0.93362090284691, $estimates['CloudScrypt']);
+        $this->assertEquals(2.9534618406957, $estimates['CloudSHA-256']);
+        $this->assertEquals(7.3832954788949, $estimates['Cloud2SHA-256']);
+        $this->assertEquals(0.88783748448356, $estimates['CloudScrypt']);
     }
 
     public function testGetEstimatesWithCache()
@@ -908,6 +912,9 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
 
         $address = $client->getDepositAddress(Client::COIN_LUMENS);
+        $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
+
+        $address = $client->getDepositAddress(Client::COIN_VOXELS);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
     }
 

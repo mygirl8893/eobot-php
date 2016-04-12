@@ -78,6 +78,11 @@ class Client
     const COIN_LUMENS = 'XLM';
 
     /**
+     * The coin abbreviation for Voxels
+     */
+    const COIN_VOXELS = 'VOX';
+
+    /**
      * The coin abbreviation for Bytecoin
      */
     const COIN_BYTECOIN = 'BCN';
@@ -2056,7 +2061,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.8Updated .0 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.8.1 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 
