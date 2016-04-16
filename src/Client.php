@@ -93,11 +93,6 @@ class Client
     const COIN_PEERCOIN = 'PPC';
 
     /**
-     * The coin abbreviation for NXT
-     */
-    const COIN_NXT = 'NXT';
-
-    /**
      * The coin abbreviation for MaidSafeCoin
      */
     const COIN_MAIDSAFECOIN = 'MAID';
@@ -2061,7 +2056,7 @@ class Client
     protected function getRequestHeaders()
     {
         return array(
-            'User-Agent' => 'RickDenHaan-Eobot/1.8.1 (+http://github.com/rickdenhaan/eobot-php)',
+            'User-Agent' => 'RickDenHaan-Eobot/1.9.0 (+http://github.com/rickdenhaan/eobot-php)',
         );
     }
 

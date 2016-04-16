@@ -161,7 +161,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
             Client::COIN_MONERO       => 0.90132942,
             Client::COIN_NEM          => 0.00137615,
             Client::COIN_NAMECOIN     => 0.43390515,
-            Client::COIN_NXT          => 0.0072229,
             Client::COIN_PEERCOIN     => 0.42862533,
             Client::COIN_REDDCOIN     => 0.00003867,
             Client::COIN_RIPPLE       => 0.00593452,
@@ -337,7 +336,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $balances = $client->getBalance();
 
         $this->assertInternalType('array', $balances);
-        $this->assertCount(24, $balances);
+        $this->assertCount(23, $balances);
 
         $this->assertEquals(0.00040978, $balances[Client::COIN_BITCOIN]);
         $this->assertEquals(0.0141392, $balances[Client::COIN_BITSHARES]);
@@ -352,7 +351,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.06467642, $balances[Client::COIN_LUMENS]);
         $this->assertEquals(0.00188207, $balances[Client::COIN_NAMECOIN]);
         $this->assertEquals(0.03115914, $balances[Client::COIN_RIPPLE]);
-        $this->assertEquals(0.10494402, $balances[Client::COIN_NXT]);
         $this->assertEquals(0.00502554, $balances[Client::COIN_PEERCOIN]);
         $this->assertEquals(0.02830923, $balances[Client::COIN_REDDCOIN]);
         $this->assertEquals(0.02748126, $balances[Client::COIN_MAIDSAFECOIN]);
@@ -518,9 +516,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $balance = $client->getBalance(Client::COIN_RIPPLE);
         $this->assertEquals(0.03115914, $balance);
-
-        $balance = $client->getBalance(Client::COIN_NXT);
-        $this->assertEquals(0.10494402, $balance);
 
         $balance = $client->getBalance(Client::COIN_PEERCOIN);
         $this->assertEquals(0.00502554, $balance);
@@ -892,9 +887,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
         $address = $client->getDepositAddress(Client::COIN_RIPPLE);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
-
-        $address = $client->getDepositAddress(Client::COIN_NXT);
-        $this->assertEquals('NXT-1234-5678-90AB-CDEF', $address);
 
         $address = $client->getDepositAddress(Client::COIN_PEERCOIN);
         $this->assertEquals('1234567890abcdefghijklmnopqrstuvwx', $address);
